@@ -4,6 +4,7 @@ SOURCES=$(wildcard source/*.cpp)
 HEADERS=$(wildcard source/*.hpp)
 OBJECTS=$(SOURCES:source/%.cpp=build/%.o)
 
+CXX=c++
 CXXFLAGS=-g3 -Wall -Wextra -Werror -std=c++98
 
 all: $(NAME)
