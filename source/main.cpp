@@ -1,4 +1,6 @@
 #include "application.hpp"
+#include "ConfigTokenizer.hpp"
+#include "ConfigParser.hpp"
 
 #include <iostream>
 
@@ -33,8 +35,27 @@ int main(int argc, char *argv[])
 {
     (void)argc;
     (void)argv;
-    ApplicationConfig config = createExampleConfig();
-    printConfig(config);
+    ApplicationConfig exampleConfig = createExampleConfig();
+    ApplicationConfig config;
+    try
+    {
+        config = ConfigParser::createConfig("/home/cgodecke/Desktop/Core/JPwebs3rv/source/server.conf");
+        printConfig(config);
+    }
+    catch (const ConfigParser::ParserException &e)
+    {
+        std::cerr << e.what() << std::endl;
+        std::cerr << "At offset " << e.getOffset() << std::endl;
+        std::cerr << e.getConfigInput()[e.getOffset()] << std::endl;
+        std::cerr << e.getConfigInput().substr(e.getOffset()) << std::endl;
+    }
+    catch (const ConfigTokenizer::TokenazierException &e)
+    {
+        std::cerr << e.what() << std::endl;
+        std::cerr << e.config_input[e.offset] << std::endl;
+        std::cerr << e.config_input.substr(e.offset) << std::endl;
+    }
+
     try
     {
         Application application(config);
