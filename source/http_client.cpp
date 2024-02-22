@@ -1,15 +1,17 @@
 #include "http_client.hpp"
 #include "application.hpp"
 
-#include <unistd.h>
 #include <stdio.h>
+#include <unistd.h>
 
 /* Constructs a HTTP client using the given socket file descriptor */
-HttpClient::HttpClient(Application &application, int fileno, time_t timeoutStart)
+HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno, time_t timeoutStart)
     : _application(application)
+    , _config(config)
     , _fileno(fileno)
     , _timeoutStart(timeoutStart)
     , _markedForCleanup(false)
+    , _parser(config)
 {
 }
 
@@ -38,7 +40,10 @@ void HttpClient::handleEvents(uint32_t eventMask)
         if (length == 0)
             throw std::runtime_error("End of stream");
 
-        printf("Client is readable\n");
+        HttpRequest request;
+        if (_parser.commit(buffer, length, request))
+        {
+        }
     }
 }
 
