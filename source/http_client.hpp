@@ -52,8 +52,8 @@ struct RouteResult
 {
     bool                 wasFound;
     bool                 isRedirect;
-    LocalRouteConfig    *localRoute;
-    RedirectRouteConfig *redirectRoute;
+    const LocalRouteConfig    *localRoute;
+    const RedirectRouteConfig *redirectRoute;
     std::string          path;
 };
 

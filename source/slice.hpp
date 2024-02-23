@@ -68,7 +68,7 @@ public:
     friend std::ostream &operator<<(std::ostream &stream, const Slice &slice);
 
     /* Converts the slice to a string*/
-        explicit operator std::string() const {
+       std::string toString() const {
         return std::string(_string, _length);
     }
 private:

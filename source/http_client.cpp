@@ -73,22 +73,42 @@ RouteResult ServerConfig::findRoute(const std::string &path) const
 {
     RouteResult result = {};
     Slice       pathSlice(path.c_str(), path.length());
-    Slice      trash; // how to free this
+    Slice      remainder; // how to free this
     
     std::cout << "pathslice first: " << pathSlice << std::endl;
     // search for the route
-    std::vector<LocalRouteConfig> iterator; 
-
-   if (std::find(iterator.begin(), iterator.end(), static_cast<std::string>(pathSlice)) != iterator.end())
+    
+    while (true)
     {
-        
+        std::vector<LocalRouteConfig>::const_iterator it = std::find(localRoutes.begin(), localRoutes.end(), pathSlice.toString());
+        if (it != localRoutes.end())
+        {
+            result.wasFound = true;
+            result.localRoute = &(*it);
+            result.isRedirect = false;
+            result.path = pathSlice.toString();
+            result.redirectRoute = NULL;
+            return result;
+        }
+        std::vector<RedirectRouteConfig>::const_iterator it_1 = std::find(redirectRoutes.begin(), redirectRoutes.end(), pathSlice.toString());
+        if (it_1 != redirectRoutes.end())
+        {
+            result.wasFound = true;
+            result.redirectRoute = &(*it_1);
+            result.isRedirect = true;
+            result.path = pathSlice.toString();
+            result.localRoute = NULL;
+            return result;
+        }
+        // no route found slice to the last slash
+        pathSlice.splitEnd('/', remainder); 
+
+        std::cout << "afterslice: " << pathSlice << std::endl;
+        std::cout << "remainder: " << remainder << std::endl;
+        if (remainder.isEmpty())
+        {
+            std::cout << "empty return isfalse here" << std::endl;
+            break;
+        }
     }
-    // no route found slice to the last slash
-    pathSlice.splitEnd('/', trash); 
-
-    std::cout << "afterslice: " << pathSlice << std::endl;
-    std::cout << "trash: " << trash << std::endl;
-    // TODO: Implement
-
-    return result;
 }
