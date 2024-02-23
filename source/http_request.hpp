@@ -12,16 +12,16 @@
 
 struct HttpRequest
 {
-    class Parser
-    {
-    public:
-        /* Constructs a HTTP request parser using the given rules */
-        Parser(const ServerConfig &config);
+    // class Parser
+    // {
+    // public:
+    //     /* Constructs a HTTP request parser using the given rules */
+    //     Parser(const ServerConfig &config);
 
-        /* Commits the given buffer to the current request
-           Returns true if parsing was finished and moves the parsed request into `outRequest` */
-        bool commit(const char *buffer, size_t length, HttpRequest &outRequest);
-    };
+    //     /* Commits the given buffer to the current request
+    //        Returns true if parsing was finished and moves the parsed request into `outRequest` */
+    //     bool commit(const char *buffer, size_t length, HttpRequest &outRequest);
+    // };
 
     HttpMethod           method;
     std::string          query;           // Full query string; eg. "/cgi-bin/demo.py?hello=world&abc=def"
@@ -30,5 +30,4 @@ struct HttpRequest
     bool                 isLegacy;        // True when HTTP/1.0 instead of HTTP/1.1
     std::vector<uint8_t> body;
 };
-
 #endif // HTTP_REQUEST_hpp

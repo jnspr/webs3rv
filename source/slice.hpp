@@ -66,6 +66,11 @@ public:
 
     /* Writes a slice's content into an output stream */
     friend std::ostream &operator<<(std::ostream &stream, const Slice &slice);
+
+    /* Converts the slice to a string*/
+        explicit operator std::string() const {
+        return std::string(_string, _length);
+    }
 private:
     const char *_string;
     size_t      _length;

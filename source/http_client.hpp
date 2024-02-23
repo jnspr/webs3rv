@@ -34,7 +34,7 @@ private:
     HttpClient         *_previous;
     HttpClient         *_cleanupNext;
     bool                _markedForCleanup;
-    HttpRequest::Parser _parser;
+    //HttpRequest::Parser _parser;
 
     /* Handles one or multiple events */
     void handleEvents(uint32_t eventMask);

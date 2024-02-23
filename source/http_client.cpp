@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iostream>
 #include "config.hpp"
+#include <algorithm>
 
 /* Constructs a HTTP client using the given socket file descriptor */
 HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno, time_t timeoutStart)
@@ -14,7 +15,7 @@ HttpClient::HttpClient(Application &application, const ServerConfig &config, int
     , _fileno(fileno)
     , _timeoutStart(timeoutStart)
     , _markedForCleanup(false)
-    , _parser(config)
+    //, _parser(config)
 {
 }
 
@@ -44,8 +45,10 @@ void HttpClient::handleEvents(uint32_t eventMask)
             throw std::runtime_error("End of stream");
 
         HttpRequest request;
-        if (_parser.commit(buffer, length, request))
+        if (true)
+        //parser.commit(buffer, length, request) 
         {
+            request.queryPath = C_SLICE("/cgi-bin/demo.py"); // dummy for testing
             // dummy for testing
             std::ostringstream oss;
             oss << request.queryPath;
@@ -70,9 +73,21 @@ RouteResult ServerConfig::findRoute(const std::string &path) const
 {
     RouteResult result = {};
     Slice       pathSlice(path.c_str(), path.length());
+    Slice      trash; // how to free this
     
-    std::cout << "findRoute: " << path << std::endl;
-    
+    std::cout << "pathslice first: " << pathSlice << std::endl;
+    // search for the route
+    std::vector<LocalRouteConfig> iterator; 
+
+   if (std::find(iterator.begin(), iterator.end(), static_cast<std::string>(pathSlice)) != iterator.end())
+    {
+        
+    }
+    // no route found slice to the last slash
+    pathSlice.splitEnd('/', trash); 
+
+    std::cout << "afterslice: " << pathSlice << std::endl;
+    std::cout << "trash: " << trash << std::endl;
     // TODO: Implement
 
     return result;
