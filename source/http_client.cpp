@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <sstream>
+#include <iostream>
+#include "config.hpp"
 
 /* Constructs a HTTP client using the given socket file descriptor */
 HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno, time_t timeoutStart)
@@ -43,6 +46,11 @@ void HttpClient::handleEvents(uint32_t eventMask)
         HttpRequest request;
         if (_parser.commit(buffer, length, request))
         {
+            // dummy for testing
+            std::ostringstream oss;
+            oss << request.queryPath;
+            std::string s = oss.str();
+            RouteResult result = _config.findRoute(s);
         }
     }
 }
@@ -56,4 +64,16 @@ void HttpClient::handleException()
     _cleanupNext = _application._cleanupClients;
     _application._cleanupClients = this;
     _markedForCleanup = true;
+}
+
+RouteResult ServerConfig::findRoute(const std::string &path) const
+{
+    RouteResult result = {};
+    Slice       pathSlice(path.c_str(), path.length());
+    
+    std::cout << "findRoute: " << path << std::endl;
+    
+    // TODO: Implement
+
+    return result;
 }

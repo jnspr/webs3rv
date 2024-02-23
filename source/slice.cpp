@@ -29,6 +29,24 @@ bool Slice::splitStart(char delimiter, Slice &outStart)
 
     return true;
 }
+   
+   /* Removes the slice's end until `delimiter` is reached and populates `outSlice` with it,
+       the current slice will be the remainder including the delimiter */
+bool Slice::splitEnd(char delimiter, Slice &outEnd)
+{
+    const char *position = (const char *)memrchr(_string, delimiter, _length);
+    if (position == NULL)
+        return false;
+
+    size_t index = position - _string + 1; // +1 to include the delimiter in the output slice
+
+    outEnd._string = _string + index;
+    outEnd._length = _length - index;
+
+    _length = index;
+
+    return true;
+}
 
 /* Removes any occurrences of the given character from the start of the slice */
 void Slice::stripStart(char character)

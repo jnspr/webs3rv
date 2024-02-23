@@ -9,6 +9,10 @@
 #include <vector>
 #include <stdint.h>
 
+/* Forward declaration*/
+struct RouteResult;
+
+
 /* Configuration for a route that requires further processing by the server */
 struct LocalRouteConfig
 {
@@ -40,6 +44,7 @@ struct ServerConfig
     size_t                             maxBodySize;
     std::vector<LocalRouteConfig>      localRoutes;
     std::vector<RedirectRouteConfig>   redirectRoutes;
+    RouteResult findRoute(const std::string &path) const;
 };
 
 /* Global application configuration; can contain many virtual servers */

@@ -47,4 +47,14 @@ private:
     HttpClient &operator=(const HttpClient &other);
 };
 
+/* The result of routing will be stored in here */
+struct RouteResult
+{
+    bool                 wasFound;
+    bool                 isRedirect;
+    LocalRouteConfig    *localRoute;
+    RedirectRouteConfig *redirectRoute;
+    std::string          path;
+};
+
 #endif // HTTP_CLIENT_hpp

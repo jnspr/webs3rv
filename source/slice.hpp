@@ -54,6 +54,10 @@ public:
        the current slice will be the remainder including the delimiter */
     bool splitStart(char delimiter, Slice &outStart);
 
+    /* Removes the slice's end until `delimiter` is reached and populates `outSlice` with it,
+       the current slice will be the remainder including the delimiter */
+    bool splitEnd(char delimiter, Slice &outEnd);
+
     /* Removes any occurrences of the given character from the start of the slice */
     void stripStart(char character);
 
