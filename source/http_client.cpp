@@ -57,3 +57,45 @@ void HttpClient::handleException()
     _application._cleanupClients = this;
     _markedForCleanup = true;
 }
+
+/* Finds a matching route for path and returns it in a struct*/
+RouteResult ServerConfig::findRoute(Slice path) const
+{
+    RouteResult result = {};
+    size_t biggestleng = 0;
+    result.wasFound = 0;
+
+    for (size_t i = 0; i < localRoutes.size(); i++)
+    {
+        if (path.startsWith(localRoutes[i].path))
+        {
+            if (localRoutes[i].path.size() > biggestleng)
+            {
+                result.wasFound = true;
+                result.localRoute = &localRoutes[i];
+                result.isRedirect = false;
+                result.path = localRoutes[i].path;
+                result.redirectRoute = NULL;
+            }
+        }
+    }
+    
+    if (result.wasFound == true)
+       return result;
+
+        for (size_t i = 0; i < redirectRoutes.size(); i++)
+    {
+        if (path.startsWith(redirectRoutes[i].path))
+        {
+            if (redirectRoutes[i].path.size() > biggestleng)
+            {
+                result.wasFound = true;
+                result.redirectRoute = &redirectRoutes[i];
+                result.isRedirect = true;
+                result.path = redirectRoutes[i].path;
+                result.localRoute = NULL;
+            }
+        }
+    }    
+    return result;
+}

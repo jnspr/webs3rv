@@ -29,6 +29,24 @@ bool Slice::splitStart(char delimiter, Slice &outStart)
 
     return true;
 }
+   
+   /* Removes the slice's end until `delimiter` is reached and populates `outSlice` with it,
+       the current slice will be the remainder including the delimiter */
+bool Slice::splitEnd(char delimiter, Slice &outEnd)
+{
+    const char *position = (const char *)memrchr(_string, delimiter, _length);
+    if (position == NULL)
+        return false;
+
+    size_t index = position - _string + 1; // +1 to include the delimiter in the output slice
+
+    outEnd._string = _string + index;
+    outEnd._length = _length - index;
+
+    _length = index;
+
+    return true;
+}
 
 /* Removes any occurrences of the given character from the start of the slice */
 void Slice::stripStart(char character)
@@ -58,4 +76,21 @@ bool Slice::removePrefix(Slice prefix)
 std::ostream &operator<<(std::ostream &stream, const Slice &slice)
 {
     return stream.write(slice._string, slice._length);
+}
+
+/* Gets if the slice starts with the given prefix */
+bool Slice::startsWith(Slice prefix) const
+{
+    if (_length < prefix._length)
+        return false;
+    return memcmp(_string, prefix._string, prefix._length) == 0;
+}
+
+/* Returns a new slice with the given number of characters removed from the start,
+   the size is clamped by the available character count */
+Slice Slice::cut(size_t amount) const
+{
+    if (amount > _length)
+        amount = _length;
+    return Slice(_string + amount, _length - amount);
 }
