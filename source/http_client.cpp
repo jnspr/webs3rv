@@ -50,10 +50,7 @@ void HttpClient::handleEvents(uint32_t eventMask)
         {
             request.queryPath = C_SLICE("/cgi-bin/demo.py"); // dummy for testing
             // dummy for testing
-            std::ostringstream oss;
-            oss << request.queryPath;
-            std::string s = oss.str();
-            RouteResult result = _config.findRoute(s);
+            RouteResult result = _config.findRoute(request.queryPath);
         }
     }
 }
@@ -69,34 +66,43 @@ void HttpClient::handleException()
     _markedForCleanup = true;
 }
 
-RouteResult ServerConfig::findRoute(const std::string &path) const
+RouteResult ServerConfig::findRoute(Slice path) const
 {
     RouteResult result = {};
     int biggestleng = 0;
-    
+    result.wasFound = 0;
+
     for (size_t i = 0; i < localRoutes.size(); i++)
     {
-        if (path.starts localRoutes[i].path )
-
-        if (it != localRoutes.end())
+        if (path.startsWith(localRoutes[i].path))
         {
-            result.wasFound = true;
-            result.localRoute = &(*it);
-            result.isRedirect = false;
-            result.path = pathSlice.toString();
-            result.redirectRoute = NULL;
-            return result;
+            if (localRoutes[i].path.size() > biggestleng)
+            {
+                result.wasFound = true;
+                result.localRoute = &localRoutes[i];
+                result.isRedirect = false;
+                result.path = localRoutes[i].path;
+                result.redirectRoute = NULL;
+            }
         }
     }
-        if (it_1 != redirectRoutes.end())
+    
+    if (result.wasFound == true)
+       return result;
+
+        for (size_t i = 0; i < redirectRoutes.size(); i++)
+    {
+        if (path.startsWith(redirectRoutes[i].path))
         {
-            result.wasFound = true;
-            result.redirectRoute = &(*it_1);
-            result.isRedirect = true;
-            result.path = pathSlice.toString();
-            result.localRoute = NULL;
-            return result;
+            if (redirectRoutes[i].path.size() > biggestleng)
+            {
+                result.wasFound = true;
+                result.redirectRoute = &redirectRoutes[i];
+                result.isRedirect = true;
+                result.path = redirectRoutes[i].path;
+                result.localRoute = NULL;
+            }
         }
-
-
+    }    
+    return result;
 }

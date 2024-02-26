@@ -44,7 +44,7 @@ struct ServerConfig
     size_t                             maxBodySize;
     std::vector<LocalRouteConfig>      localRoutes;
     std::vector<RedirectRouteConfig>   redirectRoutes;
-    RouteResult findRoute(const std::string &path) const;
+    RouteResult findRoute(Slice path) const;
 };
 
 /* Global application configuration; can contain many virtual servers */
