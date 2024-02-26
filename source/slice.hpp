@@ -67,11 +67,6 @@ public:
     /* Writes a slice's content into an output stream */
     friend std::ostream &operator<<(std::ostream &stream, const Slice &slice);
 
-    /* Converts the slice to a string*/
-       std::string toString() const {
-        return std::string(_string, _length);
-    }
-
     /* Gets if the slice starts with the given prefix */
     bool startsWith(Slice prefix) const;
 

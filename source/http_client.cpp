@@ -69,7 +69,7 @@ void HttpClient::handleException()
 RouteResult ServerConfig::findRoute(Slice path) const
 {
     RouteResult result = {};
-    int biggestleng = 0;
+    size_t biggestleng = 0;
     result.wasFound = 0;
 
     for (size_t i = 0; i < localRoutes.size(); i++)
