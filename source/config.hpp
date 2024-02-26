@@ -10,6 +10,10 @@
 #include <vector>
 #include <stdint.h>
 
+/* Forward declaration*/
+struct RouteResult;
+
+
 /* Configuration for a route that requires further processing by the server */
 struct LocalRouteConfig
 {
@@ -36,15 +40,16 @@ struct RedirectRouteConfig
 /* Virtual server configuration */
 struct ServerConfig
 {
-    std::string name;
-    uint32_t host;
-    uint16_t port;
-    std::map<int, std::string> errorPages;
-    size_t maxBodySize;
-    std::vector<LocalRouteConfig> localRoutes;
-    std::vector<RedirectRouteConfig> redirectRoutes;
-
+    std::string                        name;
+    uint32_t                           host;
+    uint16_t                           port;
+    std::map<int, std::string>         errorPages;
+    size_t                             maxBodySize;
+    std::vector<LocalRouteConfig>      localRoutes;
+    std::vector<RedirectRouteConfig>   redirectRoutes;
     std::set<TokenKind> parsedTokens;
+
+    RouteResult findRoute(Slice path) const;
 };
 
 /* Global application configuration; can contain many virtual servers */

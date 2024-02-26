@@ -54,6 +54,10 @@ public:
        the current slice will be the remainder including the delimiter */
     bool splitStart(char delimiter, Slice &outStart);
 
+    /* Removes the slice's end until `delimiter` is reached and populates `outSlice` with it,
+       the current slice will be the remainder including the delimiter */
+    bool splitEnd(char delimiter, Slice &outEnd);
+
     /* Removes any occurrences of the given character from the start of the slice */
     void stripStart(char character);
 
@@ -62,6 +66,20 @@ public:
 
     /* Writes a slice's content into an output stream */
     friend std::ostream &operator<<(std::ostream &stream, const Slice &slice);
+
+    /* Gets if the slice starts with the given prefix */
+    bool startsWith(Slice prefix) const;
+
+    /* Returns a new slice with the given number of characters removed from the start,
+       the size is clamped by the available character count */
+    Slice cut(size_t amount) const;
+
+    /* Converts the slice to a string */
+    inline std::string toString() const
+    {
+        return std::string(_string, _length);
+    }
+    
 private:
     const char *_string;
     size_t      _length;
