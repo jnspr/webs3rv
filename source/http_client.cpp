@@ -72,15 +72,12 @@ void HttpClient::handleException()
 RouteResult ServerConfig::findRoute(const std::string &path) const
 {
     RouteResult result = {};
-    Slice       pathSlice(path.c_str(), path.length());
-    Slice      remainder; // how to free this
+    int biggestleng = 0;
     
-    std::cout << "pathslice first: " << pathSlice << std::endl;
-    // search for the route
-    
-    while (true)
+    for (size_t i = 0; i < localRoutes.size(); i++)
     {
-        std::vector<LocalRouteConfig>::const_iterator it = std::find(localRoutes.begin(), localRoutes.end(), pathSlice.toString());
+        if (path.starts localRoutes[i].path )
+
         if (it != localRoutes.end())
         {
             result.wasFound = true;
@@ -90,7 +87,7 @@ RouteResult ServerConfig::findRoute(const std::string &path) const
             result.redirectRoute = NULL;
             return result;
         }
-        std::vector<RedirectRouteConfig>::const_iterator it_1 = std::find(redirectRoutes.begin(), redirectRoutes.end(), pathSlice.toString());
+    }
         if (it_1 != redirectRoutes.end())
         {
             result.wasFound = true;
@@ -100,15 +97,6 @@ RouteResult ServerConfig::findRoute(const std::string &path) const
             result.localRoute = NULL;
             return result;
         }
-        // no route found slice to the last slash
-        pathSlice.splitEnd('/', remainder); 
 
-        std::cout << "afterslice: " << pathSlice << std::endl;
-        std::cout << "remainder: " << remainder << std::endl;
-        if (remainder.isEmpty())
-        {
-            std::cout << "empty return isfalse here" << std::endl;
-            break;
-        }
-    }
+
 }

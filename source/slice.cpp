@@ -77,3 +77,20 @@ std::ostream &operator<<(std::ostream &stream, const Slice &slice)
 {
     return stream.write(slice._string, slice._length);
 }
+
+/* Gets if the slice starts with the given prefix */
+bool Slice::startsWith(Slice prefix) const
+{
+    if (_length < prefix._length)
+        return false;
+    return memcmp(_string, prefix._string, prefix._length) == 0;
+}
+
+/* Returns a new slice with the given number of characters removed from the start,
+   the size is clamped by the available character count */
+Slice Slice::cut(size_t amount) const
+{
+    if (amount > _length)
+        amount = _length;
+    return Slice(_string + amount, _length - amount);
+}
