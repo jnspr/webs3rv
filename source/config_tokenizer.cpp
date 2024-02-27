@@ -1,3 +1,4 @@
+#include "config_parser.hpp"
 #include "config_tokenizer.hpp"
 
 // Token
@@ -9,24 +10,6 @@ Token::Token(TokenKind kind, std::string data, size_t offset)
 // Constructor
 ConfigTokenizer::ConfigTokenizer(const std::string &config_input)
     : config_input(config_input), offset(0)
-{
-}
-
-// Exceptions
-ConfigTokenizer::TokenazierException::TokenazierException(size_t offset, const std::string &config_input) : offset(offset), config_input(config_input)
-{
-    std::ostringstream oss;
-    oss << "TokenazierException: Invalid token at offset " << offset;
-    msg = oss.str();
-}
-
-const char *ConfigTokenizer::TokenazierException::what() const throw()
-{
-
-    return msg.c_str();
-}
-
-ConfigTokenizer::TokenazierException::~TokenazierException() throw()
 {
 }
 
@@ -62,7 +45,7 @@ std::vector<Token> ConfigTokenizer::tokenize()
             tokens.push_back(parseComment());
         else
         {
-            throw TokenazierException(offset, config_input);
+            throw ConfigException("Invalid token", config_input, offset);
         }
     }
 

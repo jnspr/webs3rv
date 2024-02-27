@@ -19,18 +19,12 @@ int main(int argc, char *argv[])
     {
         config = ConfigParser::createConfig(argv[1]);
     }
-    catch (const ConfigParser::ParserException &e)
+    catch (const ConfigException &e)
     {
         std::cerr << e.what() << std::endl;
         std::cerr << "At offset " << e.getOffset() << std::endl;
-        std::cerr << e.getConfigInput()[e.getOffset()] << std::endl;
-        std::cerr << e.getConfigInput().substr(e.getOffset()) << std::endl;
-    }
-    catch (const ConfigTokenizer::TokenazierException &e)
-    {
-        std::cerr << e.what() << std::endl;
-        std::cerr << e.config_input[e.offset] << std::endl;
-        std::cerr << e.config_input.substr(e.offset) << std::endl;
+        std::cerr << e.getSource()[e.getOffset()] << std::endl;
+        std::cerr << e.getSource().substr(e.getOffset()) << std::endl;
     }
 
     // Start the application using the parsed configuration

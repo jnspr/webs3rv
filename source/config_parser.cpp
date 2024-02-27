@@ -1,42 +1,5 @@
 #include "config_parser.hpp"
 
-// Exceptions
-ConfigParser::ParserException::ParserException(const std::string &message, size_t offset, const std::string &config_input)
-    : offset(offset), config_input(config_input)
-{
-    std::ostringstream oss;
-    oss << "ParserException: " << message << " at offset " << offset;
-    formattedMessage = oss.str();
-}
-
-// For tokenizer
-ConfigParser::ParserException::ParserException(const std::string &message, size_t offset)
-    : offset(offset)
-{
-    std::ostringstream oss;
-    oss << "ParserException: " << message << " at offset " << offset;
-    formattedMessage = oss.str();
-}
-
-ConfigParser::ParserException::~ParserException() throw()
-{
-}
-
-const char *ConfigParser::ParserException::what() const throw()
-{
-    return formattedMessage.c_str();
-}
-
-size_t ConfigParser::ParserException::getOffset() const
-{
-    return offset;
-}
-
-std::string ConfigParser::ParserException::getConfigInput() const
-{
-    return config_input;
-}
-
 // Constructor
 ConfigParser::ConfigParser(const std::vector<Token> &tokens) : _tokens(tokens), _current(0)
 {
@@ -51,7 +14,7 @@ ApplicationConfig ConfigParser::parse()
         if (_tokens[_current].kind == KW_SERVER)
             config.servers.push_back(parseServerConfig());
         else
-            throw ParserException("Error: Unexpected token in config", _tokens[_current].offset, _config_input);
+            throw ConfigException("Error: Unexpected token in config", _config_input, _tokens[_current].offset);
     }
     return config;
 }
@@ -103,8 +66,8 @@ ServerConfig ConfigParser::parseServerConfig()
             serverConfig.parsedTokens.insert(KW_LOCATION);
             break;
         default:
-            throw ParserException("Error: Unexpected token in server config",
-                                  _tokens[_current].offset, _config_input);
+            throw ConfigException("Error: Unexpected token in server config",
+                                  _config_input, _tokens[_current].offset);
         }
     }
 
@@ -126,7 +89,7 @@ void ConfigParser::parsePortOrIp(ServerConfig &serverConfig)
         std::istringstream iss(port);
         iss >> serverConfig.port;
         if (iss.fail() || !iss.eof())
-            throw ParserException("Error: Invalid port number", _tokens[_current].offset, _config_input);
+            throw ConfigException("Error: Invalid port number", _config_input, _tokens[_current].offset);
         moveToNextToken();
     }
 }
@@ -135,7 +98,7 @@ void ConfigParser::parsePortOrIp(ServerConfig &serverConfig)
 void ConfigParser::expect(TokenKind kind)
 {
     if (currentToken().kind != kind)
-        throw ParserException("Error: Unexpected token", _tokens[_current].offset, _config_input);
+        throw ConfigException("Error: Unexpected token", _config_input, _tokens[_current].offset);
     if (currentToken().kind != DATA)
         moveToNextToken();
 }
@@ -150,7 +113,7 @@ void ConfigParser::moveToNextToken()
     if (_current < _tokens.size())
         ++_current;
     else
-        throw ParserException("Error: Unexpected end of tokens", _tokens[_current].offset, _config_input);
+        throw ConfigException("Error: Unexpected end of tokens", _config_input, _tokens[_current].offset);
 }
 
 // Parsing data types
@@ -169,7 +132,7 @@ uint16_t ConfigParser::parseUint16()
     uint16_t num;
     iss >> num;
     if (iss.fail() || !iss.eof())
-        throw ParserException("Error: Invalid uint16_t value", _tokens[_current].offset, _config_input);
+        throw ConfigException("Error: Invalid uint16_t value", _config_input, _tokens[_current].offset);
     moveToNextToken();
     return num;
 }
@@ -181,7 +144,7 @@ size_t ConfigParser::parseSizeT()
     size_t num;
     iss >> num;
     if (iss.fail() || !iss.eof())
-        throw ParserException("Error: Invalid size_t value", _tokens[_current].offset, _config_input);
+        throw ConfigException("Error: Invalid size_t value", _config_input, _tokens[_current].offset);
     moveToNextToken();
     return num;
 }
@@ -194,7 +157,7 @@ std::map<int, std::string> ConfigParser::parseErrorRedirects()
     int errorNum;
     iss >> errorNum;
     if (iss.fail() || !iss.eof())
-        throw ParserException("Error: Invalid error number", _tokens[_current].offset, _config_input);
+        throw ConfigException("Error: Invalid error number", _config_input, _tokens[_current].offset);
     moveToNextToken();
     expect(DATA);
     std::string redirect;
@@ -266,8 +229,8 @@ LocalRouteConfig ConfigParser::parseLocalRouteConfig(ServerConfig &serverConfig)
             expect(SY_SEMICOLON);
             break;
         default:
-            throw ParserException("Error: Unexpected token in local route config",
-                                  _tokens[_current].offset, _config_input);
+            throw ConfigException("Error: Unexpected token in local route config",
+                                  _config_input, _tokens[_current].offset);
         }
     }
 
@@ -285,7 +248,7 @@ std::set<HttpMethod> ConfigParser::parseAllowedHttpMethods(ServerConfig &serverC
         expect(DATA);
         HttpMethod method = parseHttpMethod(currentToken().data);
         if (method == HTTP_METHOD_NONE)
-            throw ParserException("Error: Invalid HTTP method", _tokens[_current].offset, _config_input);
+            throw ConfigException("Error: Invalid HTTP method", _config_input, _tokens[_current].offset);
         allowedMethods.insert(method);
 
         // If a redirect route exists for this local route, add the allowed methods to the
@@ -315,7 +278,7 @@ bool ConfigParser::parseDirectoryListing()
     else if (currentToken().data == "off")
         allowDirectoryListing = false;
     else
-        throw ParserException("Error: Invalid value for autoindex", _tokens[_current].offset, _config_input);
+        throw ConfigException("Error: Invalid value for autoindex", _config_input, _tokens[_current].offset);
     moveToNextToken();
     return allowDirectoryListing;
 }
@@ -364,7 +327,7 @@ ApplicationConfig ConfigParser::createConfig(const char *path)
     // tokenizer.printTokens(tokens);
 
     if (tokens.size() == 0)
-        throw ParserException("Error: Empty config file", 0, config_input);
+        throw ConfigException("Error: Empty config file", config_input, 0);
 
     ConfigParser parser(tokens);
     parser._config_input = config_input;
@@ -372,4 +335,29 @@ ApplicationConfig ConfigParser::createConfig(const char *path)
     ApplicationConfig config = parser.parse();
     // printConfigP(config);
     return config;
+}
+
+/* Constructs a parser exception using the given reason, source and offset */
+ConfigException::ConfigException(const std::string &reason, const std::string &source, size_t offset)
+    : _reason(reason)
+    , _source(source)
+    , _offset(offset)
+{
+}
+
+/* Constructs a parser exception using the given reason and offset */
+ConfigException::ConfigException(const std::string &reason, size_t offset)
+    : _reason(reason)
+    , _source() // FIXME: Change code to always supply this
+    , _offset(offset)
+{
+}
+
+/* Empty method; declares the destructor as non-throwing */
+ConfigException::~ConfigException() throw() {}
+
+/* Gets the cause of the error as a C-style string */
+const char *ConfigException::what() const throw()
+{
+    return _reason.c_str();
 }

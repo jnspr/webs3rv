@@ -54,18 +54,6 @@ struct ConfigTokenizer
     TokenKind getTokenKind(const std::string &word);
     void printTokens(std::vector<Token> tokens);
     std::string TokenKindToString(TokenKind kind);
-
-    // Exceptions
-    struct TokenazierException : public std::exception
-    {
-        mutable std::string msg;
-        size_t offset;
-        std::string config_input;
-
-        TokenazierException(size_t offset, const std::string &config_input);
-        ~TokenazierException() throw();
-        virtual const char *what() const throw();
-    };
 };
 
 #endif // CONFIG_TOKENIZER_hpp

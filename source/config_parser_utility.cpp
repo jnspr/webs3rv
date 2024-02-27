@@ -8,7 +8,7 @@ void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind token
     if (tokenKind != KW_ERROR_PAGE && tokenKind != KW_LOCATION)
     {
         if (serverConfig.parsedTokens.find(tokenKind) != serverConfig.parsedTokens.end())
-            throw ConfigParser::ParserException("Error: Redundant token", offset);
+            throw ConfigException("Error: Redundant token", offset);
         serverConfig.parsedTokens.insert(tokenKind);
     }
 }
@@ -18,7 +18,7 @@ void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind token
 {
     if (serverConfig.errorPages.find(currentErrorRedirect.begin()->first) !=
         serverConfig.errorPages.end())
-        throw ConfigParser::ParserException("Error: Redundant token error redirect", offset);
+        throw ConfigException("Error: Redundant token error redirect", offset);
     serverConfig.parsedTokens.insert(tokenKind);
 }
 // Checks if the route path (location) is already defined
@@ -33,7 +33,7 @@ void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind token
 
         {
             if (localRouteConfigIt->path == currentRoutePath)
-                throw ConfigParser::ParserException("Error: Redundant token route path", offset);
+                throw ConfigException("Error: Redundant token route path", offset);
         }
     }
     serverConfig.parsedTokens.insert(tokenKind);
@@ -42,7 +42,7 @@ void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind token
 void isRedundantToken(size_t offset, LocalRouteConfig &localRouteConfig, TokenKind tokenKind)
 {
     if (localRouteConfig.parsedTokens.find(tokenKind) != localRouteConfig.parsedTokens.end())
-        throw ConfigParser::ParserException("Error: Redundant or contradictory token", offset);
+        throw ConfigException("Error: Redundant or contradictory token", offset);
     localRouteConfig.parsedTokens.insert(tokenKind);
 }
 
@@ -52,7 +52,7 @@ void isRedundantToken(size_t offset, LocalRouteConfig &localRouteConfig, TokenKi
 {
     if (localRouteConfig.cgiTypes.find(currentCgiFileExtension.begin()->first) !=
         localRouteConfig.cgiTypes.end())
-        throw ConfigParser::ParserException("Error: Redundant token CGI file extension", offset);
+        throw ConfigException("Error: Redundant token CGI file extension", offset);
     localRouteConfig.parsedTokens.insert(tokenKind);
 }
 
@@ -62,7 +62,7 @@ void isServerTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset)
     if (parsedTokens.find(KW_PORT) == parsedTokens.end() ||
         parsedTokens.find(KW_LOCATION) == parsedTokens.end() ||
         parsedTokens.find(KW_SERVER_NAME) == parsedTokens.end())
-        throw ConfigParser::ParserException("Error: Missing server config required token", offset);
+        throw ConfigException("Error: Missing server config required token", offset);
 }
 
 // Check if required route/location config entries/tokens are missing
@@ -71,13 +71,13 @@ void isRouteTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset)
     if ((parsedTokens.find(KW_ROOT) == parsedTokens.end() &&
          parsedTokens.find(KW_REDIRECT_ADDRESS) == parsedTokens.end()) ||
         parsedTokens.find(KW_CGI) == parsedTokens.end())
-        throw ConfigParser::ParserException("Error: Missing route/location required token", offset);
+        throw ConfigException("Error: Missing route/location required token", offset);
 }
 
 void checkValidCgiFileExtension(const std::string &cgiFileExtension, size_t offset)
 {
     if (cgiFileExtension != ".php" && cgiFileExtension != ".py" && cgiFileExtension != ".cgi")
-        throw ConfigParser::ParserException("Error: Invalid CGI file extension", offset);
+        throw ConfigException("Error: Invalid CGI file extension", offset);
 }
 
 std::string readFile(const char *path)
