@@ -3,7 +3,10 @@
 
 #include "config.hpp"
 
-/* Prints the given configuration to standard output */
-void printConfig(const ApplicationConfig &config);
+namespace Debug
+{
+    /* Prints the given configuration to standard output */
+    void printConfig(const ApplicationConfig &config);
+};
 
 #endif // DEBUG_UTILITY_hpp

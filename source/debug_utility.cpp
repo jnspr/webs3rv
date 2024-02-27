@@ -1,5 +1,6 @@
-#include "config.hpp"
 #include "slice.hpp"
+#include "config.hpp"
+#include "debug_utility.hpp"
 
 #include <ctype.h>
 #include <iostream>
@@ -83,7 +84,7 @@ static void printAllowedMethods(const std::set<HttpMethod> &methods)
 }
 
 /* Prints the given configuration to standard output */
-void printConfig(const ApplicationConfig &config)
+void Debug::printConfig(const ApplicationConfig &config)
 {
     for (size_t index = 0; index < config.servers.size(); index++)
     {
