@@ -1,25 +1,9 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*  Unbreakable Webserv                               _             _         */
-/*                                                   / /\      _   / /\       */
-/*                                                  / / /    / /\ / /  \      */
-/*                                                 / / /    / / // / /\ \__   */
-/*                                                / / /_   / / // / /\ \___\  */
-/*                                               / /_//_/\/ / / \ \ \ \/___/  */
-/*                                              / _______/\/ /   \ \ \        */
-/*                                             / /  \____\  /_    \ \ \       */
-/*   By: cgodecke (Dsite42 on Github)         /_/ /\ \ /\ \//_/\__/ / /       */
-/*       jsprenge (jnspr on GitHub)           \_\//_/ /_/ / \ \/___/ /        */
-/*       fvon-nag (flx25 on GitHub)               \_\/\_\/   \_____\/         */
-/*                                                                            */
-/* ************************************************************************** */
+#ifndef CONFIG_PARSER_UTILITY_hpp
+#define CONFIG_PARSER_UTILITY_hpp
 
-#ifndef CONFIGPARSERUTILITY_HPP
-#define CONFIGPARSERUTILITY_HPP
-
-#include "ConfigParser.hpp"
-#include "ConfigTokenizer.hpp"
 #include "config.hpp"
+#include "config_parser.hpp"
+#include "config_tokenizer.hpp"
 
 // Checks if the token is already defined for all tokens exept KW_ERROR_PAGE and KW_LOCATION
 void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind tokenKind);
@@ -54,4 +38,4 @@ bool isValidIpSegment(const std::string &ipSegment);
 // Print config
 void printConfigP(const ApplicationConfig &config);
 
-#endif
+#endif // CONFIG_PARSER_UTILITY_hpp

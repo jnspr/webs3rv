@@ -1,6 +1,6 @@
 #include "application.hpp"
-#include "ConfigTokenizer.hpp"
-#include "ConfigParser.hpp"
+#include "config_parser.hpp"
+#include "config_tokenizer.hpp"
 
 #include <iostream>
 

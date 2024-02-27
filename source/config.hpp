@@ -2,7 +2,7 @@
 #define CONFIG_hpp
 
 #include "http_constants.hpp"
-#include "ConfigTokenizer.hpp"
+#include "config_tokenizer.hpp"
 
 #include <map>
 #include <set>

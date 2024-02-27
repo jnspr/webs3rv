@@ -1,26 +1,11 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*  Unbreakable Webserv                               _             _         */
-/*                                                   / /\      _   / /\       */
-/*                                                  / / /    / /\ / /  \      */
-/*                                                 / / /    / / // / /\ \__   */
-/*                                                / / /_   / / // / /\ \___\  */
-/*                                               / /_//_/\/ / / \ \ \ \/___/  */
-/*                                              / _______/\/ /   \ \ \        */
-/*                                             / /  \____\  /_    \ \ \       */
-/*   By: cgodecke (Dsite42 on Github)         /_/ /\ \ /\ \//_/\__/ / /       */
-/*       jsprenge (jnspr on GitHub)           \_\//_/ /_/ / \ \/___/ /        */
-/*       fvon-nag (flx25 on GitHub)               \_\/\_\/   \_____\/         */
-/*                                                                            */
-/* ************************************************************************** */
+#ifndef CONFIG_PARSER_hpp
+#define CONFIG_PARSER_hpp
 
-#ifndef CONFIGPARSER_HPP
-#define CONFIGPARSER_HPP
-
-#include "http_constants.hpp"
-#include "ConfigParserUtility.hpp"
-#include "ConfigTokenizer.hpp"
 #include "config.hpp"
+#include "http_constants.hpp"
+#include "config_tokenizer.hpp"
+#include "config_parser_utility.hpp"
+
 #include <sstream>
 #include <stdint.h>
 
@@ -80,4 +65,4 @@ public:
     static ApplicationConfig createConfig(const char *configPath);
 };
 
-#endif
+#endif // CONFIG_PARSER_hpp

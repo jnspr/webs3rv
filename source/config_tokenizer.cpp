@@ -1,20 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*  Unbreakable Webserv                               _             _         */
-/*                                                   / /\      _   / /\       */
-/*                                                  / / /    / /\ / /  \      */
-/*                                                 / / /    / / // / /\ \__   */
-/*                                                / / /_   / / // / /\ \___\  */
-/*                                               / /_//_/\/ / / \ \ \ \/___/  */
-/*                                              / _______/\/ /   \ \ \        */
-/*                                             / /  \____\  /_    \ \ \       */
-/*   By: cgodecke (Dsite42 on Github)         /_/ /\ \ /\ \//_/\__/ / /       */
-/*       jsprenge (jnspr on GitHub)           \_\//_/ /_/ / \ \/___/ /        */
-/*       fvon-nag (flx25 on GitHub)               \_\/\_\/   \_____\/         */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "ConfigTokenizer.hpp"
+#include "config_tokenizer.hpp"
 
 // Token
 Token::Token(TokenKind kind, std::string data, size_t offset)
