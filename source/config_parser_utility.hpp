@@ -35,7 +35,4 @@ uint32_t ConvertIpString(std::string ip);
 // Checks if the string is a valid IP segment (0-255)
 bool isValidIpSegment(const std::string &ipSegment);
 
-// Print config
-void printConfigP(const ApplicationConfig &config);
-
 #endif // CONFIG_PARSER_UTILITY_hpp
