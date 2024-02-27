@@ -1,20 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*  Unbreakable Webserv                               _             _         */
-/*                                                   / /\      _   / /\       */
-/*                                                  / / /    / /\ / /  \      */
-/*                                                 / / /    / / // / /\ \__   */
-/*                                                / / /_   / / // / /\ \___\  */
-/*                                               / /_//_/\/ / / \ \ \ \/___/  */
-/*                                              / _______/\/ /   \ \ \        */
-/*                                             / /  \____\  /_    \ \ \       */
-/*   By: cgodecke (Dsite42 on Github)         /_/ /\ \ /\ \//_/\__/ / /       */
-/*       jsprenge (jnspr on GitHub)           \_\//_/ /_/ / \ \/___/ /        */
-/*       fvon-nag (flx25 on GitHub)               \_\/\_\/   \_____\/         */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "ConfigParser.hpp"
+#include "config_parser.hpp"
 
 // Exceptions
 ConfigParser::ParserException::ParserException(const std::string &message, size_t offset, const std::string &config_input)

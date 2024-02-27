@@ -1,22 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*  Unbreakable Webserv                               _             _         */
-/*                                                   / /\      _   / /\       */
-/*                                                  / / /    / /\ / /  \      */
-/*                                                 / / /    / / // / /\ \__   */
-/*                                                / / /_   / / // / /\ \___\  */
-/*                                               / /_//_/\/ / / \ \ \ \/___/  */
-/*                                              / _______/\/ /   \ \ \        */
-/*                                             / /  \____\  /_    \ \ \       */
-/*   By: cgodecke (Dsite42 on Github)         /_/ /\ \ /\ \//_/\__/ / /       */
-/*       jsprenge (jnspr on GitHub)           \_\//_/ /_/ / \ \/___/ /        */
-/*       fvon-nag (flx25 on GitHub)               \_\/\_\/   \_____\/         */
-/*                                                                            */
-/* ************************************************************************** */
+#include "config_parser_utility.hpp"
 
 #include <stdlib.h>
-
-#include "ConfigParserUtility.hpp"
 
 // Checks if the token is already defined for all tokens exept KW_ERROR_PAGE and KW_LOCATION
 void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind tokenKind)
