@@ -333,7 +333,6 @@ ApplicationConfig ConfigParser::createConfig(const char *path)
     parser._config_input = config_input;
 
     ApplicationConfig config = parser.parse();
-    // printConfigP(config);
     return config;
 }
 
