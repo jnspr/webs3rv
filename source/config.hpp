@@ -58,7 +58,4 @@ struct ApplicationConfig
     std::vector<ServerConfig> servers;
 };
 
-/* Prints the given configuration to standard output */
-void printConfig(const ApplicationConfig &config);
-
 #endif // CONFIG_hpp
