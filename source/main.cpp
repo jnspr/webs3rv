@@ -4,43 +4,20 @@
 
 #include <iostream>
 
-static ApplicationConfig createExampleConfig()
-{
-    ApplicationConfig applicationConfig = {};
-    {
-        ServerConfig serverConfig = {};
-        serverConfig.name = "example_server";
-        serverConfig.host = 0x7f000001;
-        serverConfig.port = 8000;
-        serverConfig.maxBodySize = 8192;
-        serverConfig.errorPages[404] = "404.html";
-        {
-            LocalRouteConfig routeConfig = {};
-            routeConfig.path = "/";
-            routeConfig.allowedMethods.insert(HTTP_METHOD_GET);
-            routeConfig.allowedMethods.insert(HTTP_METHOD_POST);
-            routeConfig.rootDirectory = "./www";
-            routeConfig.indexFile = "index.html";
-            routeConfig.allowUploads = false;
-            routeConfig.allowListing = true;
-            routeConfig.cgiTypes["py"] = "/usr/bin/python3";
-            serverConfig.localRoutes.push_back(routeConfig);
-        }
-        applicationConfig.servers.push_back(serverConfig);
-    }
-    return applicationConfig;
-}
-
 int main(int argc, char *argv[])
 {
-    (void)argc;
-    (void)argv;
-    ApplicationConfig exampleConfig = createExampleConfig();
+    // If the configuration path was not specified, display usage and quit
+    if (argc != 2)
+    {
+        std::cerr << "usage: " << argv[0] << " <path-to-config>" << std::endl;
+        return 1;
+    }
+
+    // Parse the configuration
     ApplicationConfig config;
     try
     {
-        config = ConfigParser::createConfig("/home/cgodecke/Desktop/Core/JPwebs3rv/source/server.conf");
-        printConfig(config);
+        config = ConfigParser::createConfig(argv[1]);
     }
     catch (const ConfigParser::ParserException &e)
     {
@@ -56,6 +33,7 @@ int main(int argc, char *argv[])
         std::cerr << e.config_input.substr(e.offset) << std::endl;
     }
 
+    // Start the application using the parsed configuration
     try
     {
         Application application(config);
