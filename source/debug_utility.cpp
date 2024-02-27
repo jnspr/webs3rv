@@ -137,3 +137,15 @@ void Debug::printConfig(const ApplicationConfig &config)
         }
     }
 }
+
+/* Prints the given HTTP request to standard output */
+void Debug::printRequest(const HttpRequest &request)
+{
+    std::cout << "+ HTTP request" << std::endl;
+    std::cout << "  Method: HTTP_METHOD_" << httpMethodToString(request.method) << std::endl;
+    printStringField("  Query: ", request.query);
+    printStringField("  Query path: ", request.queryPath);
+    printStringField("  Query parameters: ", request.queryParameters);
+    printBoolField("  Is legacy?: ", request.isLegacy);
+    std::cout << "  <Body of " << request.body.size() << " bytes>" << std::endl;
+}
