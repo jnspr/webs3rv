@@ -66,10 +66,20 @@ void Application::mainLoop()
     HttpClient *headClient, *nextClient;
     for (;;)
     {
-        // Wait up to 5000 to dispatch any event(s)
+        // Wait up to 5 seconds to dispatch any event(s)
         _dispatcher.dispatch(5000);
 
-        // TODO: Implement timeouts (mark for cleanup)
+        // Destroy any process with a timeout
+        headClient = _clients;
+        while (headClient != NULL)
+        {
+            // TODO: Implement client timeout behavior
+            if (headClient->_process != NULL)
+            {
+                // TODO: Implement process timeout behavior
+            }
+            headClient = headClient->_next;
+        }
 
         // Remove all clients that were marked for cleanup
         headClient = _cleanupClients;
