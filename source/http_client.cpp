@@ -5,11 +5,10 @@
 #include <unistd.h>
 
 /* Constructs a HTTP client using the given socket file descriptor */
-HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno, uint64_t timeoutStart)
+HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno)
     : _application(application)
     , _config(config)
     , _fileno(fileno)
-    , _timeoutStart(timeoutStart)
     , _markedForCleanup(false)
     , _parser(config)
     , _process(NULL)

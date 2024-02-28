@@ -98,7 +98,7 @@ void Application::takeClient(int fileno, const ServerConfig &config)
 {
     // Wrap the client into an object
     (void)config;
-    HttpClient *client = new HttpClient(*this, config, fileno, 0);
+    HttpClient *client = new HttpClient(*this, config, fileno);
 
     // Subscribe client sink to read events
     try

@@ -4,14 +4,12 @@
 #include <unistd.h>
 
 /* Constructs a CGI process from the given client, request and route result */
-CgiProcess::CgiProcess(HttpClient *client, const HttpRequest &request, const RouteResult &routeResult, uint64_t timeoutStart)
+CgiProcess::CgiProcess(HttpClient *client, const HttpRequest &request, const RouteResult &routeResult)
     : _process(setupArguments(request, routeResult), setupEnvironment(request, routeResult))
-    , _timeoutStart(timeoutStart)
 {
     (void)client;
     (void)request;
     (void)routeResult;
-    (void)_timeoutStart;
 }
 
 /* Handles one or multiple events */
