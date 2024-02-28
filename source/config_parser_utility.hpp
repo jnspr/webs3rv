@@ -31,7 +31,7 @@ std::string readFile(const char *path);
 
 // Checks if the string is a valid IP address consisting of 4 segments and returns the IP address as
 // a uint32_t
-uint32_t ConvertIpString(std::string ip);
+uint32_t ConvertIpString(std::string ip, size_t offset, std::string config_input);
 // Checks if the string is a valid IP segment (0-255)
 bool isValidIpSegment(const std::string &ipSegment);
 
