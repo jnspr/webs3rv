@@ -94,7 +94,7 @@ std::string readFile(const char *path)
 
 // Checks if the string is a valid IP address consisting of 4 segments and returns the IP address as
 // a uint32_t
-uint32_t ConvertIpString(std::string ip)
+uint32_t ConvertIpString(std::string ip, size_t offset, std::string config_input)
 {
     uint32_t ip_num = 0;
     std::istringstream iss(ip);
@@ -105,7 +105,7 @@ uint32_t ConvertIpString(std::string ip)
     {
         if (!isValidIpSegment(segment) || segmentsCount >= 4)
         {
-            throw std::invalid_argument("Invalid IP address format");
+            throw ConfigException("Invalid IP address format", config_input, offset);
         }
         ip_num |= (static_cast<uint32_t>(std::atoi(segment.c_str())) << ((3 - segmentsCount) * 8));
         segmentsCount++;
@@ -113,7 +113,7 @@ uint32_t ConvertIpString(std::string ip)
 
     if (segmentsCount != 4)
     {
-        throw std::invalid_argument("Invalid IP address format");
+        throw ConfigException("Invalid IP address format", config_input, offset);
     }
 
     return ip_num;

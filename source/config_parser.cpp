@@ -84,7 +84,7 @@ void ConfigParser::parsePortOrIp(ServerConfig &serverConfig)
     else
     {
         std::string ip = currentToken().data.substr(0, currentToken().data.find(':'));
-        serverConfig.host = ConvertIpString(ip);
+        serverConfig.host = ConvertIpString(ip, _tokens[_current].offset, _config_input);
         std::string port = currentToken().data.substr(currentToken().data.find(':') + 1);
         std::istringstream iss(port);
         iss >> serverConfig.port;
