@@ -3,27 +3,27 @@
 #include <stdlib.h>
 
 // Checks if the token is already defined for all tokens exept KW_ERROR_PAGE and KW_LOCATION
-void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind tokenKind)
+void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind tokenKind, std::string config_input)
 {
     if (tokenKind != KW_ERROR_PAGE && tokenKind != KW_LOCATION)
     {
         if (serverConfig.parsedTokens.find(tokenKind) != serverConfig.parsedTokens.end())
-            throw ConfigException("Error: Redundant token", offset);
+            throw ConfigException("Error: Redundant token", config_input, offset);
         serverConfig.parsedTokens.insert(tokenKind);
     }
 }
 // Checks if the error redirect (error page) is already defined
 void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind tokenKind,
-                      std::map<int, std::string> &currentErrorRedirect)
+                      std::map<int, std::string> &currentErrorRedirect, std::string config_input)
 {
     if (serverConfig.errorPages.find(currentErrorRedirect.begin()->first) !=
         serverConfig.errorPages.end())
-        throw ConfigException("Error: Redundant token error redirect", offset);
+        throw ConfigException("Error: Redundant token error redirect", config_input, offset);
     serverConfig.parsedTokens.insert(tokenKind);
 }
 // Checks if the route path (location) is already defined
 void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind tokenKind,
-                      std::string &currentRoutePath)
+                      std::string &currentRoutePath, std::string config_input)
 {
     if (serverConfig.parsedTokens.size() != 0)
     {
@@ -33,26 +33,26 @@ void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind token
 
         {
             if (localRouteConfigIt->path == currentRoutePath)
-                throw ConfigException("Error: Redundant token route path", offset);
+                throw ConfigException("Error: Redundant token route path", config_input, offset);
         }
     }
     serverConfig.parsedTokens.insert(tokenKind);
 }
 // Checks if the token is already defined in the current local route
-void isRedundantToken(size_t offset, LocalRouteConfig &localRouteConfig, TokenKind tokenKind)
+void isRedundantToken(size_t offset, LocalRouteConfig &localRouteConfig, TokenKind tokenKind, std::string config_input)
 {
     if (localRouteConfig.parsedTokens.find(tokenKind) != localRouteConfig.parsedTokens.end())
-        throw ConfigException("Error: Redundant or contradictory token", offset);
+        throw ConfigException("Error: Redundant or contradictory token", config_input, offset);
     localRouteConfig.parsedTokens.insert(tokenKind);
 }
 
 // Checks if the cgi file extension is already defined
 void isRedundantToken(size_t offset, LocalRouteConfig &localRouteConfig, TokenKind tokenKind,
-                      std::map<std::string, std::string> &currentCgiFileExtension)
+                      std::map<std::string, std::string> &currentCgiFileExtension, std::string config_input)
 {
     if (localRouteConfig.cgiTypes.find(currentCgiFileExtension.begin()->first) !=
         localRouteConfig.cgiTypes.end())
-        throw ConfigException("Error: Redundant token CGI file extension", offset);
+        throw ConfigException("Error: Redundant token CGI file extension", config_input, offset);
     localRouteConfig.parsedTokens.insert(tokenKind);
 }
 

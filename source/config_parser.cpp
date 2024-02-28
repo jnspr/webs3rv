@@ -35,19 +35,19 @@ ServerConfig ConfigParser::parseServerConfig()
             moveToNextToken();
             break;
         case KW_SERVER_NAME:
-            isRedundantToken(_tokens[_current].offset, serverConfig, KW_SERVER_NAME);
+            isRedundantToken(_tokens[_current].offset, serverConfig, KW_SERVER_NAME, _config_input);
             moveToNextToken();
             serverConfig.name = parseString();
             expect(SY_SEMICOLON);
             break;
         case KW_PORT:
-            isRedundantToken(_tokens[_current].offset, serverConfig, KW_PORT);
+            isRedundantToken(_tokens[_current].offset, serverConfig, KW_PORT, _config_input);
             moveToNextToken();
             parsePortOrIp(serverConfig);
             expect(SY_SEMICOLON);
             break;
         case KW_MAX_BODY_SIZE:
-            isRedundantToken(_tokens[_current].offset, serverConfig, KW_MAX_BODY_SIZE);
+            isRedundantToken(_tokens[_current].offset, serverConfig, KW_MAX_BODY_SIZE, _config_input);
             moveToNextToken();
             serverConfig.maxBodySize = parseSizeT();
             expect(SY_SEMICOLON);
@@ -56,7 +56,7 @@ ServerConfig ConfigParser::parseServerConfig()
             moveToNextToken();
             currentErrorRedirect = parseErrorRedirects();
             isRedundantToken(_tokens[_current - 2].offset, serverConfig, KW_ERROR_PAGE,
-                             currentErrorRedirect);
+                             currentErrorRedirect, _config_input);
             serverConfig.errorPages.insert(currentErrorRedirect.begin(),
                                            currentErrorRedirect.end());
             expect(SY_SEMICOLON);
@@ -176,7 +176,7 @@ LocalRouteConfig ConfigParser::parseLocalRouteConfig(ServerConfig &serverConfig)
     moveToNextToken();
     localRouteConfig.path = parseString();
     isRedundantToken(_tokens[_current - 1].offset, serverConfig, KW_LOCATION,
-                     localRouteConfig.path);
+                     localRouteConfig.path, _config_input);
     expect(SY_BRACE_OPEN);
     while (currentToken().kind != SY_BRACE_CLOSE)
     {
@@ -187,27 +187,27 @@ LocalRouteConfig ConfigParser::parseLocalRouteConfig(ServerConfig &serverConfig)
             break;
 
         case KW_ROOT:
-            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_ROOT);
-            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_REDIRECT_ADDRESS);
+            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_ROOT, _config_input);
+            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_REDIRECT_ADDRESS, _config_input);
             moveToNextToken();
             localRouteConfig.rootDirectory = parseString();
             expect(SY_SEMICOLON);
             break;
         case KW_ALLOW_METHODS:
-            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_ALLOW_METHODS);
+            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_ALLOW_METHODS, _config_input);
             moveToNextToken();
             localRouteConfig.allowedMethods =
                 parseAllowedHttpMethods(serverConfig, localRouteConfig);
             expect(SY_SEMICOLON);
             break;
         case KW_AUTOINDEX:
-            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_AUTOINDEX);
+            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_AUTOINDEX, _config_input);
             moveToNextToken();
             localRouteConfig.allowListing = parseDirectoryListing();
             expect(SY_SEMICOLON);
             break;
         case KW_INDEX:
-            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_INDEX);
+            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_INDEX, _config_input);
             moveToNextToken();
             localRouteConfig.indexFile = parseString();
             expect(SY_SEMICOLON);
@@ -216,14 +216,14 @@ LocalRouteConfig ConfigParser::parseLocalRouteConfig(ServerConfig &serverConfig)
             moveToNextToken();
             currentCgiFileExtension = parseCgiFileExtensions();
             isRedundantToken(_tokens[_current - 2].offset, localRouteConfig, KW_CGI,
-                             currentCgiFileExtension);
+                             currentCgiFileExtension, _config_input);
             localRouteConfig.cgiTypes.insert(currentCgiFileExtension.begin(),
                                              currentCgiFileExtension.end());
             expect(SY_SEMICOLON);
             break;
         case KW_REDIRECT_ADDRESS:
-            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_REDIRECT_ADDRESS);
-            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_ROOT);
+            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_REDIRECT_ADDRESS, _config_input);
+            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_ROOT, _config_input);
             moveToNextToken();
             serverConfig.redirectRoutes.push_back(parseRedirectRouteConfig(localRouteConfig));
             expect(SY_SEMICOLON);

@@ -6,18 +6,18 @@
 #include "config_tokenizer.hpp"
 
 // Checks if the token is already defined for all tokens exept KW_ERROR_PAGE and KW_LOCATION
-void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind tokenKind);
+void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind tokenKind, std::string config_input);
 // Checks if the error redirect (error page) is already defined
 void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind tokenKind,
-                      std::map<int, std::string> &currentErrorRedirect);
+                      std::map<int, std::string> &currentErrorRedirect, std::string config_input);
 // Checks if the route path (location) is already defined
 void isRedundantToken(size_t offset, ServerConfig &serverConfig, TokenKind tokenKind,
-                      std::string &currentRoutePath);
+                      std::string &currentRoutePath, std::string config_input);
 // Checks if the token is already defined in the current local route
-void isRedundantToken(size_t offset, LocalRouteConfig &localRouteConfig, TokenKind tokenKind);
+void isRedundantToken(size_t offset, LocalRouteConfig &localRouteConfig, TokenKind tokenKind, std::string config_input);
 // Checks if the cgi file extension is already defined
 void isRedundantToken(size_t offset, LocalRouteConfig &localRouteConfig, TokenKind tokenKind,
-                      std::map<std::string, std::string> &currentCgiFileExtension);
+                      std::map<std::string, std::string> &currentCgiFileExtension, std::string config_input);
 
 // Check if required server config entries/tokens are missing
 void isServerTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset);
