@@ -75,7 +75,7 @@ void isRouteTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset, std:
 
 void checkValidCgiFileExtension(const std::string &cgiFileExtension, size_t offset, std::string config_input)
 {
-    if (cgiFileExtension != ".php" && cgiFileExtension != ".py" && cgiFileExtension != ".cgi")
+    if (cgiFileExtension.size() < 1 || cgiFileExtension[0] != '.')
         throw ConfigException("Error: Invalid CGI file extension", config_input, offset);
 }
 
