@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>webserv - CGI form test</title>
+        <style>
+            input {
+                margin: 6px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>CGI form test</h1>
+        <form method="POST" action="form_test_result.py">
+            <input type="text" name="first_name" placeholder="Enter first name">
+            <br/>
+            <input type="text" name="last_name" placeholder="Enter last name">
+            <br/>
+            <input type="number" name="age" placeholder="Enter age">
+            <br/>
+            <input type="submit">
+        </form>
+    </body>
+</html>
