@@ -57,6 +57,9 @@ public:
     /* Constructs a parser exception using the given reason and offset */
     ConfigException(const std::string &reason, size_t offset);
 
+    /* Constructs a parser exception using the given reason */
+    ConfigException(const std::string &reason);
+
     /* Empty method; declares the destructor as non-throwing */
     ~ConfigException() throw();
 
