@@ -3,19 +3,22 @@
 
 #include "config.hpp"
 #include "dispatcher.hpp"
+#include "cgi_process.hpp"
 #include "http_request.hpp"
 
-#include <time.h>
+#include <stdint.h>
 
 class Application;
+class CgiProcess;
 
 class HttpClient: public Sink
 {
 public:
     friend class Application;
+    friend class CgiProcess;
 
     /* Constructs a HTTP client using the given socket file descriptor */
-    HttpClient(Application &application, const ServerConfig &config, int fileno, time_t timeoutStart);
+    HttpClient(Application &application, const ServerConfig &config, int fileno, uint64_t timeoutStart);
 
     /* Closes the client's file descriptor */
     ~HttpClient();
@@ -35,12 +38,16 @@ private:
     HttpClient         *_cleanupNext;
     bool                _markedForCleanup;
     HttpRequest::Parser _parser;
+    CgiProcess         *_process;
 
     /* Handles one or multiple events */
     void handleEvents(uint32_t eventMask);
 
     /* Handles an exception that occurred in `handleEvent()` */
     void handleException();
+
+    /* Handles a CGI process event */
+    void handleCgiState();
 
     /* Disable copy-construction and copy-assignment */
     HttpClient(const HttpClient &other);

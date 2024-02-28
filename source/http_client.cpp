@@ -5,19 +5,22 @@
 #include <unistd.h>
 
 /* Constructs a HTTP client using the given socket file descriptor */
-HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno, time_t timeoutStart)
+HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno, uint64_t timeoutStart)
     : _application(application)
     , _config(config)
     , _fileno(fileno)
     , _timeoutStart(timeoutStart)
     , _markedForCleanup(false)
     , _parser(config)
+    , _process(NULL)
 {
 }
 
 /* Closes the client's file descriptor */
 HttpClient::~HttpClient()
 {
+    if (_process != NULL)
+        delete _process;
     close(_fileno);
 }
 
@@ -56,4 +59,11 @@ void HttpClient::handleException()
     _cleanupNext = _application._cleanupClients;
     _application._cleanupClients = this;
     _markedForCleanup = true;
+}
+
+void HttpClient::handleCgiState()
+{
+    if (_process == NULL)
+        return;
+    // TODO: Implement this
 }
