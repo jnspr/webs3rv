@@ -20,11 +20,11 @@ void isRedundantToken(size_t offset, LocalRouteConfig &localRouteConfig, TokenKi
                       std::map<std::string, std::string> &currentCgiFileExtension, std::string config_input);
 
 // Check if required server config entries/tokens are missing
-void isServerTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset);
+void isServerTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset, std::string config_input);
 // Check if required route/location config entries/tokens are missing
-void isRouteTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset);
+void isRouteTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset, std::string config_input);
 // Check if it is a valid CGI file extension
-void checkValidCgiFileExtension(const std::string &cgiFileExtension, size_t offset);
+void checkValidCgiFileExtension(const std::string &cgiFileExtension, size_t offset, std::string config_input);
 
 // Read then all content of the config file
 std::string readFile(const char *path);
