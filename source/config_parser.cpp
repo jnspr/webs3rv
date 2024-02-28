@@ -347,8 +347,14 @@ ConfigException::ConfigException(const std::string &reason, const std::string &s
 /* Constructs a parser exception using the given reason and offset */
 ConfigException::ConfigException(const std::string &reason, size_t offset)
     : _reason(reason)
-    , _source() // FIXME: Change code to always supply this
+    , _source()
     , _offset(offset)
+{
+}
+
+/* Constructs a parser exception using the given reason */
+ConfigException::ConfigException(const std::string &reason)
+    : _reason(reason)
 {
 }
 

@@ -83,12 +83,12 @@ std::string readFile(const char *path)
 {
     std::ifstream inputStream(path);
     if (!inputStream.is_open())
-        throw std::runtime_error("Unable to open file: " + std::string(path));
+        throw ConfigException("Unable to open file: " + std::string(path));
 
     std::stringstream stringStream;
     stringStream << inputStream.rdbuf();
     if (!inputStream.good())
-        throw std::runtime_error("Unable to read file: " + std::string(path));
+        throw ConfigException("Unable to read file: " + std::string(path));
     return stringStream.str();
 }
 
