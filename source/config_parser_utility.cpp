@@ -69,8 +69,7 @@ void isServerTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset, std
 void isRouteTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset, std::string config_input)
 {
     if ((parsedTokens.find(KW_ROOT) == parsedTokens.end() &&
-         parsedTokens.find(KW_REDIRECT_ADDRESS) == parsedTokens.end()) ||
-        parsedTokens.find(KW_CGI) == parsedTokens.end())
+         parsedTokens.find(KW_REDIRECT_ADDRESS) == parsedTokens.end()))
         throw ConfigException("Error: Missing route/location required token", config_input, offset);
 }
 
