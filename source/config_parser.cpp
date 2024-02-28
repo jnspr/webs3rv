@@ -72,7 +72,7 @@ ServerConfig ConfigParser::parseServerConfig()
     }
 
     expect(SY_BRACE_CLOSE);
-    isServerTokensMissing(serverConfig.parsedTokens, _tokens[_current].offset);
+    isServerTokensMissing(serverConfig.parsedTokens, _tokens[_current].offset, _config_input);
     return serverConfig;
 }
 
@@ -235,7 +235,7 @@ LocalRouteConfig ConfigParser::parseLocalRouteConfig(ServerConfig &serverConfig)
     }
 
     expect(SY_BRACE_CLOSE);
-    isRouteTokensMissing(localRouteConfig.parsedTokens, _tokens[_current].offset);
+    isRouteTokensMissing(localRouteConfig.parsedTokens, _tokens[_current].offset,_config_input);
     return localRouteConfig;
 }
 
@@ -290,7 +290,7 @@ std::map<std::string, std::string> ConfigParser::parseCgiFileExtensions()
     std::string path;
     expect(DATA);
     extension = currentToken().data;
-    checkValidCgiFileExtension(extension, _tokens[_current].offset);
+    checkValidCgiFileExtension(extension, _tokens[_current].offset, _config_input);
     // If the extension is .cgi, the path is the same as server root path
     if (extension == ".cgi")
     {

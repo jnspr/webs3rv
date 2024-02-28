@@ -57,27 +57,27 @@ void isRedundantToken(size_t offset, LocalRouteConfig &localRouteConfig, TokenKi
 }
 
 // Check if required config entries/tokens are missing
-void isServerTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset)
+void isServerTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset, std::string config_input)
 {
     if (parsedTokens.find(KW_PORT) == parsedTokens.end() ||
         parsedTokens.find(KW_LOCATION) == parsedTokens.end() ||
         parsedTokens.find(KW_SERVER_NAME) == parsedTokens.end())
-        throw ConfigException("Error: Missing server config required token", offset);
+        throw ConfigException("Error: Missing server config required token", config_input, offset);
 }
 
 // Check if required route/location config entries/tokens are missing
-void isRouteTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset)
+void isRouteTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset, std::string config_input)
 {
     if ((parsedTokens.find(KW_ROOT) == parsedTokens.end() &&
          parsedTokens.find(KW_REDIRECT_ADDRESS) == parsedTokens.end()) ||
         parsedTokens.find(KW_CGI) == parsedTokens.end())
-        throw ConfigException("Error: Missing route/location required token", offset);
+        throw ConfigException("Error: Missing route/location required token", config_input, offset);
 }
 
-void checkValidCgiFileExtension(const std::string &cgiFileExtension, size_t offset)
+void checkValidCgiFileExtension(const std::string &cgiFileExtension, size_t offset, std::string config_input)
 {
     if (cgiFileExtension != ".php" && cgiFileExtension != ".py" && cgiFileExtension != ".cgi")
-        throw ConfigException("Error: Invalid CGI file extension", offset);
+        throw ConfigException("Error: Invalid CGI file extension", config_input, offset);
 }
 
 std::string readFile(const char *path)
