@@ -12,7 +12,7 @@ bool Slice::operator==(Slice other)
 }
 
 /* Removes the slice's start until `delimiter` is reached and populates `outSlice` with it,
-   the current slice will be the remainder including the delimiter */
+   the current slice will be the remainder excluding the delimiter */
 bool Slice::splitStart(char delimiter, Slice &outStart)
 {
     const char *position = (const char *)memchr(_string, delimiter, _length);
@@ -24,14 +24,34 @@ bool Slice::splitStart(char delimiter, Slice &outStart)
     outStart._string = _string;
     outStart._length = index;
 
-    _string += index;
-    _length -= index;
+    _string += index + 1;
+    _length -= index + 1;
 
     return true;
 }
-   
-   /* Removes the slice's end until `delimiter` is reached and populates `outSlice` with it,
-       the current slice will be the remainder including the delimiter */
+
+
+/* Removes the slice's start until `delimiter` is reached and populates `outSlice` with it,
+    the current slice will be the remainder excluding the delimiter */
+bool Slice::splitStart(Slice delimiter, Slice &outStart)
+{
+    const char *position = (const char *)memmem(_string, _length, delimiter._string, delimiter._length);
+    if (position == NULL)
+        return false;
+
+    size_t index = position - _string;
+
+    outStart._string = _string;
+    outStart._length = index;
+
+    _string += index + delimiter._length;
+    _length -= index + delimiter._length;
+
+    return true;
+}
+
+/* Removes the slice's end until `delimiter` is reached and populates `outSlice` with it,
+    the current slice will be the remainder including the delimiter */
 bool Slice::splitEnd(char delimiter, Slice &outEnd)
 {
     const char *position = (const char *)memrchr(_string, delimiter, _length);
