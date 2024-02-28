@@ -2,6 +2,7 @@
 #define HTTP_CLIENT_hpp
 
 #include "config.hpp"
+#include "timeout.hpp"
 #include "dispatcher.hpp"
 #include "cgi_process.hpp"
 #include "http_request.hpp"
@@ -18,7 +19,7 @@ public:
     friend class CgiProcess;
 
     /* Constructs a HTTP client using the given socket file descriptor */
-    HttpClient(Application &application, const ServerConfig &config, int fileno, uint64_t timeoutStart);
+    HttpClient(Application &application, const ServerConfig &config, int fileno);
 
     /* Closes the client's file descriptor */
     ~HttpClient();
@@ -28,11 +29,17 @@ public:
     {
         return _fileno;
     }
+
+    /* Gets the associated timeout object */
+    inline Timeout &getTimeout()
+    {
+        return _timeout;
+    }
 private:
     Application        &_application;
     const ServerConfig &_config;
     int                 _fileno;
-    time_t              _timeoutStart;
+    Timeout             _timeout;
     HttpClient         *_next;
     HttpClient         *_previous;
     HttpClient         *_cleanupNext;

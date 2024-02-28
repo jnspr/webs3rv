@@ -22,7 +22,7 @@ class CgiProcess: public Sink
 {
 public:
     /* Constructs a CGI process from the given client, request and route result */
-    CgiProcess(HttpClient *client, const HttpRequest &request, const RouteResult &routeResult, uint64_t timeoutStart);
+    CgiProcess(HttpClient *client, const HttpRequest &request, const RouteResult &routeResult);
 
     /* Handles one or multiple events */
     void handleEvents(uint32_t eventMask);
@@ -41,11 +41,17 @@ public:
     {
         return _process;
     }
+
+    /* Gets the associated timeout object */
+    inline Timeout &getTimeout()
+    {
+        return _timeout;
+    }
 private:
     CgiProcessState _state;
     HttpClient     *_client;
     Process         _process;
-    uint64_t        _timeoutStart;
+    Timeout         _timeout;
 
     /* Creates a vector of strings for the process arguments */
     static std::vector<std::string> setupArguments(const HttpRequest &request, const RouteResult &routeResult);
