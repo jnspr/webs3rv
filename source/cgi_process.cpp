@@ -37,6 +37,25 @@ std::vector<std::string> CgiProcess::setupArguments(const HttpRequest &request, 
     (void)routeResult;
     std::vector<std::string> result;
     // TODO: Implement this
+
+    /* Extract the file name from the route */
+    std::string fileName;
+    if (routeResult.isRedirect)
+    {
+        std::string path = routeResult.redirectRoute->path;
+        size_t pos = path.rfind('/');
+        if (pos != std::string::npos)
+            fileName = path.substr(pos + 1);
+    }
+    else
+    {
+        std::string path = routeResult.localRoute->path;
+        size_t pos = path.rfind('/');
+        if (pos != std::string::npos)
+            fileName = path.substr(pos + 1);
+    }
+    result.push_back(fileName);        
+
     return result;
 }
 
