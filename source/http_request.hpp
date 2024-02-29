@@ -29,6 +29,19 @@ struct HttpRequest
     Slice                queryParameters; // Query parameters; eg. "hello=world&abc=def"
     bool                 isLegacy;        // True when HTTP/1.0 instead of HTTP/1.1
     std::vector<uint8_t> body;
+
+    public:
+            /* Gets URL-decoded path of the request */
+        inline std::string getPath() const
+        {
+            return queryPath.toString();
+        }
+
+            /* Sets the queryPath to newpath*/
+        inline void setPath(std::string newpath)
+        {
+            queryPath = newpath;
+        }
 };
 
 #endif // HTTP_REQUEST_hpp
