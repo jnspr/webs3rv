@@ -8,10 +8,13 @@
 #include <time.h>
 
 class Application;
+struct uploadData;
 
 #define ISDIR 0
 #define ISFILE 1
 #define ERROR 3
+
+
 
 class HttpClient: public Sink
 {

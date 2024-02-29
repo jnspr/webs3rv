@@ -56,7 +56,7 @@ public:
 
     /* NEW Removes the slice's start until `delimiter` is reached and populates `outSlice` with it,
     the current slice will be the remainder excluding the delimiter */
-    bool Slice::splitStart(Slice delimiter, Slice &outStart);
+    bool splitStart(Slice delimiter, Slice &outStart);
 
     /* Removes the slice's end until `delimiter` is reached and populates `outSlice` with it,
        the current slice will be the remainder including the delimiter */
@@ -85,7 +85,7 @@ public:
     }
 
     /* Removes 1 instance of the given character of the beginning and the end of the slice, used for quotes mainly */
-    void Slice::removequotes(char character);
+    void removequotes(char character);
     
 private:
     const char *_string;

@@ -176,7 +176,7 @@ void HttpClient::parseupload(HttpRequest request, uploadData &data)
         std::cout << "slicebod contenttype slice: " << sliceBod << std::endl;
         // maybe add error checks here
         std::string boundary_end_string = data.boundary.toString() + "--";
-        Slice boundary_end = Slice(boundary_end_string.c_str(), data.boundary.length + 2);
+        Slice boundary_end = Slice(boundary_end_string.c_str(), data.boundary.getLength() + 2);
 
         if (sliceBod.splitStart(boundary_end, data.fileContent))
         {
