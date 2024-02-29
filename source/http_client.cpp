@@ -59,8 +59,6 @@ void HttpClient::handleEvents(uint32_t eventMask)
 void HttpClient::handleRequest(HttpRequest request)
 {
        printf("Handling request\n");
-    if(request.getState() != REQUEST_STATE_VALID)
-        throw std::runtime_error("Http state invalid.");
 
     printf("Method: %d\n", request.method);
 
