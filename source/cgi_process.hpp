@@ -5,6 +5,7 @@
 #include "dispatcher.hpp"
 #include "http_client.hpp"
 #include "http_request.hpp"
+#include "utility.hpp"
 
 #include <stdint.h>
 

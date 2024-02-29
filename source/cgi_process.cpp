@@ -66,5 +66,25 @@ std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request
     (void)routeResult;
     std::vector<std::string> result;
     // TODO: Implement this
+
+    /* Add the environment variables C++98 */
+    result.push_back("GATEWAY_INTERFACE=CGI/1.1");
+    result.push_back("SERVER_SOFTWARE=JPwebs3rv/1.0");
+    result.push_back("SERVER_NAME=" + numberToString(routeResult.serverConfig->host));
+    if (request.isLegacy)
+        result.push_back("SERVER_PROTOCOL=HTTP/1.0");
+    else
+        result.push_back("SERVER_PROTOCOL=HTTP/1.1");
+    result.push_back("SERVER_PORT=" + numberToString(routeResult.serverConfig->port));
+    result.push_back("REQUEST_METHOD=" + std::string(httpMethodToString(request.method)));
+    result.push_back("CONTENT_TYPE=");
+    result.push_back("CONTENT_LENGTH=" + numberToString(request.body.size()));
+    result.push_back("SCRIPT_NAME=");
+    result.push_back("PATH_INFO=");
+    result.push_back("PATH_TRANSLATED=");
+    result.push_back("QUERY_STRING=" + request.queryParameters.toString());
+    result.push_back("REMOTE_HOST=");
+    result.push_back("REMOTE_ADDR=");
+
     return result;
 }
