@@ -11,6 +11,13 @@
 
 class Application;
 class CgiProcess;
+struct uploadData;
+
+#define ISDIR 0
+#define ISFILE 1
+#define ERROR 3
+
+
 
 class HttpClient: public Sink
 {
@@ -50,6 +57,25 @@ private:
     /* Handles one or multiple events */
     void handleEvents(uint32_t eventMask);
 
+    /* Handles the request*/
+    void handleRequest(HttpRequest request);
+
+
+    /* Uploads a file sent by a POST request*/
+    void uploadFile(HttpRequest request);
+
+    /* Parses the upload body*/
+    void parseupload(HttpRequest request, uploadData &data);
+
+    /* Returns the fileextension of a given path/file */
+    std::string fileextension(const std::string &file_or_path);
+
+    /* Checks how deep a given path is*/
+    size_t checkpathlevel(const std::string &path);
+
+    /* Checks the stat of the file/directory pointed to by request PATH */
+    int checkstat(HttpRequest request);
+
     /* Handles an exception that occurred in `handleEvent()` */
     void handleException();
 
@@ -59,6 +85,23 @@ private:
     /* Disable copy-construction and copy-assignment */
     HttpClient(const HttpClient &other);
     HttpClient &operator=(const HttpClient &other);
+};
+
+/* Struct for parsing Uploads */
+struct uploadData
+{
+    Slice boundary;
+    Slice contentDisposition;
+    Slice name;
+    Slice filename;
+    Slice contentType;
+    Slice fileContent;
+    ssize_t fileSize;
+
+    uploadData()
+    {
+        this->fileSize = 0;
+    }
 };
 
 #endif // HTTP_CLIENT_hpp

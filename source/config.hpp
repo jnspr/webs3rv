@@ -10,6 +10,8 @@
 #include <vector>
 #include <stdint.h>
 
+struct ServerConfig;
+
 /* Configuration for a route that requires further processing by the server */
 struct LocalRouteConfig
 {
@@ -39,6 +41,7 @@ struct RouteResult
     bool                       isRedirect;
     const LocalRouteConfig    *localRoute;
     const RedirectRouteConfig *redirectRoute;
+    const ServerConfig        *serverConfig;
     std::string                path;
 };
 
