@@ -36,6 +36,12 @@ public:
         return _state;
     }
 
+    /* Sets the process state */
+    inline void setState(CgiProcessState state)
+    {
+        _state = state;
+    }
+
     /* Gets the underlying process */
     inline Process &getProcess()
     {
