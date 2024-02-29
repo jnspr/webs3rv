@@ -29,6 +29,25 @@ bool Slice::splitStart(char delimiter, Slice &outStart)
 
     return true;
 }
+
+/* NEW Removes the slice's start until `delimiter` is reached and populates `outSlice` with it,
+    the current slice will be the remainder excluding the delimiter */
+bool Slice::splitStart(Slice delimiter, Slice &outStart)
+{
+    const char *position = (const char *)memmem(_string, _length, delimiter._string, delimiter._length);
+    if (position == NULL)
+        return false;
+
+    size_t index = position - _string;
+
+    outStart._string = _string;
+    outStart._length = index;
+
+    _string += index + delimiter._length;
+    _length -= index + delimiter._length;
+
+    return true;
+}
    
    /* Removes the slice's end until `delimiter` is reached and populates `outSlice` with it,
        the current slice will be the remainder including the delimiter */
@@ -93,4 +112,15 @@ Slice Slice::cut(size_t amount) const
     if (amount > _length)
         amount = _length;
     return Slice(_string + amount, _length - amount);
+}
+
+/* Removes 1 instance of the given character of the beginning and the end of the slice, used for quotes mainly */
+void Slice::removequotes(char character)
+{
+    if (_length >= 2 && _string[0] == character && _string[_length -1] == character)
+    {
+        _string++;
+        _length -= 2;
+    }
+
 }
