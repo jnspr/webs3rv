@@ -87,18 +87,9 @@ private:
     HttpClient &operator=(const HttpClient &other);
 };
 
-/* The result of routing will be stored in here */
-struct RouteResult
-{
-    bool                 wasFound;
-    bool                 isRedirect;
-    const LocalRouteConfig    *localRoute;
-    const RedirectRouteConfig *redirectRoute;
-    std::string          path;
-};
-
 /* Struct for parsing Uploads */
-struct uploadData{
+struct uploadData
+{
     Slice boundary;
     Slice contentDisposition;
     Slice name;

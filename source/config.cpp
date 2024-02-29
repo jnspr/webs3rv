@@ -38,6 +38,8 @@ RouteResult ServerConfig::findRoute(Slice path) const
                 result.localRoute = NULL;
             }
         }
-    }    
+    }
+
+    result.serverConfig = this;
     return result;
 }
