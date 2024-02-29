@@ -114,3 +114,14 @@ Slice Slice::cut(size_t amount) const
         amount = _length;
     return Slice(_string + amount, _length - amount);
 }
+
+/* Removes 1 instance of the given character of the beginning and the end of the slice, used for quotes mainly */
+void Slice::removequotes(char character)
+{
+    if (_length >= 2 && _string[0] == character && _string[_length -1] == character)
+    {
+        _string++;
+        _length -= 2;
+    }
+
+}
