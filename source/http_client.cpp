@@ -241,4 +241,16 @@ void HttpClient::handleCgiState()
     if (_process == NULL)
         return;
     // TODO: Implement this
+    if (_process->getState() == CGI_PROCESS_SUCCESS)
+    {
+    }
+    else if (_process->getState() == CGI_PROCESS_FAILURE)
+    {
+    }
+    else if (_process->getState() == CGI_PROCESS_TIMEOUT)
+    {
+        this->_markedForCleanup = true;
+        this->_cleanupNext = _application._cleanupClients;
+        _application._cleanupClients = this;
+    }
 }

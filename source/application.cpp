@@ -73,10 +73,22 @@ void Application::mainLoop()
         headClient = _clients;
         while (headClient != NULL)
         {
-            // TODO: Implement client timeout behavior
+            /* Destroy the client if it is timeout */
+            if (headClient->_timeout.isExpired())
+            {
+                headClient->_markedForCleanup = true;
+                headClient->_cleanupNext = _cleanupClients;
+                _cleanupClients = headClient;
+            }
+                
             if (headClient->_process != NULL)
             {
-                // TODO: Implement process timeout behavior
+                /* Destroy the process if it is timeout */
+                if (headClient->_process->getTimeout().isExpired())
+                {
+                    headClient->_process->setState(CGI_PROCESS_TIMEOUT);
+                    headClient->handleCgiState();             
+                }
             }
             headClient = headClient->_next;
         }
