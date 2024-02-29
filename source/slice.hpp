@@ -83,6 +83,9 @@ public:
     {
         return std::string(_string, _length);
     }
+
+    /* Removes 1 instance of the given character of the beginning and the end of the slice, used for quotes mainly */
+    void removequotes(char character);
     
 private:
     const char *_string;
