@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <algorithm>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 /* Constructs a HTTP client using the given socket file descriptor */
 HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno)
@@ -109,17 +110,17 @@ void HttpClient::uploadFile(HttpRequest request)
     printf("Uploading file\n");
 
     parseupload(request, data);
-        /*printf("file to open: %s\n", (getinputvalue(mybuffer, "filename=")).c_str());
-        int fd = open((getContentLength(mybuffer, "filename=")).c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0666);
+        printf("file to open: %s\n", (data.filename).toString().c_str());
+        int fd = open((data.filename).toString().c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0666);
         if (fd == -1)
             throw std::runtime_error("Unable to open file");
-        int writereturn = write(fd, mybuffer, readLength);
+        int writereturn = write(fd, data.fileContent.toString().c_str(), data.fileContent.getLength());
         if (writereturn == -1)
             throw std::runtime_error("Unable to write to file");
         printf ("Write return: %d\n", writereturn);
         close(fd);
         //printf("Mybuffer:\n%s \n", mybuffer);
-         */
+         
 
 }
 
