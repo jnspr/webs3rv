@@ -8,10 +8,10 @@
 
 enum NodeType
 {
-    /* The file can't be accessed */
-    NODE_TYPE_ERROR,
     NODE_TYPE_REGULAR,
     NODE_TYPE_DIRECTORY,
+    NODE_TYPE_NOT_FOUND,
+    NODE_TYPE_NO_ACCESS,
     /* Symlinks, sockets, named pipes, etc. */
     NODE_TYPE_UNSUPPORTED
 };

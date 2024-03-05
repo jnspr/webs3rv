@@ -1,6 +1,8 @@
 #include "utility.hpp"
 
+#include <errno.h>
 #include <iostream>
+#include <stdexcept>
 #include <sys/stat.h>
 
 /* Queries the type of node at the given FS path */
@@ -9,7 +11,13 @@ NodeType Utility::queryNodeType(const char *path)
     struct stat result;
 
     if (stat(path, &result) != 0)
-        return NODE_TYPE_ERROR;
+    {
+        if (errno == EACCES)
+            return NODE_TYPE_NOT_FOUND;
+        if (errno == ENOENT)
+            return NODE_TYPE_NO_ACCESS;
+        throw std::runtime_error("Unable to query file information");
+    }
 
     if (S_ISREG(result.st_mode))
         return NODE_TYPE_REGULAR;
