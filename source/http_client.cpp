@@ -14,7 +14,6 @@ HttpClient::HttpClient(Application &application, const ServerConfig &config, int
     , _config(config)
     , _fileno(fileno)
     , _markedForCleanup(false)
-    , _parser(config, host, port)
     , _process(NULL)
     , _host(host)
     , _port(port)
@@ -47,12 +46,6 @@ void HttpClient::handleEvents(uint32_t eventMask)
             throw std::runtime_error("Unable to read from client");
         if (length == 0)
             throw std::runtime_error("End of stream");
-
-        HttpRequest request;
-        if (_parser.commit(buffer, length, request))
-        {
-            handleRequest(request);
-        }
     }
 }
 

@@ -51,7 +51,6 @@ private:
     HttpClient         *_previous;
     HttpClient         *_cleanupNext;
     bool                _markedForCleanup;
-    HttpRequest::Parser _parser;
     CgiProcess         *_process;
     uint32_t            _host;
     uint16_t            _port;

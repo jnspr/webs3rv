@@ -2,7 +2,6 @@
 #define HTTP_REQUEST_hpp
 
 #include "slice.hpp"
-#include "config.hpp"
 #include "http_constants.hpp"
 
 #include <string>
@@ -35,17 +34,6 @@ struct HttpRequest
     private:
         std::string _key;
         std::string _value;
-    };
-
-    class Parser
-    {
-    public:
-        /* Constructs a HTTP request parser using the given rules */
-        Parser(const ServerConfig &config, uint32_t host, uint16_t port);
-
-        /* Commits the given buffer to the current request
-           Returns true if parsing was finished and moves the parsed request into `outRequest` */
-        bool commit(const char *buffer, size_t length, HttpRequest &outRequest);
     };
 
     HttpMethod           method;
