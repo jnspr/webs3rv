@@ -22,13 +22,13 @@ struct HttpRequest
         bool matchKey(Slice key) const;
 
         /* Gets the header's key */
-        inline const std::string &getKey()
+        inline const std::string &getKey() const
         {
             return _key;
         }
 
         /* Gets the header's value */
-        inline const std::string &getValue()
+        inline const std::string &getValue() const
         {
             return _value;
         }
