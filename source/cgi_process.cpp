@@ -19,6 +19,7 @@ void CgiProcess::handleEvents(uint32_t eventMask)
         return;
     (void)eventMask;
     // TODO: Implement this
+
 }
 
 /* Handles an exception that occurred in `handleEvent()` */

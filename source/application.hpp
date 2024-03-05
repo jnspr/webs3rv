@@ -38,6 +38,12 @@ private:
 
     /* Immediately releases and destroys the given client; DO NOT use from outside of this class */
     void removeClient(HttpClient *client);
+
+    /* Starts CGI processes for the given client */
+    void startCgiProcess(HttpClient *client, const HttpRequest &request, const RouteResult &routeResult);
+
+    /*Close CGI processes for the given client */
+    void closeCgiProcess(HttpClient *client);
 };
 
 #endif // APPLICATION_hpp

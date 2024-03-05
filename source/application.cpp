@@ -146,3 +146,36 @@ void Application::removeClient(HttpClient *client)
     _dispatcher.unsubscribe(client->getFileno());
     delete client;
 }
+
+/* Starts CGI processes for the given client */
+void Application::startCgiProcess(HttpClient *client, const HttpRequest &request, const RouteResult &routeResult)
+{
+    // Create a CGI process
+    CgiProcess *process = new CgiProcess(client, request, routeResult);
+    client->_process = process;
+
+    // Subscribe the process to the dispatcher
+    try
+    {
+        //_dispatcher.subscribe(process->getProcess().getInputFileno(), EPOLLIN | EPOLLHUP, process);
+        _dispatcher.subscribe(client->getFileno(), EPOLLIN | EPOLLHUP, client);
+    }
+    catch(...)
+    {
+        delete process;
+        throw;
+    }
+}
+
+/*Close CGI processes for the given client */
+void Application::closeCgiProcess(HttpClient *client)
+{
+    // Unsubscribe the process from the dispatcher
+    _dispatcher.unsubscribe(client->getFileno());
+    //_dispatcher.unsubscribe(client->_process->getProcess().getInputFileno());
+
+    // Destroy the process
+    delete client->_process;
+    client->_process = NULL;
+}
+
