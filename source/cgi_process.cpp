@@ -67,7 +67,6 @@ std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request
     std::vector<std::string> result;
     // TODO: Implement this
 
-    /* Add the environment variables C++98 */
     result.push_back("GATEWAY_INTERFACE=CGI/1.1");
     result.push_back("SERVER_SOFTWARE=JPwebs3rv/1.0");
     result.push_back("SERVER_NAME=" + numberToString(routeResult.serverConfig->host));
@@ -79,13 +78,17 @@ std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request
     result.push_back("REQUEST_METHOD=" + std::string(httpMethodToString(request.method)));
     result.push_back("CONTENT_TYPE=");
     result.push_back("CONTENT_LENGTH=" + numberToString(request.body.size()));
-    result.push_back("SCRIPT_NAME=");
-    result.push_back("PATH_INFO=");
-    result.push_back("PATH_TRANSLATED=");
+    /*The path is virtual because it represents a URL path rather than a physical file system path. Is request.queryPath the virtual path?*/
+    result.push_back("SCRIPT_NAME=" + request.queryPath.toString());
+    result.push_back("PATH_INFO=" + request.queryParameters.toString());
+    if (request.queryParameters.isEmpty())
+        result.push_back("PATH_TRANSLATED=NULL");
+    else
+        result.push_back("PATH_TRANSLATED=" + routeResult.redirectRoute->redirectLocation + request.queryParameters.toString());
     result.push_back("QUERY_STRING=" + request.queryParameters.toString());
-    result.push_back("REMOTE_HOST=");
-    result.push_back("REMOTE_ADDR=");
-
+    /* Will not be used and no DNS lookup performed*/
+    result.push_back("REMOTE_HOST=NULL");
+    result.push_back("REMOTE_ADDR=" + numberToString(request.clientHost));
 
     return result;
 }
