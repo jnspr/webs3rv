@@ -11,6 +11,14 @@ bool Slice::operator==(Slice other)
     return memcmp(_string, other._string, _length) == 0;
 }
 
+/* Comparison to other slice */
+bool Slice::operator!=(Slice other)
+{
+    if (_length != other._length)
+        return true;
+    return memcmp(_string, other._string, _length) != 0;
+}
+
 /* Removes the slice's start until `delimiter` is reached and populates `outSlice` with it,
    the current slice will be the remainder excluding the delimiter */
 bool Slice::splitStart(char delimiter, Slice &outStart)
@@ -29,7 +37,6 @@ bool Slice::splitStart(char delimiter, Slice &outStart)
 
     return true;
 }
-
 
 /* Removes the slice's start until `delimiter` is reached and populates `outSlice` with it,
     the current slice will be the remainder excluding the delimiter */
@@ -115,13 +122,12 @@ Slice Slice::cut(size_t amount) const
     return Slice(_string + amount, _length - amount);
 }
 
-/* Removes 1 instance of the given character of the beginning and the end of the slice, used for quotes mainly */
-void Slice::removequotes(char character)
+/* Removes leading and trailing double-quotes from the slice */
+void Slice::removeDoubleQuotes()
 {
-    if (_length >= 2 && _string[0] == character && _string[_length -1] == character)
+    if (_length >= 2 && _string[0] == '"' && _string[_length - 1] == '"')
     {
         _string++;
         _length -= 2;
     }
-
 }
