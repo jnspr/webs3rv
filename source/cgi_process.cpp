@@ -86,5 +86,6 @@ std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request
     result.push_back("REMOTE_HOST=");
     result.push_back("REMOTE_ADDR=");
 
+
     return result;
 }
