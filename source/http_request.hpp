@@ -58,18 +58,6 @@ struct HttpRequest
     std::vector<Header>  headers;
     std::vector<uint8_t> body;
 
-    /* Gets URL-decoded path of the request */
-    inline std::string getPath() const
-    {
-        return queryPath.toString();
-    }
-
-    /* Sets the queryPath to newpath*/
-    inline void setPath(std::string newpath)
-    {
-        queryPath = newpath;
-    }
-
     /* Case-invariantly finds a header in the current request */
     inline const Header *findHeader(Slice key)
     {
