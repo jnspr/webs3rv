@@ -8,13 +8,15 @@
 #include <fcntl.h>
 
 /* Constructs a HTTP client using the given socket file descriptor */
-HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno)
+HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno, uint32_t host, uint16_t port)
     : _application(application)
     , _config(config)
     , _fileno(fileno)
     , _markedForCleanup(false)
-    , _parser(config)
+    , _parser(config, host, port)
     , _process(NULL)
+    , _host(host)
+    , _port(port)
 {
 }
 

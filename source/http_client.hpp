@@ -26,7 +26,7 @@ public:
     friend class CgiProcess;
 
     /* Constructs a HTTP client using the given socket file descriptor */
-    HttpClient(Application &application, const ServerConfig &config, int fileno);
+    HttpClient(Application &application, const ServerConfig &config, int fileno, uint32_t host, uint16_t port);
 
     /* Closes the client's file descriptor */
     ~HttpClient();
@@ -53,6 +53,8 @@ private:
     bool                _markedForCleanup;
     HttpRequest::Parser _parser;
     CgiProcess         *_process;
+    uint32_t            _host;
+    uint16_t            _port;
 
     /* Handles one or multiple events */
     void handleEvents(uint32_t eventMask);

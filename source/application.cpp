@@ -106,11 +106,11 @@ void Application::mainLoop()
 }
 
 /* Starts to manage the given client file descriptor according to its server's config */
-void Application::takeClient(int fileno, const ServerConfig &config)
+void Application::takeClient(int fileno, const ServerConfig &config, uint32_t host, uint16_t port)
 {
     // Wrap the client into an object
     (void)config;
-    HttpClient *client = new HttpClient(*this, config, fileno);
+    HttpClient *client = new HttpClient(*this, config, fileno, host, port);
 
     // Subscribe client sink to read events
     try

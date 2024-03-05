@@ -34,7 +34,7 @@ private:
     bool                       _wasConfigured;
 
     /* Starts to manage the given client file descriptor according to its server's config */
-    void takeClient(int fileno, const ServerConfig &config);
+    void takeClient(int fileno, const ServerConfig &config, uint32_t host, uint16_t port);
 
     /* Immediately releases and destroys the given client; DO NOT use from outside of this class */
     void removeClient(HttpClient *client);

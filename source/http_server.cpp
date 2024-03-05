@@ -48,13 +48,16 @@ void HttpServer::handleEvents(uint32_t eventMask)
     if ((eventMask & EPOLLIN) == 0)
         return;
 
-    int fileno;
-    if ((fileno = accept(_fileno, NULL, NULL)) < 0)
+    int         fileno;
+    sockaddr_in address;
+    socklen_t   addressLength = sizeof(address);
+
+    if ((fileno = accept(_fileno, (sockaddr *)&address, &addressLength)) < 0)
         throw std::runtime_error("Unable to accept client");
 
     try
     {
-        _application.takeClient(fileno, _config);
+        _application.takeClient(fileno, _config, ntohl(address.sin_addr.s_addr), ntohs(address.sin_port));
     }
     catch (...)
     {

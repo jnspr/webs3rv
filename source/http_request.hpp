@@ -16,7 +16,7 @@ struct HttpRequest
     {
     public:
         /* Constructs a HTTP request parser using the given rules */
-        Parser(const ServerConfig &config);
+        Parser(const ServerConfig &config, uint32_t host, uint16_t port);
 
         /* Commits the given buffer to the current request
            Returns true if parsing was finished and moves the parsed request into `outRequest` */
@@ -24,6 +24,8 @@ struct HttpRequest
     };
 
     HttpMethod           method;
+    uint32_t             clientHost;
+    uint16_t             clientPort;
     std::string          query;           // Full query string; eg. "/cgi-bin/demo.py?hello=world&abc=def"
     Slice                queryPath;       // Query path; eg. "/cgi-bin/demo.py"
     Slice                queryParameters; // Query parameters; eg. "hello=world&abc=def"

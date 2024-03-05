@@ -1,9 +1,11 @@
 #include "http_request.hpp"
 
 /* Constructs a HTTP request parser using the given rules */
-HttpRequest::Parser::Parser(const ServerConfig &config)
+HttpRequest::Parser::Parser(const ServerConfig &config, uint32_t host, uint16_t port)
 {
     (void)config;
+    (void)host;
+    (void)port;
 }
 
 /* Commits the given buffer to the current request
