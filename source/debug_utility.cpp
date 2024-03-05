@@ -121,7 +121,7 @@ void Debug::printConfig(const ApplicationConfig &config)
             printAllowedMethods(routeConfig.allowedMethods);
             printStringField("    Root directory: ", routeConfig.rootDirectory);
             printStringField("    Upload directory: ", routeConfig.uploadDirectory);
-            printBoolField("    Uploads allowed?: ", routeConfig.allowUploads);
+            printBoolField("    Uploads allowed?: ", routeConfig.allowUpload);
             printBoolField("    Listing allowed?: ", routeConfig.allowListing);
 
             // Print CGI types
