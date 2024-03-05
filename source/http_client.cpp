@@ -157,7 +157,7 @@ void HttpClient::parseupload(HttpRequest request, uploadData &data)
         if (checkData == C_SLICE("name"))
         {
             sliceBod.splitStart(C_SLICE(";"), data.name);
-            data.name.removequotes('"');
+            data.name.removeDoubleQuotes();
             std::cout << "Name: \n" << data.name << std::endl;
             std::cout << "slicebod name slice: " << sliceBod << std::endl;
             sliceBod.stripStart(' ');
@@ -167,7 +167,7 @@ void HttpClient::parseupload(HttpRequest request, uploadData &data)
         if (checkData == C_SLICE("filename"))
         {
             sliceBod.splitStart(C_SLICE("\r\n"), data.filename);
-            data.filename.removequotes('"');
+            data.filename.removeDoubleQuotes();
             std::cout << "Filename: \n" << data.filename << std::endl;
             std::cout << "slicebod filename slice: " << sliceBod << std::endl;
         }

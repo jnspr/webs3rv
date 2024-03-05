@@ -49,6 +49,7 @@ public:
 
     /* Comparison to other slice */
     bool operator==(Slice other);
+    bool operator!=(Slice other);
 
     /* Removes the slice's start until `delimiter` is reached and populates `outSlice` with it,
        the current slice will be the remainder excluding the delimiter */
@@ -84,8 +85,8 @@ public:
         return std::string(_string, _length);
     }
 
-    /* Removes 1 instance of the given character of the beginning and the end of the slice, used for quotes mainly */
-    void removequotes(char character);
+    /* Removes leading and trailing double-quotes from the slice */
+    void removeDoubleQuotes();
     
 private:
     const char *_string;

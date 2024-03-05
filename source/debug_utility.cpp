@@ -15,10 +15,10 @@ static void printHexChar(unsigned char value)
         std::cout << static_cast<char>(value + '0');
 }
 
-/* Prints a field of any string type */
-static void printStringField(const char *prefix, Slice value)
+/* Prints a string; escapes non-printable characters and quotes */
+static void printString(Slice value)
 {
-    std::cout << prefix << '"';
+    std::cout << '"';
     for (size_t index = 0; index < value.getLength(); index++)
     {
         char current = value[index];
@@ -38,7 +38,15 @@ static void printStringField(const char *prefix, Slice value)
             printHexChar(currentUnsigned);
         }
     }
-    std::cout << '"' << std::endl;
+    std::cout << '"';
+}
+
+/* Prints a field of any string type; escapes non-printable characters and quotes */
+static void printStringField(const char *prefix, Slice value)
+{
+    std::cout << prefix;
+    printString(value);
+    std::cout << std::endl;
 }
 
 /* Prints a field of boolean type */
@@ -147,5 +155,13 @@ void Debug::printRequest(const HttpRequest &request)
     printStringField("  Query path: ", request.queryPath);
     printStringField("  Query parameters: ", request.queryParameters);
     printBoolField("  Is legacy?: ", request.isLegacy);
+    for (size_t index = 0; index < request.headers.size(); index++)
+    {
+        std::cout << "    Header ";
+        printString(request.headers[index].getKey());
+        std::cout << ": ";
+        printString(request.headers[index].getValue());
+        std::cout << std::endl;
+    }
     std::cout << "  <Body of " << request.body.size() << " bytes>" << std::endl;
 }
