@@ -1,6 +1,8 @@
 #ifndef UTILITY_hpp
 #define UTILITY_hpp
 
+#include "slice.hpp"
+
 #include <string>
 #include <sstream>
 
@@ -33,6 +35,9 @@ namespace Utility
     {
         return queryNodeType(path.c_str());
     }
+
+    /* Checks whether the given path exceeds the root path, returns true if it doesn't */
+    bool checkPathLevel(Slice path);
 }
 
 #endif // UTILITY_hpp
