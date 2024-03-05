@@ -43,3 +43,13 @@ RouteResult ServerConfig::findRoute(Slice path) const
     result.serverConfig = this;
     return result;
 }
+
+/* Constructors */
+LocalRouteConfig::LocalRouteConfig()
+    : indexFile("index.html"), allowUpload(false), allowListing(false)
+{
+}
+
+ServerConfig::ServerConfig() : maxBodySize(100000)
+{
+}

@@ -20,10 +20,12 @@ struct LocalRouteConfig
     std::string                        rootDirectory;
     std::string                        uploadDirectory;
     std::string                        indexFile;
-    bool                               allowUploads;
+    bool                               allowUpload;
     bool                               allowListing;
     std::map<std::string, std::string> cgiTypes;
     std::set<TokenKind>                parsedTokens;
+
+    LocalRouteConfig();
 };
 
 /* Configuration for a route that immediately redirects the client */
@@ -58,6 +60,7 @@ struct ServerConfig
     std::set<TokenKind>              parsedTokens;
 
     RouteResult findRoute(Slice path) const;
+    ServerConfig();
 };
 
 /* Global application configuration; can contain many virtual servers */
