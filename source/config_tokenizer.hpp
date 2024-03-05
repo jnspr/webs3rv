@@ -22,6 +22,7 @@ enum TokenKind
     KW_ALLOW_METHODS,
     KW_MAX_BODY_SIZE,
     KW_CGI,
+    KW_ALLOW_UPLOAD,
     SY_BRACE_OPEN,
     SY_BRACE_CLOSE,
     SY_SEMICOLON,

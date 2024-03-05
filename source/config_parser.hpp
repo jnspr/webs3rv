@@ -25,6 +25,7 @@ private:
     std::set<HttpMethod> parseAllowedHttpMethods(ServerConfig &serverConfig,
                                                  LocalRouteConfig &localRouteConfig);
     bool parseDirectoryListing();
+    bool parseAllowUpload();
     std::map<std::string, std::string> parseCgiFileExtensions();
 
     // Parsing RedirectRouteConfig

@@ -221,6 +221,12 @@ LocalRouteConfig ConfigParser::parseLocalRouteConfig(ServerConfig &serverConfig)
                                              currentCgiFileExtension.end());
             expect(SY_SEMICOLON);
             break;
+        case KW_ALLOW_UPLOAD:
+            isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_ALLOW_UPLOAD, _config_input);
+            moveToNextToken();
+            localRouteConfig.allowUpload = parseAllowUpload();
+            expect(SY_SEMICOLON);
+            break;
         case KW_REDIRECT_ADDRESS:
             isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_REDIRECT_ADDRESS, _config_input);
             isRedundantToken(_tokens[_current].offset, localRouteConfig, KW_ROOT, _config_input);
@@ -281,6 +287,20 @@ bool ConfigParser::parseDirectoryListing()
         throw ConfigException("Error: Invalid value for autoindex", _config_input, _tokens[_current].offset);
     moveToNextToken();
     return allowDirectoryListing;
+}
+
+bool ConfigParser::parseAllowUpload()
+{
+    expect(DATA);
+    bool allowUpload;
+    if (currentToken().data == "on")
+        allowUpload = true;
+    else if (currentToken().data == "off")
+        allowUpload = false;
+    else
+        throw ConfigException("Error: Invalid value for allow_upload", _config_input, _tokens[_current].offset);
+    moveToNextToken();
+    return allowUpload;
 }
 
 std::map<std::string, std::string> ConfigParser::parseCgiFileExtensions()

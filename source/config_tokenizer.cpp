@@ -104,6 +104,8 @@ TokenKind ConfigTokenizer::getTokenKind(const std::string &word)
         return (KW_MAX_BODY_SIZE);
     else if (word == "cgi")
         return (KW_CGI);
+    else if (word == "allow_upload")
+        return (KW_ALLOW_UPLOAD);
     else if (word == "#")
         return (SY_COMMEND);
     else
@@ -152,6 +154,8 @@ std::string ConfigTokenizer::TokenKindToString(TokenKind token)
         return "KW_BODY_SIZE";
     case KW_CGI:
         return "KW_CGI";
+    case KW_ALLOW_UPLOAD:
+        return "KW_ALLOW_UPLOAD";
     case SY_BRACE_OPEN:
         return "SY_BRACE_OPEN";
     case SY_BRACE_CLOSE:

@@ -34,6 +34,7 @@ void Application::configure()
         }
         _dispatcher.subscribe(server->getFileno(), EPOLLIN, server);
     }
+    
 
     _wasConfigured = true;
 }
