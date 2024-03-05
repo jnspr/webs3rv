@@ -76,13 +76,14 @@ bool Slice::splitEnd(char delimiter, Slice &outEnd)
 }
 
 /* Removes any occurrences of the given character from the start of the slice */
-void Slice::stripStart(char character)
+Slice &Slice::stripStart(char character)
 {
     while (_length > 0 && _string[0] == character)
     {
         _string++;
         _length--;
     }
+    return *this;
 }
 
 /* If available, removes the given prefix from the slice and returns true */

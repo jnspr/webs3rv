@@ -64,7 +64,7 @@ public:
     bool splitEnd(char delimiter, Slice &outEnd);
 
     /* Removes any occurrences of the given character from the start of the slice */
-    void stripStart(char character);
+    Slice &stripStart(char character);
 
     /* If available, removes the given prefix from the slice and returns true */
     bool removePrefix(Slice prefix);
