@@ -1,5 +1,6 @@
 #include "http_client.hpp"
 #include "application.hpp"
+#include "utility.hpp"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -55,55 +56,31 @@ void HttpClient::handleEvents(uint32_t eventMask)
     }
 }
 
-#define ALLOWED_PATH_LEVEL 1 // temporary
-#define AUTOINDEX_ON 1 // placeholder for debugging
-#define UPLOAD_IS_ALLOWED 1 //placeholder for debugging
-
 void HttpClient::handleRequest(HttpRequest request)
 {
-       printf("Handling request\n");
+    if (!Utility::checkPathLevel(request.queryPath))
+        throw std::runtime_error("Client tried to access above-root directory");
 
-    printf("Method: %d\n", request.method);
+    // TODO: Implement check if file exists on route in ServerConfig::findRoute()
+    //       ^ Don't use stat() directly, use Utility::queryNodeType()
 
-    // check if method is allowed
-
-    if (checkpathlevel(request.getPath()) < ALLOWED_PATH_LEVEL)
-        throw std::runtime_error("Access denied.");
-    printf("Path: %s\n", request.getPath().c_str());
-    int pathStat = checkstat(request);
-printf("Pathstat: %d\n", pathStat);
-    if (pathStat == ISDIR){
-
-        if (request.method == HTTP_METHOD_POST)
-        {
-            if (UPLOAD_IS_ALLOWED)
-            {
-                uploadFile(request);
-            }
-            else
-            {
-                //403
-            }
-        }
-        else if (AUTOINDEX_ON)
-        {
-            // generate directory list
-            // change path do directory list file
-        }
-        else
-            request.setPath(request.getPath() += "/${index}");
-    }
-    else if (pathStat == ISFILE)
-    {
-        if (fileextension(request.getPath()) == "cgi")
-        {
-            //run cgi script
-        }
-    }
-
+    // TODO: Find route using ServerConfig::findRoute()
+    //       ^ Quit early when node type is NODE_TYPE_NO_ACCESS (HTTP 403)
+    //       ^ Only 404 when the route wasn't found
+    // TODO: Check allowed methods on route
+    // TODO: Handle node type
+    //       ^ Is directory?
+    //         ^ Index file configured?
+    //           ^ Quit if inaccessible (HTTP 403) or not found (HTTP 403), use it if present
+    //         ^ Index file not configured?
+    //           ^ Generate autoindex if enabled, quit with HTTP 403 if disabled
+    //       ^ Is file?
+    //         ^ Is CGI file extension? (use route's CGI map)
+    //           ^ Start CGI process
+    //         ^ Is regular file?
+    //           ^ Get MIME type and set Content-Type
+    //           ^ Send the file with Content-Length (not chunked)
 }
-
-
 
 void HttpClient::uploadFile(HttpRequest request)
 { 
@@ -190,41 +167,6 @@ void HttpClient::parseupload(HttpRequest request, uploadData &data)
             throw std::runtime_error("Incomplete upload body");
     }
 }
-
-std::string HttpClient::fileextension(const std::string &file_or_path)
-{
-        size_t pos = file_or_path.find_last_of('.');
-        return (file_or_path.substr(pos +1));
-}
-
-
-size_t HttpClient::checkpathlevel(const std::string &path)
-{
-    return std::count(path.begin(), path.end(), '/');
-}
-
-
-
-int HttpClient::checkstat(HttpRequest request)
-{
-    struct stat pathstat ={};
-
-    int statResult = stat(request.getPath().c_str(), &pathstat);
-    printf("Checking path: %s\n", request.getPath().c_str());
-    printf("Stat result: %d\n", statResult);
-
-    if (statResult != 0)
-    {
-        printf("Stat failed for path: %s\n", request.getPath().c_str());
-        throw std::runtime_error("Path is neither an accessible file or directory");
-    }
-    if (S_ISDIR(pathstat.st_mode))
-        return ISDIR;
-    else if (S_ISREG(pathstat.st_mode))
-        return ISFILE;
-    return ERROR;
-}
-
 
 /* Handles an exception that occurred in `handleEvent()` */
 void HttpClient::handleException()

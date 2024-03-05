@@ -62,21 +62,11 @@ private:
     /* Handles the request*/
     void handleRequest(HttpRequest request);
 
-
     /* Uploads a file sent by a POST request*/
     void uploadFile(HttpRequest request);
 
     /* Parses the upload body*/
     void parseupload(HttpRequest request, uploadData &data);
-
-    /* Returns the fileextension of a given path/file */
-    std::string fileextension(const std::string &file_or_path);
-
-    /* Checks how deep a given path is*/
-    size_t checkpathlevel(const std::string &path);
-
-    /* Checks the stat of the file/directory pointed to by request PATH */
-    int checkstat(HttpRequest request);
 
     /* Handles an exception that occurred in `handleEvent()` */
     void handleException();
