@@ -1,6 +1,7 @@
 #include "application.hpp"
 #include "config_parser.hpp"
 #include "config_tokenizer.hpp"
+#include "debug_utility.hpp"
 
 #include <iostream>
 
@@ -49,6 +50,7 @@ int main(int argc, char *argv[])
         std::cerr << "At offset " << e.getOffset() << std::endl;
         std::cerr << e.getSource()[e.getOffset()] << std::endl;
         std::cerr << e.getSource().substr(e.getOffset()) << std::endl;
+        return 1;
     }
 
     // Start the application using the parsed configuration
