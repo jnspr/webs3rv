@@ -6,6 +6,7 @@
 #include "http_client.hpp"
 #include "http_request.hpp"
 #include "utility.hpp"
+#include "routing.hpp"
 
 #include <stdint.h>
 
@@ -23,7 +24,7 @@ class CgiProcess: public Sink
 {
 public:
     /* Constructs a CGI process from the given client, request and route result */
-    CgiProcess(HttpClient *client, const HttpRequest &request, const RouteResult &routeResult);
+    CgiProcess(HttpClient *client, const HttpRequest &request, const RoutingInfo &routingInfo);
 
     /* Handles one or multiple events */
     void handleEvents(uint32_t eventMask);
@@ -61,10 +62,10 @@ private:
     Timeout         _timeout;
 
     /* Creates a vector of strings for the process arguments */
-    static std::vector<std::string> setupArguments(const HttpRequest &request, const RouteResult &routeResult);
+    static std::vector<std::string> setupArguments(const HttpRequest &request, const RoutingInfo &routingInfo);
 
     /* Creates a vector of strings for the process environment */
-    static std::vector<std::string> setupEnvironment(const HttpRequest &request, const RouteResult &routeResult);
+    static std::vector<std::string> setupEnvironment(const HttpRequest &request, const RoutingInfo &routingInfo);
 };
 
 #endif // CGI_PROCESS_hpp

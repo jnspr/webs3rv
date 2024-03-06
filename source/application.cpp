@@ -149,10 +149,10 @@ void Application::removeClient(HttpClient *client)
 }
 
 /* Starts CGI processes for the given client */
-void Application::startCgiProcess(HttpClient *client, const HttpRequest &request, const RouteResult &routeResult)
+void Application::startCgiProcess(HttpClient *client, const HttpRequest &request, const RoutingInfo &routingInfo)
 {
     // Create a CGI process
-    CgiProcess *process = new CgiProcess(client, request, routeResult);
+    CgiProcess *process = new CgiProcess(client, request, routingInfo);
     client->_process = process;
 
     // Subscribe the process to the dispatcher

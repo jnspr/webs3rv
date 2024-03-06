@@ -36,17 +36,6 @@ struct RedirectRouteConfig
     std::string          redirectLocation;
 };
 
-/* The result of routing will be stored in here */
-struct RouteResult
-{
-    bool                       wasFound;
-    bool                       isRedirect;
-    const LocalRouteConfig    *localRoute;
-    const RedirectRouteConfig *redirectRoute;
-    const ServerConfig        *serverConfig;
-    std::string                path;
-};
-
 /* Virtual server configuration */
 struct ServerConfig
 {
@@ -59,7 +48,6 @@ struct ServerConfig
     std::vector<RedirectRouteConfig> redirectRoutes;
     std::set<TokenKind>              parsedTokens;
 
-    RouteResult findRoute(Slice path) const;
     ServerConfig();
 };
 

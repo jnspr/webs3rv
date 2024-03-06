@@ -40,7 +40,7 @@ private:
     void removeClient(HttpClient *client);
 
     /* Starts CGI processes for the given client */
-    void startCgiProcess(HttpClient *client, const HttpRequest &request, const RouteResult &routeResult);
+    void startCgiProcess(HttpClient *client, const HttpRequest &request, const RoutingInfo &routingInfo);
 
     /*Close CGI processes for the given client */
     void closeCgiProcess(HttpClient *client);
