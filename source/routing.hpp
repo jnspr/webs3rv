@@ -21,6 +21,7 @@ class RoutingInfo
 public:
     RoutingStatus       status;
     std::string         nodePath;
+    std::string         cgiInterpreter;
     const ServerConfig *serverConfig;
 
     /* Gets a pointer to the local route if the state is correct */

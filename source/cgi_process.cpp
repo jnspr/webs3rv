@@ -35,34 +35,9 @@ void CgiProcess::handleException()
 std::vector<std::string> CgiProcess::setupArguments(const HttpRequest &request, const RoutingInfo &routingInfo)
 {
     (void)request;
-    (void)routingInfo;
     std::vector<std::string> result;
-    // TODO: Implement this
-
-    /* Extract the file name from the route */
-    std::string fileName;
-    switch (routingInfo.status)
-    {
-        case ROUTING_STATUS_FOUND_LOCAL:
-        {
-            std::string path = routingInfo.getRedirectRoute()->path;
-            size_t pos = path.rfind('/');
-            if (pos != std::string::npos)
-                fileName = path.substr(pos + 1);
-        }
-        break;
-        case ROUTING_STATUS_FOUND_REDIRECT:
-        {
-            std::string path = routingInfo.getLocalRoute()->path;
-            size_t pos = path.rfind('/');
-            if (pos != std::string::npos)
-                fileName = path.substr(pos + 1);
-        }
-        break;
-        default:
-            throw std::logic_error("Invalid routing info passed to CGI process");
-    }
-    result.push_back(fileName);
+    result.push_back(routingInfo.nodePath);
+    result.push_back(routingInfo.cgiInterpreter);
     return result;
 }
 
