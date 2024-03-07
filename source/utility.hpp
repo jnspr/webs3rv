@@ -5,6 +5,8 @@
 
 #include <string>
 #include <sstream>
+#include <stdint.h>
+#include <cstdio> 
 
 enum NodeType
 {
@@ -38,6 +40,9 @@ namespace Utility
 
     /* Checks whether the given path exceeds the root path, returns true if it doesn't */
     bool checkPathLevel(Slice path);
+
+    /* Converts a uint32_t ipv4 adress to a string*/
+    std::string ipv4ToString(uint32_t ipv4Addr);
 }
 
 #endif // UTILITY_hpp

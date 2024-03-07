@@ -58,3 +58,13 @@ bool Utility::checkPathLevel(Slice path)
 
     return true;
 }
+
+/* Converts a uint32_t ipv4 adress to a string*/
+std::string Utility::ipv4ToString(uint32_t ipv4Addr)
+{
+    char addrBuffer[16];
+    sprintf(addrBuffer, "%u.%u.%u.%u", (ipv4Addr >> 24) & 0xFF, (ipv4Addr >> 16) & 0xFF,
+        (ipv4Addr >> 8) & 0xFF, ipv4Addr & 0xFF);
+    return std::string(addrBuffer);
+}
+
