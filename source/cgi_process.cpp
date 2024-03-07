@@ -87,11 +87,11 @@ std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request
     result.push_back("CONTENT_LENGTH=" + Utility::numberToString(request.body.size()));
     /*The path is virtual because it represents a URL path rather than a physical file system path. Is request.queryPath the virtual path?*/
     result.push_back("SCRIPT_NAME=" + request.queryPath.toString());
-    result.push_back("PATH_INFO=" + request.queryParameters.toString());
+    result.push_back("PATH_INFO=");
     if (request.queryParameters.isEmpty())
         result.push_back("PATH_TRANSLATED=NULL");
     else
-        result.push_back("PATH_TRANSLATED=" + routingInfo.getRedirectRoute()->redirectLocation + request.queryParameters.toString());
+        result.push_back("PATH_TRANSLATED=" + routingInfo.nodePath + request.queryParameters.toString());
     result.push_back("QUERY_STRING=" + request.queryParameters.toString());
     /* Will not be used and no DNS lookup performed*/
     result.push_back("REMOTE_HOST=NULL");
