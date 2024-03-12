@@ -1,18 +1,19 @@
 #include "routing.hpp"
 #include "utility.hpp"
 
-/* Sets the route pointer to the given local route; also sets the status */
-void RoutingInfo::setLocalRoute(const LocalRouteConfig *localRouteConfig)
+/* Sets the route pointer to the given local route and its node type; also sets the status */
+void RoutingInfo::setLocalRoute(const LocalRouteConfig *localRouteConfig, NodeType nodeType)
 {
     status = ROUTING_STATUS_FOUND_LOCAL;
-    opaqueRoute = reinterpret_cast<const void *>(localRouteConfig);
+    _opaqueRoute = reinterpret_cast<const void *>(localRouteConfig);
+    _nodeType = nodeType;
 }
 
 /* Sets the route pointer to the given redirect route; also sets the status */
 void RoutingInfo::setRedirectRoute(const RedirectRouteConfig *redirectRouteConfig)
 {
     status = ROUTING_STATUS_FOUND_REDIRECT;
-    opaqueRoute = reinterpret_cast<const void *>(redirectRouteConfig);
+    _opaqueRoute = reinterpret_cast<const void *>(redirectRouteConfig);
 }
 
 /* Finds a route on a server configuration using the given query path */
@@ -56,7 +57,7 @@ RoutingInfo RoutingInfo::findRoute(const ServerConfig &serverConfig, Slice query
         info.hasCgiInterpreter = false;
         bestLength = config.path.size();
         info.nodePath = path;
-        info.setLocalRoute(&config);
+        info.setLocalRoute(&config, nodeType);
 
         // Search for the CGI interpreter
         std::map<std::string, std::string>::const_iterator iterator = config.cgiTypes.begin();
