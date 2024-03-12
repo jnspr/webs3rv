@@ -53,9 +53,23 @@ RoutingInfo RoutingInfo::findRoute(const ServerConfig &serverConfig, Slice query
             continue;
 
         // Populate with the current route
+        info.hasCgiInterpreter = false;
         bestLength = config.path.size();
         info.nodePath = path;
         info.setLocalRoute(&config);
+
+        // Search for the CGI interpreter
+        std::map<std::string, std::string>::const_iterator iterator = config.cgiTypes.begin();
+        for (; iterator != config.cgiTypes.end(); iterator++)
+        {
+            std::cout << queryPath << std::endl;
+            if (queryPath.endsWith(iterator->first))
+            {
+                info.hasCgiInterpreter = true;
+                info.cgiInterpreter = iterator->second;
+                break;
+            }
+        }
     }
 
     // Search for a redirect route
@@ -70,6 +84,7 @@ RoutingInfo RoutingInfo::findRoute(const ServerConfig &serverConfig, Slice query
             continue;
 
         // Populate with the current route
+        info.hasCgiInterpreter = false;
         bestLength = config.path.size();
         info.setRedirectRoute(&config);
     }
