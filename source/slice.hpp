@@ -75,6 +75,9 @@ public:
     /* Gets if the slice starts with the given prefix */
     bool startsWith(Slice prefix) const;
 
+    /* Gets if the slice ends with the given suffix */
+    bool endsWith(Slice prefix) const;
+
     /* Returns a new slice with the given number of characters removed from the start,
        the size is clamped by the available character count */
     Slice cut(size_t amount) const;
