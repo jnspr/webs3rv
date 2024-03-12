@@ -121,7 +121,7 @@ bool Slice::endsWith(Slice prefix) const
         return false;
     if (_length == 0)
         return true;
-    return memcmp(&_string[_length - prefix._length - 1], prefix._string, prefix._length) == 0;
+    return memcmp(&_string[_length - prefix._length], prefix._string, prefix._length) == 0;
 }
 
 /* Returns a new slice with the given number of characters removed from the start,
