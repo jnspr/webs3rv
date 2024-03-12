@@ -125,6 +125,16 @@ std::string ConfigParser::parseString()
     return str;
 }
 
+std::string ConfigParser::parseLocalRoutePath()
+{
+    expect(DATA);
+    std::string str = currentToken().data;
+    if (str.empty() || str[0] != '/')
+        throw ConfigException("Error: Invalid path. Shall begin with /", _config_input, _tokens[_current].offset);
+    moveToNextToken();
+    return str;
+}
+
 uint16_t ConfigParser::parseUint16()
 {
     expect(DATA);
@@ -174,7 +184,7 @@ LocalRouteConfig ConfigParser::parseLocalRouteConfig(ServerConfig &serverConfig)
     std::map<std::string, std::string> currentCgiFileExtension;
 
     moveToNextToken();
-    localRouteConfig.path = parseString();
+    localRouteConfig.path = parseLocalRoutePath();
     isRedundantToken(_tokens[_current - 1].offset, serverConfig, KW_LOCATION,
                      localRouteConfig.path, _config_input);
     expect(SY_BRACE_OPEN);
