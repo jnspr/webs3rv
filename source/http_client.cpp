@@ -1,6 +1,8 @@
+#include "http_exception.hpp"
 #include "http_client.hpp"
 #include "application.hpp"
 #include "utility.hpp"
+#include "mime_db.hpp"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -57,37 +59,55 @@ void HttpClient::handleRequest(HttpRequest request)
     RoutingInfo info;
     info.findRoute(_config, request.queryPath);
 
-    NodeType type = Utility::queryNodeType(info.nodePath);
-    switch (type)
-    {
-        case NODE_TYPE_NOT_FOUND:
-            std::cout << "node not found 404" << std::endl; // placeholder
-            break;
-        case NODE_TYPE_NO_ACCESS:
-            throw std::runtime_error("node inecessible"); // replace with right exception 
-            break;
-        case NODE_TYPE_UNSUPPORTED:
-            throw std::runtime_error("unsupported node type"); // replace with right exception 
-            break;
-        default:
-            break;
-    }
     
-
-    if (info.status ==  ROUTING_STATUS_FOUND_LOCAL)
+    if (info.status == ROUTING_STATUS_NOT_FOUND)
+        throw HttpException(404);
+    else if (info.status == ROUTING_STATUS_NO_ACCESS)
+        throw HttpException(403);
+    else if (info.status ==  ROUTING_STATUS_FOUND_LOCAL)
     {
-            info.getLocalRoute()->allowedMethods
-    // vergleichen mit request.methods
+        std::set<HttpMethod>::iterator it = info.getLocalRoute()->allowedMethods.find(request.method);
+        if (it == info.getLocalRoute()->allowedMethods.end())
+            throw HttpException(405);
+        
+        switch (info.getLocalNodeType())
+        {
+            case NODE_TYPE_REGULAR:
+                std::cout << "NODE_TYPE_REGULAR" << std::endl;
+                if (Slice(info.nodePath).endsWith(C_SLICE(".cgi")))
+                    std::cout << "Starting CGI process (placeholder)" << std::endl;
+                else 
+                {
+                    std::string mimetype = g_mimeDB.getMimeType(Slice(info.nodePath));
+                   // Send the file with Content-Length (not chunked)
+                }
+                break;
+            case NODE_TYPE_DIRECTORY:
+                std::cout << "NODE_TYPE_DIRECTORY" << std::endl;
+                if (Utility::queryNodeType(info.getLocalRoute()->indexFile) == 0)
+                {
+                    switch(info.getLocalRoute()->allowListing)
+                    {
+                        case 0:
+                            throw HttpException(403);
+                        case 1:
+                            std::cout << "Generating autoindex (Placeholder)";
+                            break;
+                    }
+                }
+                else 
+                    throw HttpException(403); 
+                break;
+            default:
+                break;
+        }
     }
     else if (info.status == ROUTING_STATUS_FOUND_REDIRECT)
     {
-
+        std::set<HttpMethod>::iterator it = info.getRedirectRoute()->allowedMethods.find(request.method);
+        if (it == info.getRedirectRoute()->allowedMethods.end())
+            throw std::runtime_error("Method not allowed");
     }
-
-
-    // check allowed methods 
-
-
 
 
     // TODO: Implement check if file exists on route in ServerConfig::findRoute()
