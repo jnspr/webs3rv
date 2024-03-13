@@ -54,44 +54,9 @@ void HttpClient::handleRequest(HttpRequest request)
     if (!Utility::checkPathLevel(request.queryPath))
         throw std::runtime_error("Client tried to access above-root directory");
 
-    RoutingInfo info;
-    info.findRoute(_config, request.queryPath);
-
-    NodeType type = Utility::queryNodeType(info.nodePath);
-    switch (type)
-    {
-        case NODE_TYPE_NOT_FOUND:
-            std::cout << "node not found 404" << std::endl; // placeholder
-            break;
-        case NODE_TYPE_NO_ACCESS:
-            throw std::runtime_error("node inecessible"); // replace with right exception 
-            break;
-        case NODE_TYPE_UNSUPPORTED:
-            throw std::runtime_error("unsupported node type"); // replace with right exception 
-            break;
-        default:
-            break;
-    }
-    
-
-    if (info.status ==  ROUTING_STATUS_FOUND_LOCAL)
-    {
-            info.getLocalRoute()->allowedMethods
-    // vergleichen mit request.methods
-    }
-    else if (info.status == ROUTING_STATUS_FOUND_REDIRECT)
-    {
-
-    }
-
-
-    // check allowed methods 
-
-
-
-
     // TODO: Implement check if file exists on route in ServerConfig::findRoute()
-    //       ^ Don't use stat() directly, use Utility::queryNodeType(
+    //       ^ Don't use stat() directly, use Utility::queryNodeType()
+
     // TODO: Find route using ServerConfig::findRoute()
     //       ^ Quit early when node type is NODE_TYPE_NO_ACCESS (HTTP 403)
     //       ^ Only 404 when the route wasn't found
