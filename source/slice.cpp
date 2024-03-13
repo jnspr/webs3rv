@@ -114,6 +114,16 @@ bool Slice::startsWith(Slice prefix) const
     return memcmp(_string, prefix._string, prefix._length) == 0;
 }
 
+/* Gets if the slice ends with the given suffix */
+bool Slice::endsWith(Slice prefix) const
+{
+    if (_length < prefix._length)
+        return false;
+    if (_length == 0)
+        return true;
+    return memcmp(&_string[_length - prefix._length], prefix._string, prefix._length) == 0;
+}
+
 /* Returns a new slice with the given number of characters removed from the start,
    the size is clamped by the available character count */
 Slice Slice::cut(size_t amount) const

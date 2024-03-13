@@ -1,6 +1,7 @@
 #include "utility.hpp"
 
 #include <errno.h>
+#include <unistd.h>
 #include <iostream>
 #include <stdexcept>
 #include <sys/stat.h>
@@ -13,11 +14,15 @@ NodeType Utility::queryNodeType(const char *path)
     if (stat(path, &result) != 0)
     {
         if (errno == EACCES)
-            return NODE_TYPE_NOT_FOUND;
-        if (errno == ENOENT)
             return NODE_TYPE_NO_ACCESS;
+        if (errno == ENOENT)
+            return NODE_TYPE_NOT_FOUND;
         throw std::runtime_error("Unable to query file information");
     }
+
+    // Separately check for permissions on the node since stat() doesn't account for this
+    if (access(path, R_OK) != 0)
+        return NODE_TYPE_NO_ACCESS;
 
     if (S_ISREG(result.st_mode))
         return NODE_TYPE_REGULAR;

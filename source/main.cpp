@@ -2,6 +2,7 @@
 #include "config_parser.hpp"
 #include "config_tokenizer.hpp"
 #include "debug_utility.hpp"
+#include "routing.hpp"
 
 #include <iostream>
 
