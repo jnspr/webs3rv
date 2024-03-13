@@ -153,27 +153,25 @@ void Application::startCgiProcess(HttpClient *client, const HttpRequest &request
 {
     // Create a CGI process
     CgiProcess *process = new CgiProcess(client, request, routingInfo);
-    client->_process = process;
 
     // Subscribe the process to the dispatcher
     try
     {
-        //_dispatcher.subscribe(process->getProcess().getInputFileno(), EPOLLIN | EPOLLHUP, process);
-        _dispatcher.subscribe(client->getFileno(), EPOLLIN | EPOLLHUP, client);
+        _dispatcher.subscribe(process->getProcess().getOutputFileno(), EPOLLIN | EPOLLHUP, process);
     }
     catch(...)
     {
         delete process;
         throw;
     }
+    client->_process = process;
 }
 
 /*Close CGI processes for the given client */
 void Application::closeCgiProcess(HttpClient *client)
 {
     // Unsubscribe the process from the dispatcher
-    _dispatcher.unsubscribe(client->getFileno());
-    //_dispatcher.unsubscribe(client->_process->getProcess().getInputFileno());
+    _dispatcher.unsubscribe(client->_process->getProcess().getOutputFileno());
 
     // Destroy the process
     delete client->_process;

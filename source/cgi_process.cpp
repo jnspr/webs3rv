@@ -5,11 +5,11 @@
 
 /* Constructs a CGI process from the given client, request and route result */
 CgiProcess::CgiProcess(HttpClient *client, const HttpRequest &request, const RoutingInfo &routingInfo)
-    : _process(setupArguments(request, routingInfo), setupEnvironment(request, routingInfo))
+    :  _state(CGI_PROCESS_RUNNING)
+    , _client(client)
+    , _process(setupArguments(request, routingInfo), setupEnvironment(request, routingInfo))
 {
-    (void)client;
-    (void)request;
-    (void)routingInfo;
+
 }
 
 /* Handles one or multiple events */
@@ -17,9 +17,30 @@ void CgiProcess::handleEvents(uint32_t eventMask)
 {
     if (_state != CGI_PROCESS_RUNNING)
         return;
-    (void)eventMask;
-    // TODO: Implement this
 
+    if (eventMask & EPOLLOUT)
+        return;
+
+    if (getProcess().getStatus() == PROCESS_EXIT_SUCCESS)
+    {
+        _state = CGI_PROCESS_SUCCESS;
+        _client->handleCgiState();
+    }
+    else if (getProcess().getStatus() == PROCESS_EXIT_FAILURE)
+    {
+        _state = CGI_PROCESS_FAILURE;
+        _client->handleCgiState();
+    }
+    else if (getProcess().getStatus() == PROCESS_RUNNING)
+    {
+        ssize_t length;
+        char    buffer[8192];
+
+        if ((length = read(getProcess().getOutputFileno(), buffer, sizeof(buffer))) < 0)
+            throw std::runtime_error("Unable to read from CGI process");
+        if (length == 0)
+            throw std::runtime_error("End of stream");
+    }
 }
 
 /* Handles an exception that occurred in `handleEvent()` */
@@ -60,14 +81,13 @@ std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request
     result.push_back("REQUEST_METHOD=" + std::string(httpMethodToString(request.method)));
     result.push_back("CONTENT_TYPE=");
     result.push_back("CONTENT_LENGTH=" + Utility::numberToString(request.body.size()));
-    /*The path is virtual because it represents a URL path rather than a physical file system path. Is request.queryPath the virtual path?*/
     result.push_back("SCRIPT_NAME=" + request.queryPath.toString());
     result.push_back("PATH_INFO=");
     if (request.queryParameters.isEmpty())
         result.push_back("PATH_TRANSLATED=NULL");
     else
         result.push_back("PATH_TRANSLATED=" + routingInfo.nodePath + request.queryParameters.toString());
-    result.push_back("QUERY_STRING=" + request.queryParameters.toString());
+    result.push_back("QUERY_STRING=?" + request.queryParameters.toString());
     /* Will not be used and no DNS lookup performed*/
     result.push_back("REMOTE_HOST=NULL");
     result.push_back("REMOTE_ADDR=" + Utility::numberToString(request.clientHost));
