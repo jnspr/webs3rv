@@ -5,9 +5,9 @@
 
 /* Constructs a CGI process from the given client, request and route result */
 CgiProcess::CgiProcess(HttpClient *client, const HttpRequest &request, const RoutingInfo &routingInfo)
-    : _process(setupArguments(request, routingInfo), setupEnvironment(request, routingInfo))
-    , _state(CGI_PROCESS_RUNNING)
+    :  _state(CGI_PROCESS_RUNNING)
     , _client(client)
+    , _process(setupArguments(request, routingInfo), setupEnvironment(request, routingInfo))
 {
 
 }
@@ -21,17 +21,17 @@ void CgiProcess::handleEvents(uint32_t eventMask)
     if (eventMask & EPOLLOUT)
         return;
 
-    if (getProcess().getStatus() == ProcessStatus::PROCESS_EXIT_SUCCESS)
+    if (getProcess().getStatus() == PROCESS_EXIT_SUCCESS)
     {
         _state = CGI_PROCESS_SUCCESS;
         _client->handleCgiState();
     }
-    else if (getProcess().getStatus() == ProcessStatus::PROCESS_EXIT_FAILURE)
+    else if (getProcess().getStatus() == PROCESS_EXIT_FAILURE)
     {
         _state = CGI_PROCESS_FAILURE;
         _client->handleCgiState();
     }
-    else if (getProcess().getStatus() == ProcessStatus::PROCESS_RUNNING)
+    else if (getProcess().getStatus() == PROCESS_RUNNING)
     {
         ssize_t length;
         char    buffer[8192];
