@@ -179,9 +179,11 @@ void HttpClient::handleCgiState()
     // TODO: Implement this
     if (_process->getState() == CGI_PROCESS_SUCCESS)
     {
+        // start the response to client
     }
     else if (_process->getState() == CGI_PROCESS_FAILURE)
     {
+        _application.closeCgiProcess(this);
     }
     else if (_process->getState() == CGI_PROCESS_TIMEOUT)
     {
