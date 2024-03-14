@@ -3,7 +3,6 @@
 /* Constructs a mime database with the default entries */
 MimeDB::MimeDB(): _defaultType("application/octet-stream")
 {
-    // TODO: Replace with actual entries
     _entries["html"] = "text/html";
     _entries["htm"] = "text/html";
     _entries["css"] = "text/css";
@@ -72,3 +71,4 @@ const std::string &MimeDB::getMimeType(Slice path)
 }
 
 /* The global instance of the mime type database */
+MimeDB g_mimeDB;
