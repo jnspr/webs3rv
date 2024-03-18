@@ -41,8 +41,8 @@ public:
         return _length;
     }
 
-    /* Gets the character at the given index */
-    inline char operator[](size_t index) const
+    /* Gets a constant reference to the character at the given index */
+    inline const char &operator[](size_t index) const
     {
         return _string[index];
     }
