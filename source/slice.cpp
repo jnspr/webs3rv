@@ -142,3 +142,12 @@ void Slice::removeDoubleQuotes()
         _length -= 2;
     }
 }
+
+/* Consumes the given number of characters from the slice's start */
+void Slice::consumeStart(size_t count)
+{
+    if (count > _length)
+        count = _length;
+    _string += count;
+    _length -= count;
+}

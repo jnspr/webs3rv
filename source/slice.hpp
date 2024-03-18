@@ -90,7 +90,9 @@ public:
 
     /* Removes leading and trailing double-quotes from the slice */
     void removeDoubleQuotes();
-    
+
+    /* Consumes the given number of characters from the slice's start */
+    void consumeStart(size_t count);
 private:
     const char *_string;
     size_t      _length;
