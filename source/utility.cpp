@@ -73,3 +73,32 @@ std::string Utility::ipv4ToString(uint32_t ipv4Addr)
     return std::string(addrBuffer);
 }
 
+/* Attempts to convert a string slice to a `size_t` */
+bool Utility::parseSize(Slice string, size_t &outResult)
+{
+    char   current;
+    size_t digit;
+    size_t result = 0;
+
+    for (size_t index = 0; index < string.getLength(); index++)
+    {
+        // Check if the character is a digit
+        current = string[index];
+        if (current < '0' || current > '9')
+            return false;
+
+        // Shift the result to the left (decimal) and check overflow
+        if (result != 0 && result / SIZE_MAX < 10)
+            return false;
+        result *= 10;
+
+        // Add the digit and check overflow
+        digit = static_cast<unsigned char>(current - '0');
+        if (SIZE_MAX - result < digit)
+            return false;
+        result += digit;
+    }
+
+    outResult = result;
+    return true;
+}

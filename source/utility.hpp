@@ -4,6 +4,7 @@
 #include "slice.hpp"
 
 #include <string>
+#include <cstddef>
 #include <sstream>
 #include <stdint.h>
 #include <cstdio> 
@@ -43,6 +44,9 @@ namespace Utility
 
     /* Converts a uint32_t ipv4 adress to a string*/
     std::string ipv4ToString(uint32_t ipv4Addr);
+
+    /* Attempts to convert a string slice to a `size_t` */
+    bool parseSize(Slice string, size_t &outResult);
 }
 
 #endif // UTILITY_hpp
