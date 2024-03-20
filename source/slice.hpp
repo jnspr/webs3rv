@@ -93,6 +93,9 @@ public:
 
     /* Consumes the given number of characters from the slice's start */
     void consumeStart(size_t count);
+
+    /* Attempts to consume the given prefix and returns whether it was consumed */
+    bool consumeStart(Slice prefix);
 private:
     const char *_string;
     size_t      _length;

@@ -151,3 +151,13 @@ void Slice::consumeStart(size_t count)
     _string += count;
     _length -= count;
 }
+
+/* Attempts to consume the given prefix and returns whether it was consumed */
+bool Slice::consumeStart(Slice prefix)
+{
+    if (!startsWith(prefix))
+        return false;
+    _string += prefix._length;
+    _length -= prefix._length;
+    return true;
+}
