@@ -1,4 +1,5 @@
 #include "http_exception.hpp"
+#include "debug_utility.hpp"
 #include "http_client.hpp"
 #include "application.hpp"
 #include "utility.hpp"
@@ -19,6 +20,7 @@ HttpClient::HttpClient(Application &application, const ServerConfig &config, int
     , _process(NULL)
     , _host(host)
     , _port(port)
+    , _parser(config, host, port)
 {
 }
 
@@ -48,6 +50,29 @@ void HttpClient::handleEvents(uint32_t eventMask)
             throw std::runtime_error("Unable to read from client");
         if (length == 0)
             throw std::runtime_error("End of stream");
+
+        Slice data(buffer, length);
+        if (_parser.commit(data))
+        {
+            switch (_parser.getPhase())
+            {
+                case HTTP_REQUEST_HEADER_EXCEED:
+                    printf("HTTP_REQUEST_HEADER_EXCEED\n");
+                    break;
+                case HTTP_REQUEST_BODY_EXCEED:
+                    printf("HTTP_REQUEST_BODY_EXCEED\n");
+                    break;
+                case HTTP_REQUEST_MALFORMED:
+                    printf("HTTP_REQUEST_MALFORMED\n");
+                    break;
+                case HTTP_REQUEST_COMPLETED:
+                    printf("HTTP_REQUEST_COMPLETED\n");
+                    Debug::printRequest(_parser.getRequest());
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
 

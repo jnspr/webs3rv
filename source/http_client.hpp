@@ -6,6 +6,7 @@
 #include "dispatcher.hpp"
 #include "cgi_process.hpp"
 #include "http_request.hpp"
+#include "http_request_parser.hpp"
 
 #include <stdint.h>
 
@@ -54,6 +55,7 @@ private:
     CgiProcess         *_process;
     uint32_t            _host;
     uint16_t            _port;
+    HttpRequestParser   _parser;
 
     /* Handles one or multiple events */
     void handleEvents(uint32_t eventMask);
