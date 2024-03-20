@@ -59,13 +59,13 @@ private:
     void handleEvents(uint32_t eventMask);
 
     /* Handles the request*/
-    void handleRequest(HttpRequest request);
+    void handleRequest(const HttpRequest &request); // take reference for all the requests
 
     /* Uploads a file sent by a POST request*/
-    void uploadFile(HttpRequest request);
+    void uploadFile(const HttpRequest &request);
 
     /* Parses the upload body*/
-    void parseupload(HttpRequest request, uploadData &data);
+    void parseupload(const HttpRequest &request, uploadData &data);
 
     /* Handles an exception that occurred in `handleEvent()` */
     void handleException();

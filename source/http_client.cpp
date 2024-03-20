@@ -51,15 +51,13 @@ void HttpClient::handleEvents(uint32_t eventMask)
     }
 }
 
-void HttpClient::handleRequest(HttpRequest request)
+void HttpClient::handleRequest(const HttpRequest &request)
 {
     if (!Utility::checkPathLevel(request.queryPath))
         throw std::runtime_error("Client tried to access above-root directory");
 
-    RoutingInfo info;
-    info.findRoute(_config, request.queryPath);
+    RoutingInfo info = info.findRoute(_config, request.queryPath);
 
-    
     if (info.status == ROUTING_STATUS_NOT_FOUND)
         throw HttpException(404);
     else if (info.status == ROUTING_STATUS_NO_ACCESS)
@@ -74,8 +72,8 @@ void HttpClient::handleRequest(HttpRequest request)
         {
             case NODE_TYPE_REGULAR:
                 std::cout << "NODE_TYPE_REGULAR" << std::endl;
-                if (Slice(info.nodePath).endsWith(C_SLICE(".cgi")))
-                    std::cout << "Starting CGI process (placeholder)" << std::endl;
+                if (Slice(info.nodePath).endsWith(C_SLICE(".cgi"))) // 
+                    _application.startCgiProcess(this, request, info);
                 else 
                 {
                     std::string mimetype = g_mimeDB.getMimeType(Slice(info.nodePath));
@@ -86,14 +84,10 @@ void HttpClient::handleRequest(HttpRequest request)
                 std::cout << "NODE_TYPE_DIRECTORY" << std::endl;
                 if (Utility::queryNodeType(info.getLocalRoute()->indexFile) == 0)
                 {
-                    switch(info.getLocalRoute()->allowListing)
-                    {
-                        case 0:
-                            throw HttpException(403);
-                        case 1:
-                            std::cout << "Generating autoindex (Placeholder)";
-                            break;
-                    }
+                    if (info.getLocalRoute()->allowListing)
+                         std::cout << "Generating autoindex (Placeholder)";
+                    else
+                        throw HttpException(403);
                 }
                 else 
                     throw HttpException(403); 
@@ -131,7 +125,7 @@ void HttpClient::handleRequest(HttpRequest request)
     //           ^ Send the file with Content-Length (not chunked)
 }
 
-void HttpClient::uploadFile(HttpRequest request)
+void HttpClient::uploadFile(const HttpRequest &request)
 { 
 
     uploadData data;
@@ -153,7 +147,7 @@ void HttpClient::uploadFile(HttpRequest request)
 }
 
 
-void HttpClient::parseupload(HttpRequest request, uploadData &data)
+void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
 {
 
     printf("Parsing upload\n");
