@@ -41,8 +41,8 @@ public:
         return _length;
     }
 
-    /* Gets the character at the given index */
-    inline char operator[](size_t index) const
+    /* Gets a constant reference to the character at the given index */
+    inline const char &operator[](size_t index) const
     {
         return _string[index];
     }
@@ -90,7 +90,9 @@ public:
 
     /* Removes leading and trailing double-quotes from the slice */
     void removeDoubleQuotes();
-    
+
+    /* Consumes the given number of characters from the slice's start */
+    void consumeStart(size_t count);
 private:
     const char *_string;
     size_t      _length;
