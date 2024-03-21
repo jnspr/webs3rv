@@ -68,6 +68,7 @@ void HttpClient::handleEvents(uint32_t eventMask)
                 case HTTP_REQUEST_COMPLETED:
                     printf("HTTP_REQUEST_COMPLETED\n");
                     Debug::printRequest(_parser.getRequest());
+                    handleRequest(_parser.getRequest());
                     break;
                 default:
                     break;
@@ -82,6 +83,7 @@ void HttpClient::handleRequest(const HttpRequest &request)
         throw std::runtime_error("Client tried to access above-root directory");
 
     RoutingInfo info = info.findRoute(_config, request.queryPath);
+    printf("%i\n", info.status);
 
     if (info.status == ROUTING_STATUS_NOT_FOUND)
         throw HttpException(404);
@@ -106,8 +108,16 @@ void HttpClient::handleRequest(const HttpRequest &request)
                 }
                 break;
             case NODE_TYPE_DIRECTORY:
-                std::cout << "NODE_TYPE_DIRECTORY" << std::endl;
-                if (Utility::queryNodeType(info.getLocalRoute()->indexFile) == 0)
+                std::cout << "NODE_TYPE_DIRECTORY" << std::endl; 
+                if (request.method == HTTP_METHOD_POST)
+                {
+                    std::cout << "allowUpload: " <<  info.getLocalRoute()->allowUpload << std::endl;
+                    if (info.getLocalRoute()->allowUpload)
+                        uploadFile(request, info);
+                    else
+                        throw HttpException(403);
+                }
+                else if (Utility::queryNodeType(info.getLocalRoute()->indexFile) == 0)
                 {
                     if (info.getLocalRoute()->allowListing)
                          std::cout << "Generating autoindex (Placeholder)";
@@ -150,15 +160,17 @@ void HttpClient::handleRequest(const HttpRequest &request)
     //           ^ Send the file with Content-Length (not chunked)
 }
 
-void HttpClient::uploadFile(const HttpRequest &request)
+void HttpClient::uploadFile(const HttpRequest &request, const RoutingInfo &info)
 { 
 
     uploadData data;
     printf("Uploading file\n");
 
     parseupload(request, data);
-        printf("file to open: %s\n", (data.filename).toString().c_str());
-        int fd = open((data.filename).toString().c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0666);
+
+    std::string path = info.nodePath + '/' + data.filename.stripStart('/').toString();
+
+        int fd = open(path.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0666);
         if (fd == -1)
             throw std::runtime_error("Unable to open file");
         int writereturn = write(fd, data.fileContent.toString().c_str(), data.fileContent.getLength());

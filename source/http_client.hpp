@@ -6,6 +6,7 @@
 #include "dispatcher.hpp"
 #include "cgi_process.hpp"
 #include "http_request.hpp"
+#include "routing.hpp"
 #include "http_request_parser.hpp"
 
 #include <stdint.h>
@@ -64,7 +65,7 @@ private:
     void handleRequest(const HttpRequest &request); // take reference for all the requests
 
     /* Uploads a file sent by a POST request*/
-    void uploadFile(const HttpRequest &request);
+    void uploadFile(const HttpRequest &request, const RoutingInfo &info);
 
     /* Parses the upload body*/
     void parseupload(const HttpRequest &request, uploadData &data);
