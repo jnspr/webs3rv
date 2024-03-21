@@ -86,6 +86,14 @@ Slice &Slice::stripStart(char character)
     return *this;
 }
 
+/* Removes any occurrences of the given character from the end of the slice */
+Slice &Slice::stripEnd(char character)
+{
+    if (_length > 0 && _string[_length - 1] == character)
+        _length--;
+    return *this;
+}
+
 /* If available, removes the given prefix from the slice and returns true */
 bool Slice::removePrefix(Slice prefix)
 {

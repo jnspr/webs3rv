@@ -39,7 +39,7 @@ RoutingInfo RoutingInfo::findRoute(const ServerConfig &serverConfig, Slice query
             continue;
 
         // Build the full node path
-        std::string path = config.rootDirectory + "/" + queryPath.stripStart('/').toString();
+        std::string path = config.rootDirectory + "/" + queryPath.cut(config.path.size()).stripStart('/').stripEnd('/').toString();
         nodeType = Utility::queryNodeType(path);
 
         // Return early when a node exists but is not accessible

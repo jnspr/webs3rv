@@ -66,6 +66,9 @@ public:
     /* Removes any occurrences of the given character from the start of the slice */
     Slice &stripStart(char character);
 
+    /* Removes any occurrences of the given character from the end of the slice */
+    Slice &stripEnd(char character);
+
     /* If available, removes the given prefix from the slice and returns true */
     bool removePrefix(Slice prefix);
 
