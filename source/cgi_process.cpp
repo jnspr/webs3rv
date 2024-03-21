@@ -81,7 +81,7 @@ std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request
     result.push_back("REQUEST_METHOD=" + std::string(httpMethodToString(request.method)));
     result.push_back("CONTENT_TYPE=");
     result.push_back("CONTENT_LENGTH=" + Utility::numberToString(request.body.size()));
-    result.push_back("SCRIPT_NAME=" + request.queryPath.toString());
+    result.push_back("SCRIPT_NAME=" + request.queryPath);
     result.push_back("PATH_INFO=");
     if (request.queryParameters.isEmpty())
         result.push_back("PATH_TRANSLATED=NULL");
