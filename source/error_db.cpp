@@ -1,4 +1,4 @@
-#include "error_db.h"
+#include "error_db.hpp"
 
 /* Constructs an error database with the default entries */
 ErrorDB::ErrorDB(): _defaultError("Unknown Error")
@@ -67,7 +67,7 @@ ErrorDB::ErrorDB(): _defaultError("Unknown Error")
 /* Gets the error message for the error number specified */
 const std::string &ErrorDB::getErrorType(int code)
 {
-    std::map<int, std::string>::const_iterator iterator = find(_entries.begin(), _entries.end(), code);
+    std::map<int, std::string>::const_iterator iterator = _entries.find(code);
     if (iterator != _entries.end())
         return iterator->second;
     return _defaultError;

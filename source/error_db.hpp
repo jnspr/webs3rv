@@ -3,7 +3,6 @@
 
 #include <map>
 #include <string>
-#include <algorithm>
 
 class ErrorDB {
 

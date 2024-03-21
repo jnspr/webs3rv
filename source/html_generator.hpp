@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
+#include "error_db.hpp"
 
 
 class Generator
@@ -14,7 +15,7 @@ class Generator
 private:
 
 public:
-    static std::string ErrorPage(int error_number, std::string error_string);
+    static std::string ErrorPage(int error_number);
     static std::string DirectoryList(std::string path);
 
     static std::string arrangeOutput(std::string basicString, std::vector<dirent *> vector1);

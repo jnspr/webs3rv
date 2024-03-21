@@ -1,4 +1,5 @@
 #include "html_generator.hpp"
+#include "utility.hpp"
 
 std::string toLowercase(const std::string& str) {
     std::string result = str;
@@ -16,8 +17,9 @@ bool compareDirentNamesCaseInsensitive(const dirent* a, const dirent* b) {
 }
 
 
-std::string Generator::ErrorPage(int error_number, std::string error_string)
+std::string Generator::ErrorPage(int error_number)
 {
+    std::string error_string = g_errorDB.getErrorType(error_number);
     std::string output = "<!DOCTYPE html>\n"
                          "<html>\n"
                          "\n"
@@ -31,7 +33,7 @@ std::string Generator::ErrorPage(int error_number, std::string error_string)
                          "  <h1>Error:</h1>\n"
                          "<hr>\n"
                          "  Error Number ";
-    output += std::to_string(error_number);
+    output += Utility::numberToString(error_number);
     output += " : ";
     output += error_string;
     output += "\n"
