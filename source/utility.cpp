@@ -107,12 +107,25 @@ bool Utility::parseSize(Slice string, size_t &outResult)
     return true;
 }
 
+/* Attempts to convert a hexadecimal character (0-9, A-F, a-f) into its numeric value (0-15) */
+bool Utility::parseHexChar(char character, uint8_t &outResult)
+{
+    if (character >= '0' && character <= '9')
+        outResult = static_cast<unsigned char>(character - '0');
+    else if (character >= 'A' && character <= 'F')
+        outResult = static_cast<unsigned char>(character - 'A' + 10);
+    else if (character >= 'a' && character <= 'f')
+        outResult = static_cast<unsigned char>(character - 'a' + 10);
+    else
+        return false;
+    return true;
+}
+
 /* Attempts to convert a string slice to a `size_t` */
 bool Utility::parseSizeHex(Slice string, size_t &outResult)
 {
-    char   current;
-    size_t digit;
-    size_t result = 0;
+    uint8_t digit;
+    size_t  result = 0;
 
     // Catch empty strings
     if (string.isEmpty())
@@ -120,24 +133,52 @@ bool Utility::parseSizeHex(Slice string, size_t &outResult)
 
     for (size_t index = 0; index < string.getLength(); index++)
     {
-        current = string[index];
-
         // Check if the character is a hex digit and transform it
-        if (current >= '0' && current <= '9')
-            digit = static_cast<unsigned char>(current - '0');
-        else if (current >= 'A' && current <= 'F')
-            digit = static_cast<unsigned char>(current - 'A' + 10);
-        else if (current >= 'a' && current <= 'f')
-            digit = static_cast<unsigned char>(current - 'a' + 10);
-        else
+        if (!parseHexChar(string[index], digit))
             return false;
 
         // Shift the result to the left and check overflow
         if (index >= sizeof(size_t) * 2)
             return false;
-        result = (result << 4) | digit;
+        result = (result << 4) | static_cast<size_t>(digit);
     }
 
     outResult = result;
+    return true;
+}
+
+/* Attempts to convert a URL-encoded string slice to a URL-decoded string */
+bool Utility::decodeUrl(Slice string, std::string &outResult)
+{
+    std::stringstream stream;
+    uint8_t           upperFour, lowerFour;
+
+    for (size_t index = 0; index < string.getLength(); index++)
+    {
+        // Handle special characters
+        if (string[index] == '%')
+        {
+            // Check if there are enough characters left (2 hex digits after '%')
+            if (string.getLength() - index < 3)
+                return false;
+
+            // Parse the two hex digits
+            if (!parseHexChar(string[index + 1], upperFour))
+                return false;
+            if (!parseHexChar(string[index + 2], lowerFour))
+                return false;
+
+            // Combine the digits and write it to the string as a character
+            stream << static_cast<char>((upperFour << 4) | lowerFour);
+            index += 2; // The last character will be consumed by the loop
+        }
+        // Handle the '+' character as a space
+        else if (string[index] == '+')
+            stream << ' ';
+        else
+            stream << string[index];
+    }
+
+    outResult = stream.str();
     return true;
 }

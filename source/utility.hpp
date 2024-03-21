@@ -48,8 +48,14 @@ namespace Utility
     /* Attempts to convert a string slice to a `size_t` */
     bool parseSize(Slice string, size_t &outResult);
 
+    /* Attempts to convert a hexadecimal character (0-9, A-F, a-f) into its numeric value (0-15) */
+    bool parseHexChar(char character, uint8_t &outResult);
+
     /* Attempts to convert a string slice to a `size_t` */
     bool parseSizeHex(Slice string, size_t &outResult);
+
+    /* Attempts to convert a URL-encoded string slice to a URL-decoded string */
+    bool decodeUrl(Slice string, std::string &outResult);
 }
 
 #endif // UTILITY_hpp
