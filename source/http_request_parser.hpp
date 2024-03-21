@@ -43,7 +43,7 @@ public:
     }
 
     /* Gets the built request; only valid when the current phase is `HTTP_REQUEST_COMPLETED` */
-    inline HttpRequest getRequest() const
+    inline const HttpRequest &getRequest() const
     {
         if (_phase != HTTP_REQUEST_COMPLETED)
             throw std::runtime_error("Attempt to access incomplete or malformed request");

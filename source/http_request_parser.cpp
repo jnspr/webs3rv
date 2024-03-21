@@ -151,8 +151,31 @@ HttpRequestPhase HttpRequestParser::handleHeader(Slice &data)
 /* Handles a data commit in the `HTTP_REQUEST_BODY_RAW` phase */
 HttpRequestPhase HttpRequestParser::handleBodyRaw(Slice &data)
 {
-    (void)data;
-    throw std::runtime_error("Not implemented");
+    // Calculate the maximum amount of bytes that can be copied from the data slice
+    size_t copyLength = data.getLength();
+    if (copyLength > _bodyRemainder)
+        copyLength = _bodyRemainder;
+
+    // Copy the bytes into the body buffer
+    size_t oldLength = _request.body.size();
+    if (SIZE_MAX - oldLength < copyLength)
+        return HTTP_REQUEST_BODY_EXCEED;
+    _request.body.resize(oldLength + copyLength);
+    memcpy(&_request.body[oldLength], &data[0], copyLength);
+
+    // Consume the copied bytes and decrement the remaining body size
+    data.consumeStart(copyLength);
+    _bodyRemainder -= copyLength;
+
+    // If the body has been fully consumed, the request is completed
+    if (_bodyRemainder == 0)
+        return HTTP_REQUEST_COMPLETED;
+
+    // If the body size exceeds the allowed limit, the request is malformed
+    if (_bodyRemainder > _config.maxBodySize)
+        return HTTP_REQUEST_BODY_EXCEED;
+
+    return HTTP_REQUEST_BODY_RAW;
 }
 
 /* Handles a data commit in the `HTTP_REQUEST_BODY_CHUNKED_HEADER` phase */
