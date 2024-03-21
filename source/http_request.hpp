@@ -39,9 +39,9 @@ struct HttpRequest
     HttpMethod           method;
     uint32_t             clientHost;
     uint16_t             clientPort;
-    std::string          query;           // Full query string; eg. "/cgi-bin/demo.py?hello=world&abc=def"
-    Slice                queryPath;       // Query path; eg. "/cgi-bin/demo.py"
-    Slice                queryParameters; // Query parameters; eg. "hello=world&abc=def"
+    std::string          query;           // Full URL-encoded query string; eg. "/cgi-bin/demo.py?hello=world&abc=def"
+    std::string          queryPath;       // URL-decoded query path; eg. "/cgi-bin/demo.py"
+    Slice                queryParameters; // URL-encoded Query parameters; eg. "hello=world&abc=def"
     bool                 isLegacy;        // True when HTTP/1.0 instead of HTTP/1.1
     std::vector<Header>  headers;
     std::vector<uint8_t> body;
