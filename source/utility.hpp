@@ -47,6 +47,9 @@ namespace Utility
 
     /* Attempts to convert a string slice to a `size_t` */
     bool parseSize(Slice string, size_t &outResult);
+
+    /* Attempts to convert a string slice to a `size_t` */
+    bool parseSizeHex(Slice string, size_t &outResult);
 }
 
 #endif // UTILITY_hpp

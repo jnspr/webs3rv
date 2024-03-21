@@ -80,6 +80,10 @@ bool Utility::parseSize(Slice string, size_t &outResult)
     size_t digit;
     size_t result = 0;
 
+    // Catch empty strings
+    if (string.isEmpty())
+        return false;
+
     for (size_t index = 0; index < string.getLength(); index++)
     {
         // Check if the character is a digit
@@ -97,6 +101,41 @@ bool Utility::parseSize(Slice string, size_t &outResult)
         if (SIZE_MAX - result < digit)
             return false;
         result += digit;
+    }
+
+    outResult = result;
+    return true;
+}
+
+/* Attempts to convert a string slice to a `size_t` */
+bool Utility::parseSizeHex(Slice string, size_t &outResult)
+{
+    char   current;
+    size_t digit;
+    size_t result = 0;
+
+    // Catch empty strings
+    if (string.isEmpty())
+        return false;
+
+    for (size_t index = 0; index < string.getLength(); index++)
+    {
+        current = string[index];
+
+        // Check if the character is a hex digit and transform it
+        if (current >= '0' && current <= '9')
+            digit = static_cast<unsigned char>(current - '0');
+        else if (current >= 'A' && current <= 'F')
+            digit = static_cast<unsigned char>(current - 'A' + 10);
+        else if (current >= 'a' && current <= 'f')
+            digit = static_cast<unsigned char>(current - 'a' + 10);
+        else
+            return false;
+
+        // Shift the result to the left and check overflow
+        if (index >= sizeof(size_t) * 2)
+            return false;
+        result = (result << 4) | digit;
     }
 
     outResult = result;
