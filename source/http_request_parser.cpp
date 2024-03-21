@@ -305,6 +305,7 @@ bool HttpRequestParser::parseHeader(Slice data)
 {
     Slice methodSlice;
     Slice querySlice;
+    Slice queryPathSlice;
     Slice versionSlice;
 
     // Expect a valid HTTP method in the first field of the request line
@@ -317,6 +318,23 @@ bool HttpRequestParser::parseHeader(Slice data)
     if (!data.splitStart(' ', querySlice))
         return false;
     _request.query = querySlice.toString();
+
+    // Separate query path and parameters (if possible)
+    if (querySlice.splitStart('?', queryPathSlice))
+    {
+        // The path was separated, decode it into `queryPath`
+        if (!Utility::decodeUrl(queryPathSlice, _request.queryPath))
+            return false;
+        // Store the remainder as query parameters
+        _request.queryParameters = querySlice;
+    }
+    else
+    {
+        // Nothing was split, the whole query is the path
+        if (!Utility::decodeUrl(querySlice, _request.queryPath))
+            return false;
+        _request.queryParameters = Slice();
+    }
 
     // Expect HTTP 1.0 or 1.1 in the third field of the request line
     if (data.consumeStart(C_SLICE("HTTP/1.1")))
