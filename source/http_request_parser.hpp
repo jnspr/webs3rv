@@ -7,6 +7,7 @@
 #include <stdexcept>
 
 #define HTTP_REQUEST_HEADER_MAX_LENGTH 8192
+#define HTTP_REQUEST_BODY_CHUNKED_HEADER_MAX_LENGTH 256
 
 enum HttpRequestPhase
 {
@@ -15,7 +16,8 @@ enum HttpRequestPhase
     HTTP_REQUEST_BODY_RAW,
     HTTP_REQUEST_BODY_CHUNKED_HEADER,
     HTTP_REQUEST_BODY_CHUNKED_BODY,
-    HTTP_REQUEST_BODY_CHUNKED_CRLF,
+    HTTP_REQUEST_BODY_CHUNKED_CR,
+    HTTP_REQUEST_BODY_CHUNKED_LF,
 
     // Final phases
     HTTP_REQUEST_HEADER_EXCEED,
@@ -58,6 +60,9 @@ private:
     char                _headerBuffer[HTTP_REQUEST_HEADER_MAX_LENGTH];
     size_t              _headerLength;
     size_t              _bodyRemainder;
+    char                _chunkHeaderBuffer[HTTP_REQUEST_BODY_CHUNKED_HEADER_MAX_LENGTH];
+    size_t              _chunkHeaderLength;
+    bool                _isEndChunk;
 
     /* Handles a data commit in the `HTTP_REQUEST_HEADER` phase */
     HttpRequestPhase handleHeader(Slice &data);
@@ -71,11 +76,17 @@ private:
     /* Handles a data commit in the `HTTP_REQUEST_BODY_CHUNKED_BODY` phase */
     HttpRequestPhase handleBodyChunkedBody(Slice &data);
 
-    /* Handles a data commit in the `HTTP_REQUEST_BODY_CHUNKED_CRLF` phase */
-    HttpRequestPhase handleBodyChunkedCRLF(Slice &data);
+    /* Handles a data commit in the `HTTP_REQUEST_BODY_CHUNKED_CR` phase */
+    HttpRequestPhase handleBodyChunkedCR(Slice &data);
+
+    /* Handles a data commit in the `HTTP_REQUEST_BODY_CHUNKED_LF` phase */
+    HttpRequestPhase handleBodyChunkedLF(Slice &data);
 
     /* Parses the given HTTP header */
     bool parseHeader(Slice data);
+
+    /* Parses the given HTTP chunk header */
+    bool parseChunkHeader(Slice data);
 };
 
 #endif // HTTP_REQUEST_PARSER_hpp
