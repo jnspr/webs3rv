@@ -88,7 +88,7 @@ bool Utility::parseSize(Slice string, size_t &outResult)
             return false;
 
         // Shift the result to the left (decimal) and check overflow
-        if (result != 0 && result / SIZE_MAX < 10)
+        if (result != 0 && SIZE_MAX / result < 10)
             return false;
         result *= 10;
 
