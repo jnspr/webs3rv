@@ -34,7 +34,7 @@ void Application::configure()
         }
         _dispatcher.subscribe(server->getFileno(), EPOLLIN, server);
     }
-    
+
 
     _wasConfigured = true;
 }
@@ -74,7 +74,7 @@ void Application::mainLoop()
         headClient = _clients;
         while (headClient != NULL)
         {
-            /* Destroy the client if it is timeout */
+            // Destroy the client if it is timeout
             if (headClient->_timeout.isExpired())
             {
                 headClient->_markedForCleanup = true;
@@ -84,7 +84,7 @@ void Application::mainLoop()
                 
             if (headClient->_process != NULL)
             {
-                /* Destroy the process if it is timeout */
+                // Destroy the process if it is timeout
                 if (headClient->_process->getTimeout().isExpired())
                 {
                     headClient->_process->setState(CGI_PROCESS_TIMEOUT);
@@ -128,6 +128,8 @@ void Application::takeClient(int fileno, const ServerConfig &config, uint32_t ho
     client->_previous = NULL;
     client->_next = _clients;
     _clients = client;
+    if (client->_next != NULL)
+        client->_next->_previous = client;
 }
 
 /* Immediately releases and destroys the given client; DO NOT use from outside of this class */
