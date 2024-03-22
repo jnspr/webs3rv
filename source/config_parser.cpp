@@ -72,7 +72,7 @@ ServerConfig ConfigParser::parseServerConfig()
     }
 
     expect(SY_BRACE_CLOSE);
-    isServerTokensMissing(serverConfig.parsedTokens, _tokens[_current].offset, _config_input);
+    isServerTokensMissing(serverConfig.parsedTokens, _tokens[_current - 1].offset, _config_input);
     return serverConfig;
 }
 
