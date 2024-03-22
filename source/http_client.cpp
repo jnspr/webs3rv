@@ -189,7 +189,7 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
 
     printf("Parsing upload\n");
    
-
+    int uploadtype = CURL;
     // creates a slice from the bodybuffer
      Slice sliceBod((char *) request.body.data(), request.body.size());
      //std::cout << "slicebod before first slice: " << sliceBod << std::endl;
@@ -228,14 +228,30 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
             std::cout << "Filename: \n" << data.filename << std::endl;
             std::cout << "slicebod filename slice: " << sliceBod << std::endl;
         }
-        sliceBod.splitStart(C_SLICE(" "), checkData);
+        Slice sliceTest = sliceBod;
+        sliceTest.splitStart(C_SLICE(" "), checkData);
         if (checkData == C_SLICE("Content-Type:"))
+        {
+            uploadtype = CURL;
+            sliceBod.splitStart(C_SLICE(" "), checkData);
             sliceBod.splitStart(C_SLICE("\r\n"), data.contentType);
+            sliceBod.splitStart(C_SLICE("\r\n"), data.contentType);
+        }
+        else
+        {
+            uploadtype = PYTHONSCRIPT;
+            sliceBod.splitStart(C_SLICE("\r\n"), data.contentType);
+        }    
 
         std::cout << "Contenttype: \n" << data.contentType << std::endl;
         std::cout << "slicebod contenttype slice: " << sliceBod << std::endl;
         // maybe add error checks here
-        std::string boundary_end_string = data.boundary.toString() + "--";
+        std::string boundary_end_string;
+        if (uploadtype == PYTHONSCRIPT)
+            boundary_end_string = "\r\n" + data.boundary.toString() + "--";
+        else
+            boundary_end_string = data.boundary.toString() + "--";
+        
         Slice boundary_end = Slice(boundary_end_string.c_str(), data.boundary.getLength() + 2);
 
         if (sliceBod.splitStart(boundary_end, data.fileContent))

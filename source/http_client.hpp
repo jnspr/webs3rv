@@ -19,6 +19,8 @@ struct uploadData;
 #define ISFILE 1
 #define ERROR 3
 
+#define CURL 0
+#define PYTHONSCRIPT 1
 
 
 class HttpClient: public Sink
