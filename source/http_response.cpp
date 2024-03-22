@@ -1,107 +1,130 @@
-
 #include "http_response.hpp"
 
+#include <stdexcept>
+#include <sys/socket.h>
+
+/* Constructs an uninitialized HTTP response */
 HttpResponse::HttpResponse()
-    : _headerRemainder(0)
-    , _bodyFileno(-1)
-    , _bodyBuffer(NULL)
-    , _bodyRemainder(0)
-    , _sendBufferRemainder(0)
+    : _state(HTTP_RESPONSE_UNINITIALIZED)
 {
 }
 
-// Initialize the response class with bodyBuffer for cgi pages
+/* Initialize the response class with bodyBuffer for cgi pages */
 void HttpResponse::initialize(int statusCode, Slice statusMessage, const void *bodyBuffer, size_t bodySize)
 {
-    _headerStream.str("");
-    _headerStream.clear();
-    _headerStream << "HTTP/1.1 " << statusCode << " " << statusMessage << "\r\n";
-    _headerStream << "Content-Length: " << bodySize << "\r\n";
-    _headerStream << "Connection: close\r\n";
-    _bodyBuffer = bodyBuffer;
+    initializeHeader(statusCode, statusMessage, bodySize);
+    _bodySlice = Slice(static_cast<const char *>(bodyBuffer), bodySize);
+    _bodyFileno = -1;
     _bodyRemainder = bodySize;
+    _state = HTTP_RESPONSE_INITIALIZED;
 }
 
-// Initialize the response class with bodyFileno for static pages
+/* Initialize the response class with bodyFileno for static pages */
 void HttpResponse::initialize(int statusCode, Slice statusMessage, int bodyFileno, size_t bodySize)
 {
-    _headerStream.str("");
-    _headerStream.clear();
-    _headerStream << "HTTP/1.1 " << statusCode << " " << statusMessage << "\r\n";
-    _headerStream << "Content-Length: " << bodySize << "\r\n";
-    _headerStream << "Connection: close\r\n";
+    if (bodyFileno < 0)
+        throw std::logic_error("Attempt to initialize HTTP response with bad file descriptor");
+    initializeHeader(statusCode, statusMessage, bodySize);
+    _bodySlice = Slice();
     _bodyFileno = bodyFileno;
     _bodyRemainder = bodySize;
+    _state = HTTP_RESPONSE_INITIALIZED;
 }
 
-// Add a header field to the header response
+/* Add a header field to the header response */
 void HttpResponse::addHeader(Slice key, Slice value)
 {
+    if (_state != HTTP_RESPONSE_INITIALIZED)
+        throw std::logic_error("addHeader() called on uninitialized response");
     _headerStream << key << ": " << value << "\r\n";
 }
 
-// Finalize Header
+/* Finalize Header */
 void HttpResponse::finalizeHeader()
 {
+    if (_state != HTTP_RESPONSE_INITIALIZED)
+        throw std::logic_error("finalizeHeader() called on uninitialized response");
     _headerStream << "\r\n";
     _headerString = _headerStream.str();
-    _headerRemainder = _headerString.size();
+    _headerSlice = _headerString;
+    _state = HTTP_RESPONSE_FINALIZED;
 }
 
-// Check if the response has data to send
+/* Check if the response has data to send */
 bool HttpResponse::hasData()
 {
-    return _headerRemainder > 0 || _bodyRemainder > 0;
+    if (_state != HTTP_RESPONSE_FINALIZED)
+        return false;
+    return !_headerSlice.isEmpty() || _bodyRemainder > 0;
 }
 
 // Start transfer process of the response to the socket
 void HttpResponse::transferToSocket(int fileno)
 {
-    if (_headerRemainder > 0)
-        _headerRemainder -= sendToSocketFd(fileno, _headerString.c_str(), _headerRemainder);
+    if (_state != HTTP_RESPONSE_FINALIZED)
+        throw std::logic_error("transferToSocket() called on non-finalized response");
+
+    // Send the header first
+    if (!_headerSlice.isEmpty())
+    {
+        sendSliceToSocket(fileno, _headerSlice);
+        return;
+    }
+
+    // Send the body
     if (_bodyRemainder > 0)
     {
-        if (_bodyFileno != -1)
-            _bodyRemainder -= sendToSocketFd(fileno, _bodyBuffer, _bodyRemainder);
+        size_t bytesSent;
+        if (_bodyFileno == -1)
+            bytesSent = sendSliceToSocket(fileno, _bodySlice);
         else
-            _bodyRemainder -= sendToSocketFd(fileno, _bodyFileno, _bodyRemainder);
+            bytesSent = streamFileToSocket(fileno);
+
+        // Reduce the number of remaining bytes but check for underflow first
+        if (bytesSent > _bodyRemainder)
+            bytesSent = _bodyRemainder;
+        _bodyRemainder -= bytesSent;
     }
 }
 
-// Send data to the socket file descriptor with bodyBuffer for cgi pages
-size_t HttpResponse::sendToSocketFd(int socketFd, const void *buffer, size_t remainderLen)
+/* Initializes the header string stream with a response line */
+void HttpResponse::initializeHeader(int statusCode, Slice statusMessage, size_t bodySize)
 {
-    ssize_t totalSend = 0;
-
-    totalSend = send(socketFd, buffer, remainderLen, 0);
-    if (totalSend == -1)
-        throw std::runtime_error("Error sending data to socket");
-
-    return static_cast<size_t>(totalSend);
+    _headerStream.clear();
+    _headerStream << "HTTP/1.1 " << statusCode << ' ' << statusMessage << "\r\n"
+                  << "Content-Length: " << bodySize << "\r\n"
+                  << "Connection: close\r\n";
 }
 
-// Send data to the socket file descriptor with bodyFileno for static pages
-size_t HttpResponse::sendToSocketFd(int socketFd, int fileFd, size_t remainderLen)
+/* Attempts to send as many bytes as possible from a slice to a socket,
+   only consumes the bytes that were actually sent */
+size_t HttpResponse::sendSliceToSocket(int fileno, Slice &slice)
 {
-    ssize_t bytesRead = 0;
-    ssize_t totalSend = 0;
+    ssize_t result;
 
-    if (_sendBufferRemainder == 0)
+    result = send(fileno, &slice[0], slice.getLength(), 0);
+    if (result == -1)
+        throw std::runtime_error("Unable to send data to socket");
+    if (result == 0)
+        throw std::runtime_error("Remote host has closed the connection");
+
+    size_t bytesSent = static_cast<size_t>(result);
+    slice.consumeStart(bytesSent);
+    return bytesSent;
+}
+
+
+/* Buffers and streams bytes out of `_bodyFileno` to the given socket */
+size_t HttpResponse::streamFileToSocket(int fileno)
+{
+    if (_bodySlice.isEmpty())
     {
-        ssize_t bytesRead = read(fileFd, _sendBuffer, sizeof(_sendBuffer));
+        ssize_t bytesRead = read(_bodyFileno, _readBuffer, sizeof(_readBuffer));
         if (bytesRead == -1)
-            throw std::runtime_error("Error reading file");
+            throw std::runtime_error("Unable to read file");
         if (bytesRead == 0)
-            return 0;
+            throw std::runtime_error("Unexpected end of file");
+        _bodySlice = Slice(_readBuffer, static_cast<size_t>(bytesRead));
     }
-
-    if (remainderLen - bytesRead < 0)
-        throw std::runtime_error("File larger then expected");
-    
-    totalSend = send(socketFd, _sendBuffer, bytesRead, 0);
-    if (totalSend == -1)
-        throw std::runtime_error("Error sending data to socket");
-    _sendBufferRemainder = bytesRead - totalSend;
-        
-    return static_cast<size_t>(totalSend);
+    return sendSliceToSocket(fileno, _bodySlice);
 }
