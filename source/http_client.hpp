@@ -80,6 +80,9 @@ private:
     /* Handles a CGI process event */
     void handleCgiState();
 
+    /* Marks the client to be cleaned up during the next cleanup cycle */
+    void markForCleanup();
+
     /* Disable copy-construction and copy-assignment */
     HttpClient(const HttpClient &other);
     HttpClient &operator=(const HttpClient &other);

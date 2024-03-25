@@ -317,12 +317,7 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
 /* Handles an exception that occurred in `handleEvent()` */
 void HttpClient::handleException()
 {
-    if (_markedForCleanup)
-        return;
-
-    _cleanupNext = _application._cleanupClients;
-    _application._cleanupClients = this;
-    _markedForCleanup = true;
+    markForCleanup();
 }
 
 void HttpClient::handleCgiState()
@@ -344,4 +339,15 @@ void HttpClient::handleCgiState()
         this->_cleanupNext = _application._cleanupClients;
         _application._cleanupClients = this;
     }
+}
+
+/* Marks the client to be cleaned up during the next cleanup cycle */
+void HttpClient::markForCleanup()
+{
+    if (_markedForCleanup)
+        return;
+
+    _cleanupNext = _application._cleanupClients;
+    _application._cleanupClients = this;
+    _markedForCleanup = true;
 }
