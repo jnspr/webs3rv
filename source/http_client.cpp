@@ -75,6 +75,14 @@ void HttpClient::handleEvents(uint32_t eventMask)
             }
         }
     }
+
+    if (eventMask & EPOLLOUT)
+    {
+        if (_response.hasData())
+            _response.transferToSocket(_fileno);
+        if (!_response.hasData())
+            handleException(); // mark for cleanup
+    }
 }
 
 void HttpClient::handleRequest(const HttpRequest &request)
@@ -83,7 +91,6 @@ void HttpClient::handleRequest(const HttpRequest &request)
         throw std::runtime_error("Client tried to access above-root directory");
 
     RoutingInfo info = info.findRoute(_config, request.queryPath);
-    printf("%i\n", info.status);
 
     if (info.status == ROUTING_STATUS_NOT_FOUND)
         throw HttpException(404);
@@ -104,7 +111,15 @@ void HttpClient::handleRequest(const HttpRequest &request)
                 else 
                 {
                     std::string mimetype = g_mimeDB.getMimeType(Slice(info.nodePath));
-                   // Send the file with Content-Length (not chunked)
+                    struct stat fileStat;
+                    if (stat(info.nodePath.c_str(), &fileStat) == -1)
+                        throw HttpException(500);
+                    int fileno = open(info.nodePath.c_str(), O_RDONLY | O_CLOEXEC);
+                    if (fileno == -1)
+                        throw HttpException(500);
+                    _response.initialize(200, C_SLICE("OK"), fileno, fileStat.st_size);
+                    _response.addHeader(C_SLICE("Content-Type"), mimetype);
+                    _response.finalizeHeader();
                 }
                 break;
             case NODE_TYPE_DIRECTORY:
@@ -138,6 +153,9 @@ void HttpClient::handleRequest(const HttpRequest &request)
             throw std::runtime_error("Method not allowed");
     }
 
+    if (_response.getState() != HTTP_RESPONSE_FINALIZED)
+        throw HttpException(500);
+    _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
 
     // TODO: Implement check if file exists on route in ServerConfig::findRoute()
     //       ^ Don't use stat() directly, use Utility::queryNodeType()
