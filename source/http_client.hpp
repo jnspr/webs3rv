@@ -75,7 +75,7 @@ private:
     void parseupload(const HttpRequest &request, uploadData &data);
 
     /* Handles an exception that occurred in `handleEvent()` */
-    void handleException();
+    void handleException(const char *message);
 
     /* Handles a CGI process event */
     void handleCgiState();

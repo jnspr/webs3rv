@@ -81,7 +81,7 @@ void HttpClient::handleEvents(uint32_t eventMask)
         if (_response.hasData())
             _response.transferToSocket(_fileno);
         if (!_response.hasData())
-            handleException(); // mark for cleanup
+            markForCleanup();
     }
 }
 
@@ -315,8 +315,10 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
 // /r new line vor boundary wegsplitten bei 2. files
 
 /* Handles an exception that occurred in `handleEvent()` */
-void HttpClient::handleException()
+void HttpClient::handleException(const char *message)
 {
+    (void)message;
+    printf("Exception while handling HTTP client event: %s\n", message);
     markForCleanup();
 }
 

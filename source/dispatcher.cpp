@@ -77,9 +77,12 @@ void Dispatcher::dispatch(int timeout)
         try
         {
             sink->handleEvents(event->events);
+        } catch (const std::exception &exception)
+        {
+            sink->handleException(exception.what());
         } catch (...)
         {
-            sink->handleException();
+            sink->handleException("Thrown type is not derived from std::exception");
         }
     }
 }

@@ -29,7 +29,7 @@ private:
     void handleEvents(uint32_t eventMask);
 
     /* Handles an exception that occurred in `handleEvent()` */
-    void handleException();
+    void handleException(const char *message);
 
     /* Disable copy-construction and copy-assignment */
     HttpServer(const HttpServer &other);

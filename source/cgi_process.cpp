@@ -44,8 +44,9 @@ void CgiProcess::handleEvents(uint32_t eventMask)
 }
 
 /* Handles an exception that occurred in `handleEvent()` */
-void CgiProcess::handleException()
+void CgiProcess::handleException(const char *message)
 {
+    (void)message;
     if (_state != CGI_PROCESS_RUNNING)
         return;
     _state = CGI_PROCESS_FAILURE;
