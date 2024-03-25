@@ -47,7 +47,7 @@ struct HttpRequest
     std::vector<uint8_t> body;
 
     /* Case-invariantly finds a header in the current request */
-    inline const Header *findHeader(Slice key)
+    inline const Header *findHeader(Slice key) const
     {
         return findHeaderIn(headers, key);
     }
