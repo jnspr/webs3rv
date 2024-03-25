@@ -95,6 +95,9 @@ struct uploadData
     Slice contentType;
     Slice fileContent;
     ssize_t fileSize;
+    bool    isfinished;
+    bool    morethanonefile;
+    Slice   rest;
 
     uploadData()
     {
