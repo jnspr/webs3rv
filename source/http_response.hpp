@@ -37,6 +37,12 @@ public:
 
     /* Start transfer process of the response to the socket */
     void transferToSocket(int fileno);
+
+    /* Gets the response's current state */
+    inline HttpResponseState getState() const
+    {
+        return _state;
+    }
 private:
     HttpResponseState _state;
     std::stringstream _headerStream;
