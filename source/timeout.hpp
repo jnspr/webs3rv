@@ -10,7 +10,7 @@ class Timeout
 {
 public:
     /* Constructs a timeout starting from the current time */
-    Timeout();
+    explicit Timeout(uint64_t duration = DEFAULT_TIMEOUT_MS);
 
     /* Resets the timeout's starting time to the current time */
     void reset();
@@ -27,6 +27,7 @@ public:
         return _isStopped;
     }
 private:
+    uint64_t _duration;
     uint64_t _startTime;
     bool     _isStopped;
 

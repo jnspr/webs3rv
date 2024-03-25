@@ -4,7 +4,8 @@
 #include <stdexcept>
 
 /* Constructs a timeout starting from the current time */
-Timeout::Timeout()
+Timeout::Timeout(uint64_t duration)
+    : _duration(duration)
 {
     reset();
 }
@@ -24,7 +25,7 @@ bool Timeout::isExpired()
     uint64_t currentTime = getCurrentTime();
     if (currentTime < _startTime)
         throw std::runtime_error("Time moved backwards; did the system time change?");
-    return currentTime - _startTime >= DEFAULT_TIMEOUT_MS;
+    return currentTime - _startTime >= _duration;
 }
 
 /* Stops the timeout so it can never expire */
