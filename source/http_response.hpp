@@ -19,7 +19,10 @@ class HttpResponse
 public:
     /* Constructs an uninitialized HTTP response */
     HttpResponse();
-    
+
+    /* Releases the response's resources */
+    ~HttpResponse();
+
     /* Initialize the response class with bodyBuffer for cgi pages */
     void initialize(int statusCode, Slice statusMessage, const void *bodyBuffer, size_t bodySize);
     
