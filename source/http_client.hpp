@@ -55,6 +55,7 @@ private:
     HttpClient         *_next;
     HttpClient         *_previous;
     HttpClient         *_cleanupNext;
+    bool                _waitingForClose;
     bool                _markedForCleanup;
     CgiProcess         *_process;
     uint32_t            _host;

@@ -8,6 +8,7 @@ CgiProcess::CgiProcess(HttpClient *client, const HttpRequest &request, const Rou
     :  _state(CGI_PROCESS_RUNNING)
     , _client(client)
     , _process(setupArguments(request, routingInfo), setupEnvironment(request, routingInfo))
+    , _timeout(TIMEOUT_CGI_MS)
 {
 
 }

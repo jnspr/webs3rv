@@ -16,6 +16,8 @@ HttpClient::HttpClient(Application &application, const ServerConfig &config, int
     : _application(application)
     , _config(config)
     , _fileno(fileno)
+    , _timeout(TIMEOUT_REQUEST_MS)
+    , _waitingForClose(false)
     , _markedForCleanup(false)
     , _process(NULL)
     , _host(host)
@@ -45,6 +47,12 @@ void HttpClient::handleEvents(uint32_t eventMask)
     {
         ssize_t length;
         char    buffer[8192];
+
+        if (_waitingForClose)
+        {
+            markForCleanup();
+            return;
+        }
 
         if ((length = read(_fileno, buffer, sizeof(buffer))) < 0)
             throw std::runtime_error("Unable to read from client");
@@ -81,7 +89,14 @@ void HttpClient::handleEvents(uint32_t eventMask)
         if (_response.hasData())
             _response.transferToSocket(_fileno);
         if (!_response.hasData())
-            markForCleanup();
+        {
+            // Do not directly close the connection after sending the response
+            // Switch back to read events and wait for the client to close the connection in
+            // and set a timeout so it doesn't linger
+            _timeout = Timeout(TIMEOUT_CLOSING_MS);
+            _application._dispatcher.modify(_fileno, EPOLLIN | EPOLLHUP, this);
+            _waitingForClose = true;
+        }
     }
 }
 
