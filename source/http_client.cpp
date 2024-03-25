@@ -107,6 +107,8 @@ void HttpClient::handleRequest(const HttpRequest &request)
 
     RoutingInfo info = info.findRoute(_config, request.queryPath);
 
+    // HACK: For reusing the existing handling logic when the path must be changed
+repeat:
     if (info.status == ROUTING_STATUS_NOT_FOUND)
         throw HttpException(404);
     else if (info.status == ROUTING_STATUS_NO_ACCESS)
@@ -147,12 +149,21 @@ void HttpClient::handleRequest(const HttpRequest &request)
                     else
                         throw HttpException(403);
                 }
-                else if (Utility::queryNodeType(info.getLocalRoute()->indexFile) == 0)
+                else if (!info.getLocalRoute()->indexFile.empty())
                 {
-                    if (info.getLocalRoute()->allowListing)
-                         std::cout << "Generating autoindex (Placeholder)";
-                    else
-                        throw HttpException(403);
+                    // HACK: Temporary solution for directory index access, refactor after the
+                    //       whole handling logic is done
+                    std::string newPath = request.queryPath + '/' + info.getLocalRoute()->indexFile;
+                    info = RoutingInfo::findRoute(_config, newPath);
+                    // HACK: Prevent infinite loop on misconfigured server
+                    if (info.status != ROUTING_STATUS_FOUND_LOCAL || info.getLocalNodeType() != NODE_TYPE_DIRECTORY)
+                        goto repeat;
+                    throw HttpException(500);
+                }
+                else if (info.getLocalRoute()->allowListing)
+                {
+                    std::cout << "Autoindex is not implemented";
+                    throw HttpException(500);
                 }
                 else 
                     throw HttpException(403); 
