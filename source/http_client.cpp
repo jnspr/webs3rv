@@ -338,7 +338,6 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
             throw std::runtime_error("Incomplete upload body");
     }
 }
-// /r new line vor boundary wegsplitten bei 2. files
 
 /* Handles an exception that occurred in `handleEvent()` */
 void HttpClient::handleException(const char *message)
