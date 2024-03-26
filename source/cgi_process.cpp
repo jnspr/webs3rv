@@ -8,6 +8,8 @@ CgiProcess::CgiProcess(HttpClient *client, const HttpRequest &request, const Rou
     :  _state(CGI_PROCESS_RUNNING)
     , _client(client)
     , _process(setupArguments(request, routingInfo), setupEnvironment(request, routingInfo), routingInfo.nodePath)
+    , _timeout(TIMEOUT_CGI_MS)
+
 {
 }
 
@@ -42,8 +44,9 @@ void CgiProcess::handleEvents(uint32_t eventMask)
 }
 
 /* Handles an exception that occurred in `handleEvent()` */
-void CgiProcess::handleException()
+void CgiProcess::handleException(const char *message)
 {
+    (void)message;
     if (_state != CGI_PROCESS_RUNNING)
         return;
     _state = CGI_PROCESS_FAILURE;

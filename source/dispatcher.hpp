@@ -15,7 +15,7 @@ struct Sink
     virtual void handleEvents(uint32_t eventMask) = 0;
 
     /* Handles an exception that occurred in `handleEvent()` */
-    virtual void handleException() = 0;
+    virtual void handleException(const char *message) = 0;
 
     /* Destructor for deriving classes */
     virtual ~Sink();

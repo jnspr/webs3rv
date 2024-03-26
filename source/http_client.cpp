@@ -16,6 +16,8 @@ HttpClient::HttpClient(Application &application, const ServerConfig &config, int
     : _application(application)
     , _config(config)
     , _fileno(fileno)
+    , _timeout(TIMEOUT_REQUEST_MS)
+    , _waitingForClose(false)
     , _markedForCleanup(false)
     , _process(NULL)
     , _host(host)
@@ -45,6 +47,12 @@ void HttpClient::handleEvents(uint32_t eventMask)
     {
         ssize_t length;
         char    buffer[8192];
+
+        if (_waitingForClose)
+        {
+            markForCleanup();
+            return;
+        }
 
         if ((length = read(_fileno, buffer, sizeof(buffer))) < 0)
             throw std::runtime_error("Unable to read from client");
@@ -81,7 +89,14 @@ void HttpClient::handleEvents(uint32_t eventMask)
         if (_response.hasData())
             _response.transferToSocket(_fileno);
         if (!_response.hasData())
-            handleException(); // mark for cleanup
+        {
+            // Do not directly close the connection after sending the response
+            // Switch back to read events and wait for the client to close the connection in
+            // and set a timeout so it doesn't linger
+            _timeout = Timeout(TIMEOUT_CLOSING_MS);
+            _application._dispatcher.modify(_fileno, EPOLLIN | EPOLLHUP, this);
+            _waitingForClose = true;
+        }
     }
 }
 
@@ -92,6 +107,8 @@ void HttpClient::handleRequest(const HttpRequest &request)
 
     RoutingInfo info = info.findRoute(_config, request.queryPath);
 
+    // HACK: For reusing the existing handling logic when the path must be changed
+repeat:
     if (info.status == ROUTING_STATUS_NOT_FOUND)
         throw HttpException(404);
     else if (info.status == ROUTING_STATUS_NO_ACCESS)
@@ -132,12 +149,21 @@ void HttpClient::handleRequest(const HttpRequest &request)
                     else
                         throw HttpException(403);
                 }
-                else if (Utility::queryNodeType(info.getLocalRoute()->indexFile) == 0)
+                else if (!info.getLocalRoute()->indexFile.empty())
                 {
-                    if (info.getLocalRoute()->allowListing)
-                         std::cout << "Generating autoindex (Placeholder)";
-                    else
-                        throw HttpException(403);
+                    // HACK: Temporary solution for directory index access, refactor after the
+                    //       whole handling logic is done
+                    std::string newPath = request.queryPath + '/' + info.getLocalRoute()->indexFile;
+                    info = RoutingInfo::findRoute(_config, newPath);
+                    // HACK: Prevent infinite loop on misconfigured server
+                    if (info.status != ROUTING_STATUS_FOUND_LOCAL || info.getLocalNodeType() != NODE_TYPE_DIRECTORY)
+                        goto repeat;
+                    throw HttpException(500);
+                }
+                else if (info.getLocalRoute()->allowListing)
+                {
+                    std::cout << "Autoindex is not implemented";
+                    throw HttpException(500);
                 }
                 else 
                     throw HttpException(403); 
@@ -182,21 +208,26 @@ void HttpClient::uploadFile(const HttpRequest &request, const RoutingInfo &info)
 { 
 
     uploadData data;
+    data.isfinished = 0;
     printf("Uploading file\n");
 
-    parseupload(request, data);
+    while (data.isfinished == 0)
+    {
+        parseupload(request, data);
 
-    std::string path = info.nodePath + '/' + data.filename.stripStart('/').toString();
+        std::string path = info.nodePath + '/' + data.filename.stripStart('/').toString();
 
-        int fd = open(path.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0666);
-        if (fd == -1)
-            throw std::runtime_error("Unable to open file");
-        int writereturn = write(fd, data.fileContent.toString().c_str(), data.fileContent.getLength());
-        if (writereturn == -1)
-            throw std::runtime_error("Unable to write to file");
-        printf ("Write return: %d\n", writereturn);
-        close(fd);
-        //printf("Mybuffer:\n%s \n", mybuffer);
+            int fd = open(path.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0666);
+            if (fd == -1)
+                throw std::runtime_error("Unable to open file");
+            int writereturn = write(fd, data.fileContent.toString().c_str(), data.fileContent.getLength());
+            if (writereturn == -1)
+                throw std::runtime_error("Unable to write to file");
+            printf ("Write return: %d\n", writereturn);
+            close(fd);
+            //data.isfinished = 1; //debugging only
+            //printf("Mybuffer:\n%s \n", mybuffer);
+    }
          
 
 }
@@ -209,13 +240,19 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
    
     int uploadtype = CURL;
     // creates a slice from the bodybuffer
-     Slice sliceBod((char *) request.body.data(), request.body.size());
-     //std::cout << "slicebod before first slice: " << sliceBod << std::endl;
-     if (sliceBod.startsWith(C_SLICE("--")))
-         sliceBod.splitStart(C_SLICE("\r\n"), data.boundary);
-     else
-         throw std::runtime_error("Error in Upload body");
-
+    //if (data.fileContent)
+    Slice sliceBod;
+    if (data.rest.isEmpty())
+    {
+        sliceBod = Slice((char *) request.body.data(), request.body.size());
+        //std::cout << "slicebod before first slice: " << sliceBod << std::endl;
+        if (sliceBod.startsWith(C_SLICE("--")))
+            sliceBod.splitStart(C_SLICE("\r\n"), data.boundary);
+        else
+            throw std::runtime_error("Error in Upload body");
+    }   
+    else
+        sliceBod = data.rest;
     std::cout << "Boundary: \n" << data.boundary << std::endl;
     std::cout << "slicebod after first slice: " << sliceBod << std::endl;
     Slice checkData;
@@ -262,19 +299,38 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
         }    
 
         std::cout << "Contenttype: \n" << data.contentType << std::endl;
-        std::cout << "slicebod contenttype slice: " << sliceBod << std::endl;
+        std::cout << "slicebod contenttype slice: \n" << sliceBod << std::endl;
         // maybe add error checks here
         std::string boundary_end_string;
         if (uploadtype == PYTHONSCRIPT)
-            boundary_end_string = "\r\n" + data.boundary.toString() + "--";
+            boundary_end_string = "\r\n" + data.boundary.toString();
         else
-            boundary_end_string = data.boundary.toString() + "--";
+            boundary_end_string = data.boundary.toString();
         
-        Slice boundary_end = Slice(boundary_end_string.c_str(), data.boundary.getLength() + 2);
+        Slice boundary_end = Slice(boundary_end_string.c_str(), data.boundary.getLength());
 
         if (sliceBod.splitStart(boundary_end, data.fileContent))
         {
+            if(data.morethanonefile == 1)
+            {
+                Slice trash;
+                data.fileContent.splitEndnoDel('\r', trash);
+            }
             std::cout << "File Content: \n" << data.fileContent << std::endl;
+            std::cout << "slicebod after filecontent: \n" << sliceBod << std::endl;
+            if (sliceBod.startsWith(C_SLICE("--")))
+            {
+                data.isfinished = 1;
+                std::cout << "isfinished = " << data.isfinished << std::endl;
+            }
+            else
+            {
+                sliceBod.splitStart(C_SLICE("\n"), data.rest);
+                data.rest = sliceBod;
+                data.morethanonefile = 1;
+                std::cout << "isfinished = " << data.isfinished << std::endl;
+                std::cout << "slicebod: \n" << sliceBod << std::endl;
+            } 
             return;
         }
         else
@@ -283,14 +339,11 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
 }
 
 /* Handles an exception that occurred in `handleEvent()` */
-void HttpClient::handleException()
+void HttpClient::handleException(const char *message)
 {
-    if (_markedForCleanup)
-        return;
-
-    _cleanupNext = _application._cleanupClients;
-    _application._cleanupClients = this;
-    _markedForCleanup = true;
+    (void)message;
+    printf("Exception while handling HTTP client event: %s\n", message);
+    markForCleanup();
 }
 
 void HttpClient::handleCgiState()
@@ -312,4 +365,15 @@ void HttpClient::handleCgiState()
         this->_cleanupNext = _application._cleanupClients;
         _application._cleanupClients = this;
     }
+}
+
+/* Marks the client to be cleaned up during the next cleanup cycle */
+void HttpClient::markForCleanup()
+{
+    if (_markedForCleanup)
+        return;
+
+    _cleanupNext = _application._cleanupClients;
+    _application._cleanupClients = this;
+    _markedForCleanup = true;
 }

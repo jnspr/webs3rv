@@ -67,6 +67,7 @@ void HttpServer::handleEvents(uint32_t eventMask)
 }
 
 /* Handles an exception that occurred in `handleEvent()` */
-void HttpServer::handleException()
+void HttpServer::handleException(const char *message)
 {
+    (void)message;
 }

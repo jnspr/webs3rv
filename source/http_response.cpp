@@ -1,5 +1,6 @@
 #include "http_response.hpp"
 
+#include <unistd.h>
 #include <stdexcept>
 #include <sys/socket.h>
 
@@ -7,6 +8,13 @@
 HttpResponse::HttpResponse()
     : _state(HTTP_RESPONSE_UNINITIALIZED)
 {
+}
+
+/* Releases the response's resources */
+HttpResponse::~HttpResponse()
+{
+    if ((_state == HTTP_RESPONSE_INITIALIZED || _state == HTTP_RESPONSE_FINALIZED) && _bodyFileno >= 0)
+        close(_bodyFileno);
 }
 
 /* Initialize the response class with bodyBuffer for cgi pages */

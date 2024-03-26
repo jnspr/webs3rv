@@ -55,6 +55,7 @@ private:
     HttpClient         *_next;
     HttpClient         *_previous;
     HttpClient         *_cleanupNext;
+    bool                _waitingForClose;
     bool                _markedForCleanup;
     CgiProcess         *_process;
     uint32_t            _host;
@@ -75,10 +76,13 @@ private:
     void parseupload(const HttpRequest &request, uploadData &data);
 
     /* Handles an exception that occurred in `handleEvent()` */
-    void handleException();
+    void handleException(const char *message);
 
     /* Handles a CGI process event */
     void handleCgiState();
+
+    /* Marks the client to be cleaned up during the next cleanup cycle */
+    void markForCleanup();
 
     /* Disable copy-construction and copy-assignment */
     HttpClient(const HttpClient &other);
@@ -95,6 +99,9 @@ struct uploadData
     Slice contentType;
     Slice fileContent;
     ssize_t fileSize;
+    bool    isfinished;
+    bool    morethanonefile;
+    Slice   rest;
 
     uploadData()
     {

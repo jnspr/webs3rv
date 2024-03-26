@@ -30,7 +30,7 @@ public:
     void handleEvents(uint32_t eventMask);
 
     /* Handles an exception that occurred in `handleEvent()` */
-    void handleException();
+    void handleException(const char *message);
 
     /* Gets the process state */
     inline CgiProcessState getState()
