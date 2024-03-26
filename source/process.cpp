@@ -5,20 +5,22 @@
 #include <stdlib.h>
 #include <stdexcept>
 #include <sys/wait.h>
+#include <iostream>
+#include "slice.hpp"
 
 /* Starts a child process using the given constant string arrays
    The arrays must be NULL-terminated, see `man execve(2)` */
-Process::Process(const char **argArray, const char **envArray)
+Process::Process(const char **argArray, const char **envArray, std::string nodePath)
 {
-    startChild(argArray, envArray);
+    startChild(argArray, envArray, nodePath);
 }
 
 /* Starts a child process using the given dynamic string vectors */
-Process::Process(const std::vector<std::string> &argVec, const std::vector<std::string> &envVec)
+Process::Process(const std::vector<std::string> &argVec, const std::vector<std::string> &envVec, std::string nodePath)
 {
     std::vector<const char *> argvVector = toCharPointers(argVec);
     std::vector<const char *> envpVector = toCharPointers(envVec);
-    startChild(argvVector.data(), envpVector.data());
+    startChild(argvVector.data(), envpVector.data(), nodePath);
 }
 
 /* Kills the child process and closes the socket */
@@ -70,7 +72,7 @@ ProcessStatus Process::getStatus()
 }
 
 /* Starts a child process using the given constant string arrays */
-void Process::startChild(const char **argArray, const char **envArray)
+void Process::startChild(const char **argArray, const char **envArray, std::string nodePath)
 {
     // Set up pipes for communication with the child
     Pipe inputPipe, outputPipe;
@@ -91,6 +93,13 @@ void Process::startChild(const char **argArray, const char **envArray)
         // Close the parent-owned pipe FDs
         close(inputPipe.writeFileno);
         close(outputPipe.readFileno);
+
+        // Change the working directory to the cgi directory
+        Slice cgiDir = Slice(nodePath);
+        Slice out;
+        cgiDir.splitEnd('/', out);
+        if (chdir(cgiDir.toString().c_str()) < 0)
+            throw std::runtime_error("Unable to change directory");
 
         // Only execute the process when both dup2() calls succeeded
         if (dup2(inputPipe.readFileno, STDIN_FILENO) >= 0 &&
