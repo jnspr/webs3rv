@@ -16,10 +16,10 @@ class Process
 public:
     /* Starts a child process using the given constant string arrays
        The arrays must be NULL-terminated, see `man execve(2)` */
-    Process(const char **argArray, const char **envArray, std::string nodePath);
+    Process(const char **argArray, const char **envArray, const std::string &nodePath);
 
     /* Starts a child process using the given dynamic string vectors */
-    Process(const std::vector<std::string> &argVec, const std::vector<std::string> &envVec, std::string nodePath);
+    Process(const std::vector<std::string> &argVec, const std::vector<std::string> &envVec, const std::string &nodePath);
 
     /* Kills the child process and closes the socket */
     ~Process();

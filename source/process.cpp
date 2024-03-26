@@ -8,15 +8,16 @@
 #include <iostream>
 #include "slice.hpp"
 
+
 /* Starts a child process using the given constant string arrays
    The arrays must be NULL-terminated, see `man execve(2)` */
-Process::Process(const char **argArray, const char **envArray, std::string nodePath)
+Process::Process(const char **argArray, const char **envArray, const std::string &nodePath)
 {
     startChild(argArray, envArray, nodePath);
 }
 
 /* Starts a child process using the given dynamic string vectors */
-Process::Process(const std::vector<std::string> &argVec, const std::vector<std::string> &envVec, std::string nodePath)
+Process::Process(const std::vector<std::string> &argVec, const std::vector<std::string> &envVec, const std::string &nodePath)
 {
     std::vector<const char *> argvVector = toCharPointers(argVec);
     std::vector<const char *> envpVector = toCharPointers(envVec);
@@ -100,7 +101,6 @@ void Process::startChild(const char **argArray, const char **envArray, std::stri
         cgiDir.splitEnd('/', out);
         if (chdir(cgiDir.toString().c_str()) < 0)
             throw std::runtime_error("Unable to change directory");
-
         // Only execute the process when both dup2() calls succeeded
         if (dup2(inputPipe.readFileno, STDIN_FILENO) >= 0 &&
             dup2(outputPipe.writeFileno, STDOUT_FILENO) >= 0)
