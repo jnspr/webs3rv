@@ -299,7 +299,7 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
         }    
 
         std::cout << "Contenttype: \n" << data.contentType << std::endl;
-        std::cout << "slicebod contenttype slice: " << sliceBod << std::endl;
+        std::cout << "slicebod contenttype slice: \n" << sliceBod << std::endl;
         // maybe add error checks here
         std::string boundary_end_string;
         if (uploadtype == PYTHONSCRIPT)
@@ -311,14 +311,14 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
 
         if (sliceBod.splitStart(boundary_end, data.fileContent))
         {
-            // if(data.morethanonefile == 1)
-            // {
-            //     Slice trash;
-            //     data.fileContent.splitEndnoDel('\r', trash);
-            //     data.fileContent.splitEndnoDel('\r', trash);
-            // }
+            if(data.morethanonefile == 1)
+            {
+                Slice trash;
+                data.fileContent.splitEndnoDel('\r', trash);
+                data.fileContent.splitEndnoDel('\n', trash);
+            }
             std::cout << "File Content: \n" << data.fileContent << std::endl;
-            //std::cout << "slicebod: \n" << sliceBod << std::endl;
+            std::cout << "slicebod after filecontent: \n" << sliceBod << std::endl;
             if (sliceBod.startsWith(C_SLICE("--")))
             {
                 data.isfinished = 1;
