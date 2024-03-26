@@ -7,10 +7,10 @@
 CgiProcess::CgiProcess(HttpClient *client, const HttpRequest &request, const RoutingInfo &routingInfo)
     :  _state(CGI_PROCESS_RUNNING)
     , _client(client)
-    , _process(setupArguments(request, routingInfo), setupEnvironment(request, routingInfo))
+    , _process(setupArguments(request, routingInfo), setupEnvironment(request, routingInfo), routingInfo.nodePath)
     , _timeout(TIMEOUT_CGI_MS)
-{
 
+{
 }
 
 /* Handles one or multiple events */
@@ -21,7 +21,6 @@ void CgiProcess::handleEvents(uint32_t eventMask)
 
     if (eventMask & EPOLLOUT)
         return;
-
     if (getProcess().getStatus() == PROCESS_EXIT_SUCCESS)
     {
         _state = CGI_PROCESS_SUCCESS;
