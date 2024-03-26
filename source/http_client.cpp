@@ -315,7 +315,6 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
             {
                 Slice trash;
                 data.fileContent.splitEndnoDel('\r', trash);
-                data.fileContent.splitEndnoDel('\n', trash);
             }
             std::cout << "File Content: \n" << data.fileContent << std::endl;
             std::cout << "slicebod after filecontent: \n" << sliceBod << std::endl;
