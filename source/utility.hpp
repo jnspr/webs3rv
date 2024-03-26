@@ -8,6 +8,9 @@
 #include <sstream>
 #include <stdint.h>
 #include <cstdio> 
+#include <netdb.h>
+#include <vector>
+
 
 enum NodeType
 {
@@ -56,6 +59,19 @@ namespace Utility
 
     /* Attempts to convert a URL-encoded string slice to a URL-decoded string */
     bool decodeUrl(Slice string, std::string &outResult);
+
+    class AddrInfo {
+        public:
+            AddrInfo(const char *hostname);
+            ~AddrInfo();
+            std::vector<struct addrinfo *> getResult() const;
+
+
+        private:
+            const char      *_hostname;
+            const char      *_service;
+            struct addrinfo *_result;
+    };
 }
 
 #endif // UTILITY_hpp
