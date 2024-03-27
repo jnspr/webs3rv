@@ -1,27 +1,27 @@
 #include "process.hpp"
+#include "slice.hpp"
 
 #include <unistd.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <iostream>
 #include <stdexcept>
 #include <sys/wait.h>
-#include <iostream>
-#include "slice.hpp"
 
 
 /* Starts a child process using the given constant string arrays
    The arrays must be NULL-terminated, see `man execve(2)` */
-Process::Process(const char **argArray, const char **envArray, const std::string &nodePath)
+Process::Process(const char **argArray, const char **envArray, const std::string &workingDirectory)
 {
-    startChild(argArray, envArray, nodePath);
+    startChild(argArray, envArray, workingDirectory);
 }
 
 /* Starts a child process using the given dynamic string vectors */
-Process::Process(const std::vector<std::string> &argVec, const std::vector<std::string> &envVec, const std::string &nodePath)
+Process::Process(const std::vector<std::string> &argVec, const std::vector<std::string> &envVec, const std::string &workingDirectory)
 {
     std::vector<const char *> argvVector = toCharPointers(argVec);
     std::vector<const char *> envpVector = toCharPointers(envVec);
-    startChild(argvVector.data(), envpVector.data(), nodePath);
+    startChild(argvVector.data(), envpVector.data(), workingDirectory);
 }
 
 /* Kills the child process and closes the socket */
@@ -73,7 +73,7 @@ ProcessStatus Process::getStatus()
 }
 
 /* Starts a child process using the given constant string arrays */
-void Process::startChild(const char **argArray, const char **envArray, std::string nodePath)
+void Process::startChild(const char **argArray, const char **envArray, const std::string &workingDirectory)
 {
     // Set up pipes for communication with the child
     Pipe inputPipe, outputPipe;
@@ -96,11 +96,9 @@ void Process::startChild(const char **argArray, const char **envArray, std::stri
         close(outputPipe.readFileno);
 
         // Change the working directory to the cgi directory
-        Slice cgiDir = Slice(nodePath);
-        Slice out;
-        cgiDir.splitEnd('/', out);
-        if (chdir(cgiDir.toString().c_str()) < 0)
-            throw std::runtime_error("Unable to change directory");
+        if (chdir(workingDirectory.c_str()) < 0)
+            std::exit(255);
+
         // Only execute the process when both dup2() calls succeeded
         if (dup2(inputPipe.readFileno, STDIN_FILENO) >= 0 &&
             dup2(outputPipe.writeFileno, STDOUT_FILENO) >= 0)

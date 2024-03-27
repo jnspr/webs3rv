@@ -20,6 +20,14 @@ enum CgiProcessState
     CGI_PROCESS_SUCCESS,
 };
 
+struct CgiPathInfo
+{
+    std::string workingDirectory;
+    std::string fileName;
+
+    CgiPathInfo(const std::string &nodePath);
+};
+
 class CgiProcess: public Sink
 {
 public:
@@ -57,12 +65,13 @@ public:
     }
 private:
     CgiProcessState _state;
+    CgiPathInfo     _pathInfo;
     HttpClient     *_client;
     Process         _process;
     Timeout         _timeout;
 
     /* Creates a vector of strings for the process arguments */
-    static std::vector<std::string> setupArguments(const HttpRequest &request, const RoutingInfo &routingInfo);
+    static std::vector<std::string> setupArguments(const HttpRequest &request, const RoutingInfo &routingInfo, const std::string &fileName);
 
     /* Creates a vector of strings for the process environment */
     static std::vector<std::string> setupEnvironment(const HttpRequest &request, const RoutingInfo &routingInfo);
