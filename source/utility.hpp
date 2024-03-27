@@ -2,6 +2,7 @@
 #define UTILITY_hpp
 
 #include "slice.hpp"
+#include "config.hpp"
 
 #include <string>
 #include <cstddef>
@@ -60,10 +61,16 @@ namespace Utility
     /* Attempts to convert a URL-encoded string slice to a URL-decoded string */
     bool decodeUrl(Slice string, std::string &outResult);
 
+    /* Checks the config for more than one server listening on the same address*/
+    void checkduplicatehost(const ApplicationConfig &config);
+
+
+    /* Class to resolve an host Adress and return the ipv4*/
     class AddrInfo {
         public:
             AddrInfo(const char *hostname);
             ~AddrInfo();
+            /* Returns a vector with the resolved http Adresses*/
             std::vector<struct addrinfo *> getResult() const;
 
 

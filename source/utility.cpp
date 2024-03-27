@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <sys/stat.h>
 #include <cstring>
+#include <netdb.h>
 
 /* Queries the type of node at the given FS path */
 NodeType Utility::queryNodeType(const char *path)
@@ -184,7 +185,18 @@ bool Utility::decodeUrl(Slice string, std::string &outResult)
     return true;
 }
 
-#include <netdb.h>
+void Utility::checkduplicatehost(const ApplicationConfig &config)
+{
+    for(size_t i = 0; i < config.servers.size(); i++)
+    {
+        for (size_t j = 0; j < config.servers.size(); j++)
+        {
+            if(i != j && config.servers[i].host == config.servers[j].host 
+                && config.servers[i].port == config.servers[j].port)
+                throw std::runtime_error("Multiple servers on the same address");
+        }
+    }
+}
 
 Utility::AddrInfo::AddrInfo(const char *hostname) : _hostname(hostname), _service("http"), _result(NULL){
     struct addrinfo hints;
@@ -203,6 +215,7 @@ Utility::AddrInfo::~AddrInfo(){
         freeaddrinfo(_result);
 }
 
+/* Returns a vector with the resolved http Adresses*/
  std::vector<struct addrinfo *>  Utility::AddrInfo::getResult() const {
     std::vector <struct addrinfo *> addresses;
     for (struct addrinfo *p = _result; p != NULL; p = p->ai_next)

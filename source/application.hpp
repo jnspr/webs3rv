@@ -5,8 +5,10 @@
 #include "dispatcher.hpp"
 #include "http_server.hpp"
 #include "http_client.hpp"
+#include "utility.hpp"
 
 #include <vector>
+
 
 class Application
 {
