@@ -141,7 +141,9 @@ repeat:
                         throw HttpException(500);
                     _response.initialize(200, C_SLICE("OK"), fileno, fileStat.st_size);
                     _response.addHeader(C_SLICE("Content-Type"), mimetype);
-                    _response.finalizeHeader();
+
+                    uint32_t timeout = _response.finalizeHeader();
+                    (void) timeout; // placeholder in order to compile
                 }
                 break;
             case NODE_TYPE_DIRECTORY:

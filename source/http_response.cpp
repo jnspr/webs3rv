@@ -48,7 +48,7 @@ void HttpResponse::addHeader(Slice key, Slice value)
 }
 
 /* Finalize Header */
-void HttpResponse::finalizeHeader()
+uint64_t HttpResponse::finalizeHeader()
 {
     if (_state != HTTP_RESPONSE_INITIALIZED)
         throw std::logic_error("finalizeHeader() called on uninitialized response");
@@ -56,6 +56,9 @@ void HttpResponse::finalizeHeader()
     _headerString = _headerStream.str();
     _headerSlice = _headerString;
     _state = HTTP_RESPONSE_FINALIZED;
+
+    /* Returns the relative timeout for the client in seconds (5 seconds per mb)*/
+    return ((this->_bodyRemainder / 1000) * 5 );
 }
 
 /* Check if the response has data to send */
