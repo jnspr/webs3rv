@@ -123,7 +123,7 @@ repeat:
         {
             case NODE_TYPE_REGULAR:
                 std::cout << "NODE_TYPE_REGULAR" << std::endl;
-                if (Slice(info.nodePath).endsWith(C_SLICE(".cgi"))) // 
+                if (info.hasCgiInterpreter)
                     _application.startCgiProcess(this, request, info);
                 else if (request.method == HTTP_METHOD_DELETE)
                 {
@@ -186,7 +186,7 @@ repeat:
             throw std::runtime_error("Method not allowed");
     }
 
-    if (_response.getState() != HTTP_RESPONSE_FINALIZED)
+    if (_response.getState() != HTTP_RESPONSE_FINALIZED && _process == NULL)
         throw HttpException(500);
     _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
 
