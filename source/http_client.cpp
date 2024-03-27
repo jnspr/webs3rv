@@ -125,7 +125,12 @@ repeat:
                 std::cout << "NODE_TYPE_REGULAR" << std::endl;
                 if (Slice(info.nodePath).endsWith(C_SLICE(".cgi"))) // 
                     _application.startCgiProcess(this, request, info);
-                else 
+                else if (request.method == HTTP_METHOD_DELETE)
+                {
+                    if (unlink(info.nodePath.c_str()) == -1)
+                        throw std::runtime_error("Error deleting file");
+                }
+                else
                 {
                     std::string mimetype = g_mimeDB.getMimeType(Slice(info.nodePath));
                     struct stat fileStat;
