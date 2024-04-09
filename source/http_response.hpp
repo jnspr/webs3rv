@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <unistd.h>
+#include <stdint.h>
 
 #include "slice.hpp"
 
@@ -33,7 +34,7 @@ public:
     void addHeader(Slice key, Slice value);
 
     /* Finalize Header */
-    void finalizeHeader();
+    uint64_t finalizeHeader();
     
     /* Check if the response has data to send */
     bool hasData();
