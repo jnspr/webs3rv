@@ -9,6 +9,7 @@
 #include "routing.hpp"
 
 #include <stdint.h>
+#include <stddef.h>
 
 class HttpClient;
 
@@ -31,6 +32,9 @@ struct CgiPathInfo
 class CgiProcess: public Sink
 {
 public:
+    friend class Application;
+    friend class HttpClient;
+
     /* Constructs a CGI process from the given client, request and route result */
     CgiProcess(HttpClient *client, const HttpRequest &request, const RoutingInfo &routingInfo);
 
@@ -63,12 +67,18 @@ public:
     {
         return _timeout;
     }
+
+
 private:
-    CgiProcessState _state;
-    CgiPathInfo     _pathInfo;
-    HttpClient     *_client;
-    Process         _process;
-    Timeout         _timeout;
+    CgiProcessState      _state;
+    CgiPathInfo          _pathInfo;
+    HttpClient          *_client;
+    Process              _process;
+    std::vector<uint8_t> _buffer;
+    Timeout              _timeout;
+    size_t               _bodyOffset;
+    bool                 _isInOutputPhase;
+
 
     /* Creates a vector of strings for the process arguments */
     static std::vector<std::string> setupArguments(const HttpRequest &request, const RoutingInfo &routingInfo, const std::string &fileName);

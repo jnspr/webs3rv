@@ -2,18 +2,13 @@
 
 /* Constructs the main application object */
 Application::Application(const ApplicationConfig &config)
-    : _config(config)
-    , _dispatcher(128)
-    , _clients(NULL)
-    , _cleanupClients(NULL)
-    , _wasConfigured(false)
+    : _config(config), _dispatcher(128), _clients(NULL), _cleanupClients(NULL), _wasConfigured(false)
 {
     // Check if the configuration is valid
     if (config.servers.size() == 0)
         throw std::runtime_error("Configuration has no servers");
-    /* Checks the config for a duplicate host and throws a standard error if found*/    
+    /* Checks the config for a duplicate host and throws a standard error if found*/
     Utility::checkduplicatehost(config);
-
 }
 
 /* Sets up the server according to the constructor-supplied configuration */
@@ -37,7 +32,6 @@ void Application::configure()
         }
         _dispatcher.subscribe(server->getFileno(), EPOLLIN, server);
     }
-
 
     _wasConfigured = true;
 }
@@ -84,14 +78,14 @@ void Application::mainLoop()
                 headClient->_cleanupNext = _cleanupClients;
                 _cleanupClients = headClient;
             }
-                
+
             if (headClient->_process != NULL)
             {
                 // Destroy the process if it is timeout
                 if (headClient->_process->getTimeout().isExpired())
                 {
                     headClient->_process->setState(CGI_PROCESS_TIMEOUT);
-                    headClient->handleCgiState();             
+                    headClient->handleCgiState();
                 }
             }
             headClient = headClient->_next;
@@ -162,9 +156,9 @@ void Application::startCgiProcess(HttpClient *client, const HttpRequest &request
     // Subscribe the process to the dispatcher
     try
     {
-        _dispatcher.subscribe(process->getProcess().getOutputFileno(), EPOLLIN | EPOLLHUP, process);
+        _dispatcher.subscribe(process->getProcess().getInputFileno(), EPOLLOUT | EPOLLHUP, process);
     }
-    catch(...)
+    catch (...)
     {
         delete process;
         throw;
@@ -176,10 +170,12 @@ void Application::startCgiProcess(HttpClient *client, const HttpRequest &request
 void Application::closeCgiProcess(HttpClient *client)
 {
     // Unsubscribe the process from the dispatcher
-    _dispatcher.unsubscribe(client->_process->getProcess().getOutputFileno());
+    if (client->_process->_isInOutputPhase)
+        _dispatcher.unsubscribe(client->_process->getProcess().getOutputFileno());
+    else
+        _dispatcher.unsubscribe(client->_process->getProcess().getInputFileno());
 
     // Destroy the process
     delete client->_process;
     client->_process = NULL;
 }
-

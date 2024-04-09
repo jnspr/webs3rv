@@ -15,6 +15,7 @@ class Application
 public:
     friend class HttpServer;
     friend class HttpClient;
+    friend class CgiProcess;
 
     /* Constructs the main application object */
     Application(const ApplicationConfig &config);

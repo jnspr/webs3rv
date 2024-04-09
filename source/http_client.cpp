@@ -13,16 +13,7 @@
 
 /* Constructs a HTTP client using the given socket file descriptor */
 HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno, uint32_t host, uint16_t port)
-    : _application(application)
-    , _config(config)
-    , _fileno(fileno)
-    , _timeout(TIMEOUT_REQUEST_MS)
-    , _waitingForClose(false)
-    , _markedForCleanup(false)
-    , _process(NULL)
-    , _host(host)
-    , _port(port)
-    , _parser(config, host, port)
+    : _application(application), _config(config), _fileno(fileno), _timeout(TIMEOUT_REQUEST_MS), _waitingForClose(false), _markedForCleanup(false), _process(NULL), _host(host), _port(port), _parser(config, host, port)
 {
 }
 
@@ -46,7 +37,7 @@ void HttpClient::handleEvents(uint32_t eventMask)
     if (eventMask & EPOLLIN)
     {
         ssize_t length;
-        char    buffer[8192];
+        char buffer[8192];
 
         if (_waitingForClose)
         {
@@ -64,22 +55,22 @@ void HttpClient::handleEvents(uint32_t eventMask)
         {
             switch (_parser.getPhase())
             {
-                case HTTP_REQUEST_HEADER_EXCEED:
-                    printf("HTTP_REQUEST_HEADER_EXCEED\n");
-                    break;
-                case HTTP_REQUEST_BODY_EXCEED:
-                    printf("HTTP_REQUEST_BODY_EXCEED\n");
-                    break;
-                case HTTP_REQUEST_MALFORMED:
-                    printf("HTTP_REQUEST_MALFORMED\n");
-                    break;
-                case HTTP_REQUEST_COMPLETED:
-                    printf("HTTP_REQUEST_COMPLETED\n");
-                    Debug::printRequest(_parser.getRequest());
-                    handleRequest(_parser.getRequest());
-                    break;
-                default:
-                    break;
+            case HTTP_REQUEST_HEADER_EXCEED:
+                printf("HTTP_REQUEST_HEADER_EXCEED\n");
+                break;
+            case HTTP_REQUEST_BODY_EXCEED:
+                printf("HTTP_REQUEST_BODY_EXCEED\n");
+                break;
+            case HTTP_REQUEST_MALFORMED:
+                printf("HTTP_REQUEST_MALFORMED\n");
+                break;
+            case HTTP_REQUEST_COMPLETED:
+                printf("HTTP_REQUEST_COMPLETED\n");
+                Debug::printRequest(_parser.getRequest());
+                handleRequest(_parser.getRequest());
+                break;
+            default:
+                break;
             }
         }
     }
@@ -113,68 +104,77 @@ repeat:
         throw HttpException(404);
     else if (info.status == ROUTING_STATUS_NO_ACCESS)
         throw HttpException(403);
-    else if (info.status ==  ROUTING_STATUS_FOUND_LOCAL)
+    else if (info.status == ROUTING_STATUS_FOUND_LOCAL)
     {
         std::set<HttpMethod>::iterator it = info.getLocalRoute()->allowedMethods.find(request.method);
         if (it == info.getLocalRoute()->allowedMethods.end())
             throw HttpException(405);
-        
+
         switch (info.getLocalNodeType())
         {
-            case NODE_TYPE_REGULAR:
-                std::cout << "NODE_TYPE_REGULAR" << std::endl;
-                if (info.hasCgiInterpreter)
-                    _application.startCgiProcess(this, request, info);
-                else if (request.method == HTTP_METHOD_DELETE)
-                {
-                    if (unlink(info.nodePath.c_str()) == -1)
-                        throw std::runtime_error("Error deleting file");
-                }
+        case NODE_TYPE_REGULAR:
+            std::cout << "NODE_TYPE_REGULAR" << std::endl;
+            if (info.hasCgiInterpreter)
+            {
+                _application.startCgiProcess(this, request, info);
+                // char cgiFdBuff[8192];
+                // ssize_t readint = read(_process->getProcess().getOutputFileno(), _process->_buffer, sizeof(_process->_buffer));
+                //_response.initialize(200, C_SLICE("OK"), static_cast<const void*>(_process->_buffer.data()), _process->_buffer.size());
+                //_response.addHeader(C_SLICE("Content-Type"), Slice("text/plain"));
+                //_response.finalizeHeader();
+                // std::cout << "buffer: " << Slice(cgiFdBuff, sizeof(cgiFdBuff)).toString() << "bufferLength: " << sizeof(cgiFdBuff) << std::endl;
+                // std::cout << "buffer: " << Slice(_process->_buffer,_process->_bufferLength).toString() << "bufferLength: " << _process->_bufferLength << std::endl;
+            }
+            else if (request.method == HTTP_METHOD_DELETE)
+            {
+                if (unlink(info.nodePath.c_str()) == -1)
+                    throw std::runtime_error("Error deleting file");
+            }
+            else
+            {
+                std::string mimetype = g_mimeDB.getMimeType(Slice(info.nodePath));
+                struct stat fileStat;
+                if (stat(info.nodePath.c_str(), &fileStat) == -1)
+                    throw HttpException(500);
+                int fileno = open(info.nodePath.c_str(), O_RDONLY | O_CLOEXEC);
+                if (fileno == -1)
+                    throw HttpException(500);
+                _response.initialize(200, C_SLICE("OK"), fileno, fileStat.st_size);
+                _response.addHeader(C_SLICE("Content-Type"), mimetype);
+                _response.finalizeHeader();
+            }
+            break;
+        case NODE_TYPE_DIRECTORY:
+            std::cout << "NODE_TYPE_DIRECTORY" << std::endl;
+            if (request.method == HTTP_METHOD_POST)
+            {
+                std::cout << "allowUpload: " << info.getLocalRoute()->allowUpload << std::endl;
+                if (info.getLocalRoute()->allowUpload)
+                    uploadFile(request, info);
                 else
-                {
-                    std::string mimetype = g_mimeDB.getMimeType(Slice(info.nodePath));
-                    struct stat fileStat;
-                    if (stat(info.nodePath.c_str(), &fileStat) == -1)
-                        throw HttpException(500);
-                    int fileno = open(info.nodePath.c_str(), O_RDONLY | O_CLOEXEC);
-                    if (fileno == -1)
-                        throw HttpException(500);
-                    _response.initialize(200, C_SLICE("OK"), fileno, fileStat.st_size);
-                    _response.addHeader(C_SLICE("Content-Type"), mimetype);
-                    _response.finalizeHeader();
-                }
-                break;
-            case NODE_TYPE_DIRECTORY:
-                std::cout << "NODE_TYPE_DIRECTORY" << std::endl; 
-                if (request.method == HTTP_METHOD_POST)
-                {
-                    std::cout << "allowUpload: " <<  info.getLocalRoute()->allowUpload << std::endl;
-                    if (info.getLocalRoute()->allowUpload)
-                        uploadFile(request, info);
-                    else
-                        throw HttpException(403);
-                }
-                else if (!info.getLocalRoute()->indexFile.empty())
-                {
-                    // HACK: Temporary solution for directory index access, refactor after the
-                    //       whole handling logic is done
-                    std::string newPath = request.queryPath + '/' + info.getLocalRoute()->indexFile;
-                    info = RoutingInfo::findRoute(_config, newPath);
-                    // HACK: Prevent infinite loop on misconfigured server
-                    if (info.status != ROUTING_STATUS_FOUND_LOCAL || info.getLocalNodeType() != NODE_TYPE_DIRECTORY)
-                        goto repeat;
-                    throw HttpException(500);
-                }
-                else if (info.getLocalRoute()->allowListing)
-                {
-                    std::cout << "Autoindex is not implemented";
-                    throw HttpException(500);
-                }
-                else 
-                    throw HttpException(403); 
-                break;
-            default:
-                break;
+                    throw HttpException(403);
+            }
+            else if (!info.getLocalRoute()->indexFile.empty())
+            {
+                // HACK: Temporary solution for directory index access, refactor after the
+                //       whole handling logic is done
+                std::string newPath = request.queryPath + '/' + info.getLocalRoute()->indexFile;
+                info = RoutingInfo::findRoute(_config, newPath);
+                // HACK: Prevent infinite loop on misconfigured server
+                if (info.status != ROUTING_STATUS_FOUND_LOCAL || info.getLocalNodeType() != NODE_TYPE_DIRECTORY)
+                    goto repeat;
+                throw HttpException(500);
+            }
+            else if (info.getLocalRoute()->allowListing)
+            {
+                std::cout << "Autoindex is not implemented";
+                throw HttpException(500);
+            }
+            else
+                throw HttpException(403);
+            break;
+        default:
+            break;
         }
     }
     else if (info.status == ROUTING_STATUS_FOUND_REDIRECT)
@@ -186,6 +186,7 @@ repeat:
 
     if (_response.getState() != HTTP_RESPONSE_FINALIZED && _process == NULL)
         throw HttpException(500);
+    std::cout << "sind wir drin?" << std::endl;
     _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
 
     // TODO: Implement check if file exists on route in ServerConfig::findRoute()
@@ -210,7 +211,7 @@ repeat:
 }
 
 void HttpClient::uploadFile(const HttpRequest &request, const RoutingInfo &info)
-{ 
+{
 
     uploadData data;
     data.isfinished = 0;
@@ -222,70 +223,74 @@ void HttpClient::uploadFile(const HttpRequest &request, const RoutingInfo &info)
 
         std::string path = info.nodePath + '/' + data.filename.stripStart('/').toString();
 
-            int fd = open(path.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0666);
-            if (fd == -1)
-                throw std::runtime_error("Unable to open file");
-            int writereturn = write(fd, data.fileContent.toString().c_str(), data.fileContent.getLength());
-            if (writereturn == -1)
-                throw std::runtime_error("Unable to write to file");
-            printf ("Write return: %d\n", writereturn);
-            close(fd);
-            //data.isfinished = 1; //debugging only
-            //printf("Mybuffer:\n%s \n", mybuffer);
+        int fd = open(path.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0666);
+        if (fd == -1)
+            throw std::runtime_error("Unable to open file");
+        int writereturn = write(fd, data.fileContent.toString().c_str(), data.fileContent.getLength());
+        if (writereturn == -1)
+            throw std::runtime_error("Unable to write to file");
+        printf("Write return: %d\n", writereturn);
+        close(fd);
+        // data.isfinished = 1; //debugging only
+        // printf("Mybuffer:\n%s \n", mybuffer);
     }
-         
-
 }
-
 
 void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
 {
 
     printf("Parsing upload\n");
-   
+
     int uploadtype = CURL;
     // creates a slice from the bodybuffer
-    //if (data.fileContent)
+    // if (data.fileContent)
     Slice sliceBod;
     if (data.rest.isEmpty())
     {
-        sliceBod = Slice((char *) request.body.data(), request.body.size());
-        //std::cout << "slicebod before first slice: " << sliceBod << std::endl;
+        sliceBod = Slice((char *)request.body.data(), request.body.size());
+        // std::cout << "slicebod before first slice: " << sliceBod << std::endl;
         if (sliceBod.startsWith(C_SLICE("--")))
             sliceBod.splitStart(C_SLICE("\r\n"), data.boundary);
         else
             throw std::runtime_error("Error in Upload body");
-    }   
+    }
     else
         sliceBod = data.rest;
-    std::cout << "Boundary: \n" << data.boundary << std::endl;
+    std::cout << "Boundary: \n"
+              << data.boundary << std::endl;
     std::cout << "slicebod after first slice: " << sliceBod << std::endl;
     Slice checkData;
     sliceBod.splitStart(C_SLICE(" "), checkData);
-    std::cout << "Checkdata: \n" << checkData << std::endl;
+    std::cout << "Checkdata: \n"
+              << checkData << std::endl;
     if (checkData == C_SLICE("Content-Disposition:"))
     {
         sliceBod.splitStart(C_SLICE(";"), data.contentDisposition);
-        std::cout << "Content Dispositon: \n" << data.contentDisposition << std::endl;
+        std::cout << "Content Dispositon: \n"
+                  << data.contentDisposition << std::endl;
         std::cout << "slicebod content dispositon slice: " << sliceBod << std::endl;
         sliceBod.stripStart(' ');
         sliceBod.splitStart(C_SLICE("="), checkData);
-        std::cout << "Checkdata: \n" << checkData << std::endl;
+        std::cout << "Checkdata: \n"
+                  << checkData << std::endl;
         if (checkData == C_SLICE("name"))
         {
             sliceBod.splitStart(C_SLICE(";"), data.name);
             data.name.removeDoubleQuotes();
-            std::cout << "Name: \n" << data.name << std::endl;
+            std::cout << "Name: \n"
+                      << data.name << std::endl;
             std::cout << "slicebod name slice: " << sliceBod << std::endl;
             sliceBod.stripStart(' ');
         }
         sliceBod.splitStart(C_SLICE("="), checkData);
-        std::cout << "Checkdata: \n" << checkData << std::endl;
+        std::cout << "Checkdata: \n"
+                  << checkData << std::endl;
         if (checkData == C_SLICE("filename"))
         {
             sliceBod.splitStart(C_SLICE("\r\n"), data.filename);
             data.filename.removeDoubleQuotes();
-            std::cout << "Filename: \n" << data.filename << std::endl;
+            std::cout << "Filename: \n"
+                      << data.filename << std::endl;
             std::cout << "slicebod filename slice: " << sliceBod << std::endl;
         }
         Slice sliceTest = sliceBod;
@@ -301,28 +306,32 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
         {
             uploadtype = PYTHONSCRIPT;
             sliceBod.splitStart(C_SLICE("\r\n"), data.contentType);
-        }    
+        }
 
-        std::cout << "Contenttype: \n" << data.contentType << std::endl;
-        std::cout << "slicebod contenttype slice: \n" << sliceBod << std::endl;
+        std::cout << "Contenttype: \n"
+                  << data.contentType << std::endl;
+        std::cout << "slicebod contenttype slice: \n"
+                  << sliceBod << std::endl;
         // maybe add error checks here
         std::string boundary_end_string;
         if (uploadtype == PYTHONSCRIPT)
             boundary_end_string = "\r\n" + data.boundary.toString();
         else
             boundary_end_string = data.boundary.toString();
-        
+
         Slice boundary_end = Slice(boundary_end_string.c_str(), data.boundary.getLength());
 
         if (sliceBod.splitStart(boundary_end, data.fileContent))
         {
-            if(data.morethanonefile == 1)
+            if (data.morethanonefile == 1)
             {
                 Slice trash;
                 data.fileContent.splitEndnoDel('\r', trash);
             }
-            std::cout << "File Content: \n" << data.fileContent << std::endl;
-            std::cout << "slicebod after filecontent: \n" << sliceBod << std::endl;
+            std::cout << "File Content: \n"
+                      << data.fileContent << std::endl;
+            std::cout << "slicebod after filecontent: \n"
+                      << sliceBod << std::endl;
             if (sliceBod.startsWith(C_SLICE("--")))
             {
                 data.isfinished = 1;
@@ -334,8 +343,9 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
                 data.rest = sliceBod;
                 data.morethanonefile = 1;
                 std::cout << "isfinished = " << data.isfinished << std::endl;
-                std::cout << "slicebod: \n" << sliceBod << std::endl;
-            } 
+                std::cout << "slicebod: \n"
+                          << sliceBod << std::endl;
+            }
             return;
         }
         else
@@ -359,6 +369,32 @@ void HttpClient::handleCgiState()
     if (_process->getState() == CGI_PROCESS_SUCCESS)
     {
         // start the response to client
+        std::cout << "im handle Cgi State" << std::endl;
+        Slice iterator(reinterpret_cast<const char *>(_process->_buffer.data()), _process->_buffer.size());
+        Slice header;
+        iterator.splitStart(C_SLICE("\r\n\r\n"), header);
+        std::cout << "-------- HEADER:\n"
+                  << header << "\n--------" << std::endl;
+        _response.initialize(200, C_SLICE("OK"), &iterator[0], iterator.getLength());
+        while (header.getLength() > 0)
+        {
+            Slice line;
+            if (!header.splitStart(C_SLICE("\r\n"), line))
+            {
+                line = header;
+                header = Slice();
+            }
+            Slice key, value;
+            if (!line.splitStart(C_SLICE(":"), key))
+                continue;
+            value = value.stripStart(' ');
+            _response.addHeader(key, value);
+        }
+        //_response.addHeader(C_SLICE("Content-Type"), Slice("text/plain"));
+        _response.finalizeHeader();
+        _application._dispatcher.unsubscribe(_process->getProcess().getOutputFileno());
+        std::cout << "im handle Cgi State after" << std::endl;
+        _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
     }
     else if (_process->getState() == CGI_PROCESS_FAILURE)
     {

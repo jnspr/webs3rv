@@ -1,6 +1,8 @@
 #include "cgi_process.hpp"
 #include "http_client.hpp"
 #include "slice.hpp"
+#include "application.hpp"
+#include <string.h>
 
 #include <unistd.h>
 
@@ -22,9 +24,11 @@ CgiProcess::CgiProcess(HttpClient *client, const HttpRequest &request, const Rou
     : _state(CGI_PROCESS_RUNNING)
     , _pathInfo(routingInfo.nodePath)
     , _client(client)
-    , _process(setupArguments(request, routingInfo, _pathInfo.fileName), setupEnvironment(request, routingInfo), _pathInfo.workingDirectory)
+    , _process(setupArguments(request, routingInfo, _pathInfo.fileName), setupEnvironment(request, routingInfo)
+    , _pathInfo.workingDirectory)
     , _timeout(TIMEOUT_CGI_MS)
-
+    , _bodyOffset(0)
+    , _isInOutputPhase(false)
 {
 }
 
@@ -35,7 +39,23 @@ void CgiProcess::handleEvents(uint32_t eventMask)
         return;
 
     if (eventMask & EPOLLOUT)
+    {
+        const std::vector<uint8_t> &requestBody = _client->_parser.getRequest().body;
+        ssize_t result = write(_process.getInputFileno(), &requestBody[_bodyOffset], requestBody.size() - _bodyOffset);
+        if (result < 0)
+            throw std::runtime_error("Unable to write to CGI process");
+        size_t writeLength = static_cast<size_t>(result);
+        _bodyOffset += writeLength;
+
+        // switch to output phase
+        // TODO(jnspr): check exception safety etc etc
+        _client->_application._dispatcher.unsubscribe(_process.getInputFileno());
+        _process.closeInput();
+        _isInOutputPhase = true;
+
+        _client->_application._dispatcher.subscribe(_process.getOutputFileno(), EPOLLIN | EPOLLHUP, this);
         return;
+    }
     if (getProcess().getStatus() == PROCESS_EXIT_SUCCESS)
     {
         _state = CGI_PROCESS_SUCCESS;
@@ -48,11 +68,19 @@ void CgiProcess::handleEvents(uint32_t eventMask)
     }
     else if (getProcess().getStatus() == PROCESS_RUNNING)
     {
-        ssize_t length;
-        char    buffer[8192];
-
-        if ((length = read(getProcess().getOutputFileno(), buffer, sizeof(buffer) - 1)) < 0)
+        std::cout << "Im Process running drin" << std::endl;
+        char data[8192];
+        ssize_t result = read(getProcess().getOutputFileno(), data, sizeof(data));
+        if (result < 0)
             throw std::runtime_error("Unable to read from CGI process");
+
+        // Copy the bytes into the body buffer
+        size_t copyLength = static_cast<size_t>(result);
+        size_t oldLength = _buffer.size();
+        if (SIZE_MAX - oldLength < copyLength)
+            throw std::runtime_error("Body exeed from CGI process");
+        _buffer.resize(oldLength + copyLength);
+        memcpy(&_buffer[oldLength], &data[0], copyLength);
     }
 }
 

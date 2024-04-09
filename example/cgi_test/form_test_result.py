@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-import cgi
+import cgi, os
+
+def html_escape(text: str) -> str:
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 def main() -> None:
     print("Content-Type: text/html\r\n\r\n", end='')
@@ -14,6 +17,7 @@ def main() -> None:
 
     form = cgi.FieldStorage()
     for field in form.keys():
+        print("key-field: ", field)
         value = form.getvalue(field)
         print("<tr>")
         print("<th>{}</th>".format(field))
@@ -21,6 +25,12 @@ def main() -> None:
         print("</tr>")
 
     print("</table>")
+
+    print('<ul>')
+    for key, value in os.environ.items():
+        print(f"<li>{html_escape(key)}: {html_escape(value)}</li>")
+    print('</ul>')
+
     print("</body>")
     print("</html>")
 
