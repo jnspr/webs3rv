@@ -60,6 +60,20 @@ static void printBoolField(const char *prefix, bool value)
     std::cout << std::endl;
 }
 
+/* Prints a vector of strings*/
+
+static void printStringVector(const char *prefix, const std::vector<std::string> &value)
+{
+    std::cout << prefix;
+    for (size_t index = 0; index < value.size(); index++)
+    {
+        std::cout << value[index];
+        if (index + 1 < value.size())
+            std::cout << ", ";
+    }
+    std::cout << std::endl;
+}
+
 /* Prints a field of a human-readable IPv4 address and port */
 static void printAddressField(const char *prefix, uint32_t host, uint16_t port)
 {
@@ -99,7 +113,7 @@ void Debug::printConfig(const ApplicationConfig &config)
         const ServerConfig &serverConfig = config.servers[index];
 
         // Print simple fields
-        printStringField("+ Server ", serverConfig.name);
+        printStringVector("+ Server names: ", serverConfig.name);
         printAddressField("  Bind address: ", serverConfig.host, serverConfig.port);
         std::cout << "  Maximum allowed body size: " << serverConfig.maxBodySize << std::endl;
 

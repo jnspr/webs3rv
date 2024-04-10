@@ -37,7 +37,7 @@ ServerConfig ConfigParser::parseServerConfig()
         case KW_SERVER_NAME:
             isRedundantToken(_tokens[_current].offset, serverConfig, KW_SERVER_NAME, _config_input);
             moveToNextToken();
-            serverConfig.name = parseString();
+            serverConfig.name = parseServerNames();
             expect(SY_SEMICOLON);
             break;
         case KW_PORT:
@@ -123,6 +123,18 @@ std::string ConfigParser::parseString()
     std::string str = currentToken().data;
     moveToNextToken();
     return str;
+}
+
+std::vector<std::string> ConfigParser::parseServerNames()
+{
+    std::vector<std::string> serverNames;
+    while (currentToken().kind != SY_SEMICOLON)
+    {
+        expect(DATA);
+        serverNames.push_back(currentToken().data);
+        moveToNextToken();
+    }
+    return serverNames;
 }
 
 std::string ConfigParser::parseLocalRoutePath()

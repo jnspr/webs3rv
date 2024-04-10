@@ -60,8 +60,7 @@ void isRedundantToken(size_t offset, LocalRouteConfig &localRouteConfig, TokenKi
 void isServerTokensMissing(std::set<TokenKind> &parsedTokens, size_t offset, std::string config_input)
 {
     if (parsedTokens.find(KW_PORT) == parsedTokens.end() ||
-        parsedTokens.find(KW_LOCATION) == parsedTokens.end() ||
-        parsedTokens.find(KW_SERVER_NAME) == parsedTokens.end())
+        parsedTokens.find(KW_LOCATION) == parsedTokens.end())
         throw ConfigException("Error: Missing server config required token", config_input, offset);
 }
 

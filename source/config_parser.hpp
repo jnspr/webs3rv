@@ -38,6 +38,7 @@ private:
 
     // Parsing data types
     std::string parseString();
+    std::vector<std::string> parseServerNames();
     std::string parseLocalRoutePath();
     uint16_t parseUint16();
     size_t parseSizeT();

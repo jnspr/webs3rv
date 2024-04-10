@@ -68,7 +68,6 @@ void CgiProcess::handleEvents(uint32_t eventMask)
     }
     else if (getProcess().getStatus() == PROCESS_RUNNING)
     {
-        std::cout << "Im Process running drin" << std::endl;
         char data[8192];
         ssize_t result = read(getProcess().getOutputFileno(), data, sizeof(data));
         if (result < 0)

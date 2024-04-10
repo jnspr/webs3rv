@@ -39,7 +39,7 @@ struct RedirectRouteConfig
 /* Virtual server configuration */
 struct ServerConfig
 {
-    std::string                      name;
+    std::vector<std::string>         name;
     uint32_t                         host;
     uint16_t                         port;
     std::map<int, std::string>       errorPages;
