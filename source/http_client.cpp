@@ -4,6 +4,7 @@
 #include "application.hpp"
 #include "utility.hpp"
 #include "mime_db.hpp"
+#include "error_db.hpp"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -39,39 +40,45 @@ void HttpClient::handleEvents(uint32_t eventMask)
         ssize_t length;
         char buffer[8192];
 
+        if ((length = read(_fileno, buffer, sizeof(buffer))) < 0)
+            throw std::runtime_error("Unable to read from client");
+
         if (_waitingForClose)
         {
             markForCleanup();
             return;
         }
 
-        if ((length = read(_fileno, buffer, sizeof(buffer))) < 0)
-            throw std::runtime_error("Unable to read from client");
         if (length == 0)
             throw std::runtime_error("End of stream");
 
         Slice data(buffer, length);
-        if (_parser.commit(data))
+        try
         {
-            switch (_parser.getPhase())
+            if (_parser.commit(data))
             {
-            case HTTP_REQUEST_HEADER_EXCEED:
-                printf("HTTP_REQUEST_HEADER_EXCEED\n");
-                break;
-            case HTTP_REQUEST_BODY_EXCEED:
-                printf("HTTP_REQUEST_BODY_EXCEED\n");
-                break;
-            case HTTP_REQUEST_MALFORMED:
-                printf("HTTP_REQUEST_MALFORMED\n");
-                break;
-            case HTTP_REQUEST_COMPLETED:
-                printf("HTTP_REQUEST_COMPLETED\n");
-                Debug::printRequest(_parser.getRequest());
-                handleRequest(_parser.getRequest());
-                break;
-            default:
-                break;
+                switch (_parser.getPhase())
+                {
+                case HTTP_REQUEST_HEADER_EXCEED:
+                    throw HttpException(413);
+                case HTTP_REQUEST_BODY_EXCEED:
+                    throw HttpException(413);
+                case HTTP_REQUEST_MALFORMED:
+                    throw HttpException(400);
+                case HTTP_REQUEST_COMPLETED:
+                    //Debug::printRequest(_parser.getRequest());
+                    handleRequest(_parser.getRequest());
+                default:
+                    break;
+                }
             }
+        } catch (HttpException &exception)
+        {
+            const std::string &errorType = g_errorDB.getErrorType(exception.getStatusCode());
+            _response.initialize(exception.getStatusCode(), errorType, errorType.data(), errorType.size()); // FIXME
+            _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/plain"));
+            _response.finalizeHeader();
+            _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
         }
     }
 
