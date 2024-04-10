@@ -71,22 +71,20 @@ void Application::mainLoop()
         headClient = _clients;
         while (headClient != NULL)
         {
-            // Destroy the client if it is timeout
-            if (headClient->_timeout.isExpired())
-            {
-                headClient->_markedForCleanup = true;
-                headClient->_cleanupNext = _cleanupClients;
-                _cleanupClients = headClient;
-            }
-
+            // Destroy the process if it is timeout
             if (headClient->_process != NULL)
             {
-                // Destroy the process if it is timeout
                 if (headClient->_process->getTimeout().isExpired())
                 {
                     headClient->_process->setState(CGI_PROCESS_TIMEOUT);
                     headClient->handleCgiState();
                 }
+            }
+
+            // Destroy the client if it is timeout
+            if (headClient->_timeout.isExpired())
+            {
+                headClient->markForCleanup();
             }
             headClient = headClient->_next;
         }
@@ -96,7 +94,7 @@ void Application::mainLoop()
         _cleanupClients = NULL;
         while (headClient != NULL)
         {
-            nextClient = headClient->_next;
+            nextClient = headClient->_cleanupNext;
             removeClient(headClient);
             headClient = nextClient;
         }
