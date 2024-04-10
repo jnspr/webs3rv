@@ -1,102 +1,112 @@
 #include "html_generator.hpp"
+#include "http_exception.hpp"
 #include "utility.hpp"
+#include "error_db.hpp"
 
-std::string toLowercase(const std::string& str) {
-    std::string result = str;
-    for (size_t i = 0; i < result.length(); ++i) {
-        result[i] = static_cast<char>(tolower(result[i]));
-    }
-    return result;
-}
+#include <dirent.h>
+#include <strings.h>
+#include <algorithm>
 
-bool compareDirentNamesCaseInsensitive(const dirent* a, const dirent* b) {
-    std::string nameA = toLowercase(a->d_name);
-    std::string nameB = toLowercase(b->d_name);
-
-    return nameA < nameB;
-}
-
-
-std::string Generator::ErrorPage(int error_number)
+/* RAII wrapper around `opendir()` and `closedir()` */
+class DirectoryHandle
 {
-    std::string error_string = g_errorDB.getErrorType(error_number);
-    std::string output = "<!DOCTYPE html>\n"
-                         "<html>\n"
-                         "\n"
-                         "<head>\n"
-                         "  <title>Error:</title>\n"
-                         "  <meta charset=\"utf-8\">\n"
-                         "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n"
-                         "</head>\n"
-                         "\n"
-                         "<body classes=\"Error_Number, Error_Text\">\n"
-                         "  <h1>Error:</h1>\n"
-                         "<hr>\n"
-                         "  Error Number ";
-    output += Utility::numberToString(error_number);
-    output += " : ";
-    output += error_string;
-    output += "\n"
-              "\n"
-              "</body>\n"
-              "\n"
-              "</html>";
-    return output;
-}
-std::string Generator::DirectoryList(std::string path)
-{
-    struct dirent *currentFile;
-    std::vector<dirent*> files;
-    DIR *directory =  opendir(path.c_str());
-   if (!directory)
-       throw std::runtime_error("Unable to open directory");
-
-   do{
-      currentFile = readdir(directory);
-      if (currentFile)
-        files.push_back(currentFile);
-   }
-   while (currentFile);
-
-    closedir(directory);
-    std::sort(files.begin(), files.end(), compareDirentNamesCaseInsensitive);
-
-    return arrangeOutput(path, files);
-}
-
-std::string Generator::arrangeOutput(std::string path, std::vector<dirent *> files)
-{
-    std::string output = "<!DOCTYPE html>\n"
-                         "<html lang=\"en\">\n"
-                         "<head>\n"
-                         "    <meta charset=\"UTF-8\">\n"
-                         "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
-                         "    <title>File List</title>\n"
-                         "    <style>\n"
-                         "        body {\n"
-                         "            font-family: Arial, sans-serif;\n"
-                         "        }\n"
-                         "    </style>\n"
-                         "</head>\n"
-                         "<body>\n"
-                         "\n"
-                         "<h1>File List</h1>\n"
-                         "\n"
-                         "<ul>";
-    for (size_t i = 0; files[i]; i++)
+public:
+    /* Opens a directory pointer */
+    inline DirectoryHandle(const char *path)
     {
-     output += "<li><a href=\"";
-     output += path;
-     output += "/";
-     output += files[i]->d_name;
-     output += "\">";
-     output += files[i]->d_name;
-     output += "</a></li>\n";
+        if ((_pointer = opendir(path)) == NULL)
+            throw std::runtime_error("Unable to open directory");
     }
-    output += "</ul>\n"
+
+    /* Releases the directory pointer */
+    inline ~DirectoryHandle()
+    {
+        if (_pointer)
+            closedir(_pointer);
+    }
+
+    /* Gets the next file name */
+    inline dirent *next()
+    {
+        return readdir(_pointer);
+    }
+private:
+    DIR *_pointer;
+
+    /* Prevent construction by copy */
+    DirectoryHandle(const DirectoryHandle &other);
+
+    /* Prevent assignment by copy */
+    DirectoryHandle &operator=(const DirectoryHandle &other);
+};
+
+/* Comparison function for `std::sort()` */
+static bool compareLowercase(const std::string &lhs, const std::string &rhs)
+{
+    return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
+}
+
+/* Generates an error page for the given status code */
+std::string HtmlGenerator::errorPage(int statusCode)
+{
+    std::stringstream  stream;
+    const std::string &message = g_errorDB.getErrorType(statusCode);
+
+    stream << "<!DOCTYPE html>\n"
+              "<html lang=\"en\">\n"
+              "<head>\n"
+              "    <meta charset=\"UTF-8\">\n"
+              "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
+              "    <title>" << statusCode << " - " << message << "</title>\n"
+              "</head>\n"
+              "<body>\n"
+              "    <h1>" << statusCode << " - " << message << "</h1>\n"
+              "    <hr>"
+              "    <p>This is the default error page</p>"
+              "</body>\n"
+              "</html>";
+
+    return stream.str();
+}
+
+/* Generates a directory list page for the given directory */
+std::string HtmlGenerator::directoryList(const char *path)
+{
+    dirent                  *entry;
+    std::vector<std::string> files;
+    std::stringstream        stream;
+    DirectoryHandle          handle(path);
+
+    stream << "<!DOCTYPE html>\n"
+              "<html lang=\"en\">\n"
+              "<head>\n"
+              "    <meta charset=\"UTF-8\">\n"
+              "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n"
+              "    <title>Directory listing</title>\n"
+              "    <style>\n"
+              "        body {\n"
+              "            font-family: Arial, sans-serif;\n"
+              "        }\n"
+              "    </style>\n"
+              "</head>\n"
+              "<body>\n"
+              "<h1>Directory listing</h1>\n"
+              "<hr>\n"
+              "<ul>";
+
+    while ((entry = handle.next()) != NULL)
+        files.push_back(entry->d_name);
+
+    std::sort(files.begin(), files.end(), compareLowercase);
+
+    std::vector<std::string>::iterator iterator = files.begin();
+    for (; iterator != files.end(); iterator++)
+        stream << "<li><a href=\"" << *iterator << "\">" << *iterator << "</a></li>\n";
+
+    stream << "</ul>\n"
               "\n"
               "</body>\n"
               "</html>\n";
 
-    return output;
+    return stream.str();
 }

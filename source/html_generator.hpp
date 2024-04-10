@@ -1,24 +1,15 @@
-#ifndef WEBSERV_GENERATOR_HPP
-#define WEBSERV_GENERATOR_HPP
+#ifndef HTML_GENERATOR_hpp
+#define HTML_GENERATOR_hpp
 
 #include <string>
-#include <sys/types.h>
-#include <dirent.h>
-#include <vector>
-#include <algorithm>
-#include <stdexcept>
-#include "error_db.hpp"
 
-
-class Generator
+namespace HtmlGenerator
 {
-private:
+    /* Generates an error page for the given status code */
+    std::string errorPage(int statusCode);
 
-public:
-    static std::string ErrorPage(int error_number);
-    static std::string DirectoryList(std::string path);
-
-    static std::string arrangeOutput(std::string basicString, std::vector<dirent *> vector1);
+    /* Generates a directory list page for the given directory */
+    std::string directoryList(const char *path);
 };
 
-#endif // WEBSERV_GENERATOR_HPP
+#endif // HTML_GENERATOR_hpp
