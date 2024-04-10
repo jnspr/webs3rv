@@ -1,0 +1,118 @@
+\doxysection{http\+\_\+client.\+hpp}
+\hypertarget{http__client_8hpp_source}{}\label{http__client_8hpp_source}\index{source/http\_client.hpp@{source/http\_client.hpp}}
+\mbox{\hyperlink{http__client_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ HTTP\_CLIENT\_hpp}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ HTTP\_CLIENT\_hpp}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{config_8hpp}{config.hpp}}"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{timeout_8hpp}{timeout.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{dispatcher_8hpp}{dispatcher.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{cgi__process_8hpp}{cgi\_process.hpp}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{http__request_8hpp}{http\_request.hpp}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{routing_8hpp}{routing.hpp}}"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{http__response_8hpp}{http\_response.hpp}}"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{http__request__parser_8hpp}{http\_request\_parser.hpp}}"{}}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classApplication}{Application}};}
+\DoxyCodeLine{00016\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classCgiProcess}{CgiProcess}};}
+\DoxyCodeLine{00017\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structuploadData}{uploadData}};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#define\ ISDIR\ 0}}
+\DoxyCodeLine{00020\ \textcolor{preprocessor}{\#define\ ISFILE\ 1}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ ERROR\ 3}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#define\ CURL\ 0}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#define\ PYTHONSCRIPT\ 1}}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classHttpClient}{HttpClient}}:\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structSink}{Sink}}}
+\DoxyCodeLine{00028\ \{}
+\DoxyCodeLine{00029\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classApplication}{Application}};}
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classCgiProcess}{CgiProcess}};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{/*\ Constructs\ a\ HTTP\ client\ using\ the\ given\ socket\ file\ descriptor\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{classHttpClient_a5d1430be67aa2d26d6d71384a8d09d75}{HttpClient}}(\mbox{\hyperlink{classApplication}{Application}}\ \&application,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structServerConfig}{ServerConfig}}\ \&config,\ \textcolor{keywordtype}{int}\ fileno,\ uint32\_t\ host,\ uint16\_t\ port);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{/*\ Closes\ the\ client's\ file\ descriptor\ */}}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{classHttpClient_a3a10dd5f2752ed1fb3cf0e40f3067a81}{\string~HttpClient}}();}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{/*\ Gets\ the\ client's\ file\ descriptor\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classHttpClient_a4d587415b1735d5d8513168c0149f403}{getFileno}}()}
+\DoxyCodeLine{00041\ \ \ \ \ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_fileno;}
+\DoxyCodeLine{00043\ \ \ \ \ \}}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{comment}{/*\ Gets\ the\ associated\ timeout\ object\ */}}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classTimeout}{Timeout}}\ \&\mbox{\hyperlink{classHttpClient_ac8b2ec2a88907398d051ec45b0707013}{getTimeout}}()}
+\DoxyCodeLine{00047\ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_timeout;}
+\DoxyCodeLine{00049\ \ \ \ \ \}}
+\DoxyCodeLine{00050\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00051\ \ \ \ \ \mbox{\hyperlink{classApplication}{Application}}\ \ \ \ \ \ \ \ \&\_application;}
+\DoxyCodeLine{00052\ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structServerConfig}{ServerConfig}}\ \&\_config;}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_fileno;}
+\DoxyCodeLine{00054\ \ \ \ \ \mbox{\hyperlink{classTimeout}{Timeout}}\ \ \ \ \ \ \ \ \ \ \ \ \ \_timeout;}
+\DoxyCodeLine{00055\ \ \ \ \ \mbox{\hyperlink{classHttpClient}{HttpClient}}\ \ \ \ \ \ \ \ \ *\_next;}
+\DoxyCodeLine{00056\ \ \ \ \ \mbox{\hyperlink{classHttpClient}{HttpClient}}\ \ \ \ \ \ \ \ \ *\_previous;}
+\DoxyCodeLine{00057\ \ \ \ \ \mbox{\hyperlink{classHttpClient}{HttpClient}}\ \ \ \ \ \ \ \ \ *\_cleanupNext;}
+\DoxyCodeLine{00058\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_waitingForClose;}
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_markedForCleanup;}
+\DoxyCodeLine{00060\ \ \ \ \ \mbox{\hyperlink{classCgiProcess}{CgiProcess}}\ \ \ \ \ \ \ \ \ *\_process;}
+\DoxyCodeLine{00061\ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \_host;}
+\DoxyCodeLine{00062\ \ \ \ \ uint16\_t\ \ \ \ \ \ \ \ \ \ \ \ \_port;}
+\DoxyCodeLine{00063\ \ \ \ \ \mbox{\hyperlink{classHttpRequestParser}{HttpRequestParser}}\ \ \ \_parser;}
+\DoxyCodeLine{00064\ \ \ \ \ \mbox{\hyperlink{classHttpResponse}{HttpResponse}}\ \ \ \ \ \ \ \ \_response;}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{/*\ Handles\ one\ or\ multiple\ events\ */}}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keywordtype}{void}\ handleEvents(uint32\_t\ eventMask);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{/*\ Handles\ the\ request*/}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{void}\ handleRequest(\textcolor{keyword}{const}\ \mbox{\hyperlink{structHttpRequest}{HttpRequest}}\ \&request);\ \textcolor{comment}{//\ take\ reference\ for\ all\ the\ requests}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{/*\ Uploads\ a\ file\ sent\ by\ a\ POST\ request*/}}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keywordtype}{void}\ uploadFile(\textcolor{keyword}{const}\ \mbox{\hyperlink{structHttpRequest}{HttpRequest}}\ \&request,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classRoutingInfo}{RoutingInfo}}\ \&info);}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{comment}{/*\ Parses\ the\ upload\ body*/}}
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordtype}{void}\ parseupload(\textcolor{keyword}{const}\ \mbox{\hyperlink{structHttpRequest}{HttpRequest}}\ \&request,\ \mbox{\hyperlink{structuploadData}{uploadData}}\ \&data);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{/*\ Handles\ an\ exception\ that\ occurred\ in\ \`{}handleEvent()`\ */}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{void}\ handleException(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *message);}
+\DoxyCodeLine{00080\ }
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{comment}{/*\ Handles\ a\ CGI\ process\ event\ */}}
+\DoxyCodeLine{00082\ \ \ \ \ \textcolor{keywordtype}{void}\ handleCgiState();}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{/*\ Marks\ the\ client\ to\ be\ cleaned\ up\ during\ the\ next\ cleanup\ cycle\ */}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keywordtype}{void}\ markForCleanup();}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{comment}{/*\ Disable\ copy-\/construction\ and\ copy-\/assignment\ */}}
+\DoxyCodeLine{00088\ \ \ \ \ \mbox{\hyperlink{classHttpClient_a5d1430be67aa2d26d6d71384a8d09d75}{HttpClient}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classHttpClient}{HttpClient}}\ \&other);}
+\DoxyCodeLine{00089\ \ \ \ \ \mbox{\hyperlink{classHttpClient}{HttpClient}}\ \&operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{classHttpClient}{HttpClient}}\ \&other);}
+\DoxyCodeLine{00090\ \};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{comment}{/*\ Struct\ for\ parsing\ Uploads\ */}}
+\DoxyCodeLine{00093\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structuploadData}{uploadData}}}
+\DoxyCodeLine{00094\ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \mbox{\hyperlink{classSlice}{Slice}}\ \mbox{\hyperlink{structuploadData_a6a69f32fc26cbafd1bdb9fa60fa3502a}{boundary}};}
+\DoxyCodeLine{00096\ \ \ \ \ \mbox{\hyperlink{classSlice}{Slice}}\ \mbox{\hyperlink{structuploadData_a23bac46b18be162857754091e1eaeedd}{contentDisposition}};}
+\DoxyCodeLine{00097\ \ \ \ \ \mbox{\hyperlink{classSlice}{Slice}}\ \mbox{\hyperlink{structuploadData_a152b9b3a618d6d140e83f32d16d197b9}{name}};}
+\DoxyCodeLine{00098\ \ \ \ \ \mbox{\hyperlink{classSlice}{Slice}}\ \mbox{\hyperlink{structuploadData_aa82c272f45ed8bbdda24fda1389e0996}{filename}};}
+\DoxyCodeLine{00099\ \ \ \ \ \mbox{\hyperlink{classSlice}{Slice}}\ \mbox{\hyperlink{structuploadData_ac949ba8f82690151ba61db8341cf840b}{contentType}};}
+\DoxyCodeLine{00100\ \ \ \ \ \mbox{\hyperlink{classSlice}{Slice}}\ \mbox{\hyperlink{structuploadData_a8377c8ca6d2d9cd49335f4059287bb4d}{fileContent}};}
+\DoxyCodeLine{00101\ \ \ \ \ ssize\_t\ \mbox{\hyperlink{structuploadData_a83f3dade660ad4ddf89996aea0c95013}{fileSize}};}
+\DoxyCodeLine{00102\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \mbox{\hyperlink{structuploadData_a6cced1620e2c50ab214ca3f47341db0c}{isfinished}};}
+\DoxyCodeLine{00103\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \mbox{\hyperlink{structuploadData_a3b79115066deb53a7a6e3a836fd50f96}{morethanonefile}};}
+\DoxyCodeLine{00104\ \ \ \ \ \mbox{\hyperlink{classSlice}{Slice}}\ \ \ \mbox{\hyperlink{structuploadData_ac92573ce27381fc1a25697fc361bb104}{rest}};}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00106\ \ \ \ \ \mbox{\hyperlink{structuploadData_a4e234a34dbd030ed6852e5727c3dfbd5}{uploadData}}()}
+\DoxyCodeLine{00107\ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ this-\/>fileSize\ =\ 0;}
+\DoxyCodeLine{00109\ \ \ \ \ \}}
+\DoxyCodeLine{00110\ \};}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HTTP\_CLIENT\_hpp}}
+
+\end{DoxyCode}

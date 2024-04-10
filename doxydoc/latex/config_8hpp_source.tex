@@ -1,0 +1,66 @@
+\doxysection{config.\+hpp}
+\hypertarget{config_8hpp_source}{}\label{config_8hpp_source}\index{source/config.hpp@{source/config.hpp}}
+\mbox{\hyperlink{config_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ CONFIG\_hpp}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ CONFIG\_hpp}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{http__constants_8hpp}{http\_constants.hpp}}"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{config__tokenizer_8hpp}{config\_tokenizer.hpp}}"{}}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <set>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structServerConfig}{ServerConfig}};}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{comment}{/*\ Configuration\ for\ a\ route\ that\ requires\ further\ processing\ by\ the\ server\ */}}
+\DoxyCodeLine{00016\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structLocalRouteConfig}{LocalRouteConfig}}}
+\DoxyCodeLine{00017\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ std::string\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structLocalRouteConfig_ae1e5320a677bb5fa820a6e271f819a8d}{path}};}
+\DoxyCodeLine{00019\ \ \ \ \ std::set<HttpMethod>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structLocalRouteConfig_ae0cb60719e015054577d17d98952bf20}{allowedMethods}};}
+\DoxyCodeLine{00020\ \ \ \ \ std::string\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structLocalRouteConfig_a58cd0b524fb16b6f030bd2770183bbd7}{rootDirectory}};}
+\DoxyCodeLine{00021\ \ \ \ \ std::string\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structLocalRouteConfig_adcd49131c4c1e0ac533a42154af3b646}{uploadDirectory}};}
+\DoxyCodeLine{00022\ \ \ \ \ std::string\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structLocalRouteConfig_af8364353a20c4d11ead136aca61d7b0a}{indexFile}};}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structLocalRouteConfig_afab0d97282edcabb6e90d047131aa7bc}{allowUpload}};}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structLocalRouteConfig_a81acd01af5a10c26277bfb6ba9ce8be2}{allowListing}};}
+\DoxyCodeLine{00025\ \ \ \ \ std::map<std::string,\ std::string>\ \mbox{\hyperlink{structLocalRouteConfig_a5f0d7d141b331f1253ff7e944565bae4}{cgiTypes}};}
+\DoxyCodeLine{00026\ \ \ \ \ std::set<TokenKind>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structLocalRouteConfig_a022cd1ae8ad36bc7c88e3ee4d084b342}{parsedTokens}};}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{structLocalRouteConfig_aa28a6207de36f8c9931a0d93f1ed705d}{LocalRouteConfig}}();}
+\DoxyCodeLine{00029\ \};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{/*\ Configuration\ for\ a\ route\ that\ immediately\ redirects\ the\ client\ */}}
+\DoxyCodeLine{00032\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structRedirectRouteConfig}{RedirectRouteConfig}}}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ std::string\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structRedirectRouteConfig_a8710557f1f48cc4f8c7f2d553278ba18}{path}};}
+\DoxyCodeLine{00035\ \ \ \ \ std::set<HttpMethod>\ \mbox{\hyperlink{structRedirectRouteConfig_ae87465251053845cf30159b2f0ded1a5}{allowedMethods}};}
+\DoxyCodeLine{00036\ \ \ \ \ std::string\ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structRedirectRouteConfig_a2cb4aee49de7719b664564e38074ec1e}{redirectLocation}};}
+\DoxyCodeLine{00037\ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \textcolor{comment}{/*\ Virtual\ server\ configuration\ */}}
+\DoxyCodeLine{00040\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structServerConfig}{ServerConfig}}}
+\DoxyCodeLine{00041\ \{}
+\DoxyCodeLine{00042\ \ \ \ \ std::vector<std::string>\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structServerConfig_a253f945866dcb0a0d7c372c2073a74cf}{name}};}
+\DoxyCodeLine{00043\ \ \ \ \ uint32\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structServerConfig_ae802277603979ecd0ae48a3cff2dc5b7}{host}};}
+\DoxyCodeLine{00044\ \ \ \ \ uint16\_t\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structServerConfig_ab49ab0a1fa996da2794a5a8003386702}{port}};}
+\DoxyCodeLine{00045\ \ \ \ \ std::map<int,\ std::string>\ \ \ \ \ \ \ \mbox{\hyperlink{structServerConfig_a50ac91f4762e4a8ac2fb18c6e9b43f48}{errorPages}};}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structServerConfig_a46b82b19aff639acf1c1b88dfa46a14e}{maxBodySize}};}
+\DoxyCodeLine{00047\ \ \ \ \ std::vector<LocalRouteConfig>\ \ \ \ \mbox{\hyperlink{structServerConfig_a21d16b1f773ee12b291d360bc9ea4032}{localRoutes}};}
+\DoxyCodeLine{00048\ \ \ \ \ std::vector<RedirectRouteConfig>\ \mbox{\hyperlink{structServerConfig_ad1821fc32bea52b39c45c20b3b833a11}{redirectRoutes}};}
+\DoxyCodeLine{00049\ \ \ \ \ std::set<TokenKind>\ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structServerConfig_a4b4f6554cf56e6662c9f38757278e5ed}{parsedTokens}};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \mbox{\hyperlink{structServerConfig_af61bcd662c3be06dd4219770350e65e6}{ServerConfig}}();}
+\DoxyCodeLine{00052\ \};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{/*\ Global\ application\ configuration;\ can\ contain\ many\ virtual\ servers\ */}}
+\DoxyCodeLine{00055\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structApplicationConfig}{ApplicationConfig}}}
+\DoxyCodeLine{00056\ \{}
+\DoxyCodeLine{00057\ \ \ \ \ std::vector<ServerConfig>\ \mbox{\hyperlink{structApplicationConfig_ae2f37317bc531b2d8edcb7e72891d7aa}{servers}};}
+\DoxyCodeLine{00058\ \};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CONFIG\_hpp}}
+
+\end{DoxyCode}

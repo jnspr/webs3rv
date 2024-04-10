@@ -1,0 +1,117 @@
+\doxysection{source/http\+\_\+request\+\_\+parser.hpp File Reference}
+\hypertarget{http__request__parser_8hpp}{}\label{http__request__parser_8hpp}\index{source/http\_request\_parser.hpp@{source/http\_request\_parser.hpp}}
+{\ttfamily \#include "{}config.\+hpp"{}}\newline
+{\ttfamily \#include "{}http\+\_\+request.\+hpp"{}}\newline
+{\ttfamily \#include $<$stdexcept$>$}\newline
+Include dependency graph for http\+\_\+request\+\_\+parser.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{http__request__parser_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{http__request__parser_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classHttpRequestParser}{Http\+Request\+Parser}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{http__request__parser_8hpp_ad40c24d64a8fc4112910aed53aad21fe}{HTTP\+\_\+\+REQUEST\+\_\+\+HEADER\+\_\+\+MAX\+\_\+\+LENGTH}}~8192
+\item 
+\#define \mbox{\hyperlink{http__request__parser_8hpp_a42213932fb451f90e97de3d5f6d2a4d0}{HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+CHUNKED\+\_\+\+HEADER\+\_\+\+MAX\+\_\+\+LENGTH}}~256
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1}{Http\+Request\+Phase}} \{ \newline
+\mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a6abc76af1430d69f92eb38212dda298b}{HTTP\+\_\+\+REQUEST\+\_\+\+HEADER}}
+, \mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1ac19223148826639082b056187dbd681a}{HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+RAW}}
+, \mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1ad4a52564b6ba8219b9d406c56fea9eec}{HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+CHUNKED\+\_\+\+HEADER}}
+, \mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a2379c14a0b420d6410e0fae242d4a999}{HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+CHUNKED\+\_\+\+BODY}}
+, \newline
+\mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1aaae4f8cd099c9ed7775f5d2d52c17e8a}{HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+CHUNKED\+\_\+\+CR}}
+, \mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a38e6c0ed2149a9c348f2710b3efa405f}{HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+CHUNKED\+\_\+\+LF}}
+, \mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1aa20d49a693d85e6f2b67a8ca86e0fdd2}{HTTP\+\_\+\+REQUEST\+\_\+\+HEADER\+\_\+\+EXCEED}}
+, \mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a61674efe5774f477a63c1f52be0a62f1}{HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+EXCEED}}
+, \newline
+\mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a4f0310ce7444991958a4bc4a5d6c6b6c}{HTTP\+\_\+\+REQUEST\+\_\+\+MALFORMED}}
+, \mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a31e7e82a72529018542f20ac22ed9c42}{HTTP\+\_\+\+REQUEST\+\_\+\+COMPLETED}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{http__request__parser_8hpp_a42213932fb451f90e97de3d5f6d2a4d0}\label{http__request__parser_8hpp_a42213932fb451f90e97de3d5f6d2a4d0} 
+\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_BODY\_CHUNKED\_HEADER\_MAX\_LENGTH@{HTTP\_REQUEST\_BODY\_CHUNKED\_HEADER\_MAX\_LENGTH}}
+\index{HTTP\_REQUEST\_BODY\_CHUNKED\_HEADER\_MAX\_LENGTH@{HTTP\_REQUEST\_BODY\_CHUNKED\_HEADER\_MAX\_LENGTH}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}
+\doxysubsubsection{\texorpdfstring{HTTP\_REQUEST\_BODY\_CHUNKED\_HEADER\_MAX\_LENGTH}{HTTP\_REQUEST\_BODY\_CHUNKED\_HEADER\_MAX\_LENGTH}}
+{\footnotesize\ttfamily \#define HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+CHUNKED\+\_\+\+HEADER\+\_\+\+MAX\+\_\+\+LENGTH~256}
+
+\Hypertarget{http__request__parser_8hpp_ad40c24d64a8fc4112910aed53aad21fe}\label{http__request__parser_8hpp_ad40c24d64a8fc4112910aed53aad21fe} 
+\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_HEADER\_MAX\_LENGTH@{HTTP\_REQUEST\_HEADER\_MAX\_LENGTH}}
+\index{HTTP\_REQUEST\_HEADER\_MAX\_LENGTH@{HTTP\_REQUEST\_HEADER\_MAX\_LENGTH}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}
+\doxysubsubsection{\texorpdfstring{HTTP\_REQUEST\_HEADER\_MAX\_LENGTH}{HTTP\_REQUEST\_HEADER\_MAX\_LENGTH}}
+{\footnotesize\ttfamily \#define HTTP\+\_\+\+REQUEST\+\_\+\+HEADER\+\_\+\+MAX\+\_\+\+LENGTH~8192}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1}\label{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1} 
+\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HttpRequestPhase@{HttpRequestPhase}}
+\index{HttpRequestPhase@{HttpRequestPhase}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}
+\doxysubsubsection{\texorpdfstring{HttpRequestPhase}{HttpRequestPhase}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1}{Http\+Request\+Phase}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_REQUEST\_HEADER@{HTTP\_REQUEST\_HEADER}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_HEADER@{HTTP\_REQUEST\_HEADER}}}\Hypertarget{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a6abc76af1430d69f92eb38212dda298b}\label{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a6abc76af1430d69f92eb38212dda298b} 
+HTTP\+\_\+\+REQUEST\+\_\+\+HEADER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_REQUEST\_BODY\_RAW@{HTTP\_REQUEST\_BODY\_RAW}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_BODY\_RAW@{HTTP\_REQUEST\_BODY\_RAW}}}\Hypertarget{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1ac19223148826639082b056187dbd681a}\label{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1ac19223148826639082b056187dbd681a} 
+HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+RAW&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_REQUEST\_BODY\_CHUNKED\_HEADER@{HTTP\_REQUEST\_BODY\_CHUNKED\_HEADER}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_BODY\_CHUNKED\_HEADER@{HTTP\_REQUEST\_BODY\_CHUNKED\_HEADER}}}\Hypertarget{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1ad4a52564b6ba8219b9d406c56fea9eec}\label{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1ad4a52564b6ba8219b9d406c56fea9eec} 
+HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+CHUNKED\+\_\+\+HEADER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_REQUEST\_BODY\_CHUNKED\_BODY@{HTTP\_REQUEST\_BODY\_CHUNKED\_BODY}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_BODY\_CHUNKED\_BODY@{HTTP\_REQUEST\_BODY\_CHUNKED\_BODY}}}\Hypertarget{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a2379c14a0b420d6410e0fae242d4a999}\label{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a2379c14a0b420d6410e0fae242d4a999} 
+HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+CHUNKED\+\_\+\+BODY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_REQUEST\_BODY\_CHUNKED\_CR@{HTTP\_REQUEST\_BODY\_CHUNKED\_CR}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_BODY\_CHUNKED\_CR@{HTTP\_REQUEST\_BODY\_CHUNKED\_CR}}}\Hypertarget{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1aaae4f8cd099c9ed7775f5d2d52c17e8a}\label{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1aaae4f8cd099c9ed7775f5d2d52c17e8a} 
+HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+CHUNKED\+\_\+\+CR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_REQUEST\_BODY\_CHUNKED\_LF@{HTTP\_REQUEST\_BODY\_CHUNKED\_LF}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_BODY\_CHUNKED\_LF@{HTTP\_REQUEST\_BODY\_CHUNKED\_LF}}}\Hypertarget{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a38e6c0ed2149a9c348f2710b3efa405f}\label{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a38e6c0ed2149a9c348f2710b3efa405f} 
+HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+CHUNKED\+\_\+\+LF&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_REQUEST\_HEADER\_EXCEED@{HTTP\_REQUEST\_HEADER\_EXCEED}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_HEADER\_EXCEED@{HTTP\_REQUEST\_HEADER\_EXCEED}}}\Hypertarget{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1aa20d49a693d85e6f2b67a8ca86e0fdd2}\label{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1aa20d49a693d85e6f2b67a8ca86e0fdd2} 
+HTTP\+\_\+\+REQUEST\+\_\+\+HEADER\+\_\+\+EXCEED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_REQUEST\_BODY\_EXCEED@{HTTP\_REQUEST\_BODY\_EXCEED}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_BODY\_EXCEED@{HTTP\_REQUEST\_BODY\_EXCEED}}}\Hypertarget{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a61674efe5774f477a63c1f52be0a62f1}\label{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a61674efe5774f477a63c1f52be0a62f1} 
+HTTP\+\_\+\+REQUEST\+\_\+\+BODY\+\_\+\+EXCEED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_REQUEST\_MALFORMED@{HTTP\_REQUEST\_MALFORMED}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_MALFORMED@{HTTP\_REQUEST\_MALFORMED}}}\Hypertarget{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a4f0310ce7444991958a4bc4a5d6c6b6c}\label{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a4f0310ce7444991958a4bc4a5d6c6b6c} 
+HTTP\+\_\+\+REQUEST\+\_\+\+MALFORMED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_REQUEST\_COMPLETED@{HTTP\_REQUEST\_COMPLETED}!http\_request\_parser.hpp@{http\_request\_parser.hpp}}\index{http\_request\_parser.hpp@{http\_request\_parser.hpp}!HTTP\_REQUEST\_COMPLETED@{HTTP\_REQUEST\_COMPLETED}}}\Hypertarget{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a31e7e82a72529018542f20ac22ed9c42}\label{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1a31e7e82a72529018542f20ac22ed9c42} 
+HTTP\+\_\+\+REQUEST\+\_\+\+COMPLETED&\\
+\hline
+
+\end{DoxyEnumFields}

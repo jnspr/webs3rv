@@ -1,0 +1,125 @@
+\doxysection{Utility Namespace Reference}
+\hypertarget{namespaceUtility}{}\label{namespaceUtility}\index{Utility@{Utility}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classUtility_1_1AddrInfo}{Addr\+Info}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{utility_8hpp_acac9cbaeea226ed297804c012dc12b16}{Node\+Type}} \mbox{\hyperlink{namespaceUtility_a67bc10c23dfd988bfe9306dcfa0fb41c}{query\+Node\+Type}} (const char \texorpdfstring{$\ast$}{*}path)
+\item 
+bool \mbox{\hyperlink{namespaceUtility_af2ddaa431a4b13a3eee7680296b86974}{check\+Path\+Level}} (\mbox{\hyperlink{classSlice}{Slice}} path)
+\item 
+std\+::string \mbox{\hyperlink{namespaceUtility_acd2bd6d90e34a8ba5250489c6f2f5767}{ipv4\+To\+String}} (uint32\+\_\+t ipv4\+Addr)
+\item 
+bool \mbox{\hyperlink{namespaceUtility_ab50ad98e16c6f90c7ec85fe2267ae66f}{parse\+Size}} (\mbox{\hyperlink{classSlice}{Slice}} string, size\+\_\+t \&out\+Result)
+\item 
+bool \mbox{\hyperlink{namespaceUtility_ad1f027888947f1668cbf89accdca3caa}{parse\+Hex\+Char}} (char character, uint8\+\_\+t \&out\+Result)
+\item 
+bool \mbox{\hyperlink{namespaceUtility_a1621e4b64c286e0d11e43dc49a2a7637}{parse\+Size\+Hex}} (\mbox{\hyperlink{classSlice}{Slice}} string, size\+\_\+t \&out\+Result)
+\item 
+bool \mbox{\hyperlink{namespaceUtility_a863ce3e7f473dcc2b3c9e36de7df0df0}{decode\+Url}} (\mbox{\hyperlink{classSlice}{Slice}} string, std\+::string \&out\+Result)
+\item 
+void \mbox{\hyperlink{namespaceUtility_a5e34972fcc8c2b0a3f94724742a8143c}{checkduplicatehost}} (const \mbox{\hyperlink{structApplicationConfig}{Application\+Config}} \&config)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{namespaceUtility_a5e34972fcc8c2b0a3f94724742a8143c}\label{namespaceUtility_a5e34972fcc8c2b0a3f94724742a8143c} 
+\index{Utility@{Utility}!checkduplicatehost@{checkduplicatehost}}
+\index{checkduplicatehost@{checkduplicatehost}!Utility@{Utility}}
+\doxysubsubsection{\texorpdfstring{checkduplicatehost()}{checkduplicatehost()}}
+{\footnotesize\ttfamily void Utility\+::checkduplicatehost (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structApplicationConfig}{Application\+Config}} \&}]{config }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceUtility_a5e34972fcc8c2b0a3f94724742a8143c_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespaceUtility_af2ddaa431a4b13a3eee7680296b86974}\label{namespaceUtility_af2ddaa431a4b13a3eee7680296b86974} 
+\index{Utility@{Utility}!checkPathLevel@{checkPathLevel}}
+\index{checkPathLevel@{checkPathLevel}!Utility@{Utility}}
+\doxysubsubsection{\texorpdfstring{checkPathLevel()}{checkPathLevel()}}
+{\footnotesize\ttfamily bool Utility\+::check\+Path\+Level (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classSlice}{Slice}}}]{path }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=333pt]{namespaceUtility_af2ddaa431a4b13a3eee7680296b86974_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespaceUtility_a863ce3e7f473dcc2b3c9e36de7df0df0}\label{namespaceUtility_a863ce3e7f473dcc2b3c9e36de7df0df0} 
+\index{Utility@{Utility}!decodeUrl@{decodeUrl}}
+\index{decodeUrl@{decodeUrl}!Utility@{Utility}}
+\doxysubsubsection{\texorpdfstring{decodeUrl()}{decodeUrl()}}
+{\footnotesize\ttfamily bool Utility\+::decode\+Url (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classSlice}{Slice}}}]{string,  }\item[{std\+::string \&}]{out\+Result }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=337pt]{namespaceUtility_a863ce3e7f473dcc2b3c9e36de7df0df0_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespaceUtility_acd2bd6d90e34a8ba5250489c6f2f5767}\label{namespaceUtility_acd2bd6d90e34a8ba5250489c6f2f5767} 
+\index{Utility@{Utility}!ipv4ToString@{ipv4ToString}}
+\index{ipv4ToString@{ipv4ToString}!Utility@{Utility}}
+\doxysubsubsection{\texorpdfstring{ipv4ToString()}{ipv4ToString()}}
+{\footnotesize\ttfamily std\+::string Utility\+::ipv4\+To\+String (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{ipv4\+Addr }\end{DoxyParamCaption})}
+
+\Hypertarget{namespaceUtility_ad1f027888947f1668cbf89accdca3caa}\label{namespaceUtility_ad1f027888947f1668cbf89accdca3caa} 
+\index{Utility@{Utility}!parseHexChar@{parseHexChar}}
+\index{parseHexChar@{parseHexChar}!Utility@{Utility}}
+\doxysubsubsection{\texorpdfstring{parseHexChar()}{parseHexChar()}}
+{\footnotesize\ttfamily bool Utility\+::parse\+Hex\+Char (\begin{DoxyParamCaption}\item[{char}]{character,  }\item[{uint8\+\_\+t \&}]{out\+Result }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceUtility_ad1f027888947f1668cbf89accdca3caa_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespaceUtility_ab50ad98e16c6f90c7ec85fe2267ae66f}\label{namespaceUtility_ab50ad98e16c6f90c7ec85fe2267ae66f} 
+\index{Utility@{Utility}!parseSize@{parseSize}}
+\index{parseSize@{parseSize}!Utility@{Utility}}
+\doxysubsubsection{\texorpdfstring{parseSize()}{parseSize()}}
+{\footnotesize\ttfamily bool Utility\+::parse\+Size (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classSlice}{Slice}}}]{string,  }\item[{size\+\_\+t \&}]{out\+Result }\end{DoxyParamCaption})}
+
+\Hypertarget{namespaceUtility_a1621e4b64c286e0d11e43dc49a2a7637}\label{namespaceUtility_a1621e4b64c286e0d11e43dc49a2a7637} 
+\index{Utility@{Utility}!parseSizeHex@{parseSizeHex}}
+\index{parseSizeHex@{parseSizeHex}!Utility@{Utility}}
+\doxysubsubsection{\texorpdfstring{parseSizeHex()}{parseSizeHex()}}
+{\footnotesize\ttfamily bool Utility\+::parse\+Size\+Hex (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classSlice}{Slice}}}]{string,  }\item[{size\+\_\+t \&}]{out\+Result }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceUtility_a1621e4b64c286e0d11e43dc49a2a7637_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespaceUtility_a67bc10c23dfd988bfe9306dcfa0fb41c}\label{namespaceUtility_a67bc10c23dfd988bfe9306dcfa0fb41c} 
+\index{Utility@{Utility}!queryNodeType@{queryNodeType}}
+\index{queryNodeType@{queryNodeType}!Utility@{Utility}}
+\doxysubsubsection{\texorpdfstring{queryNodeType()}{queryNodeType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{utility_8hpp_acac9cbaeea226ed297804c012dc12b16}{Node\+Type}} Utility\+::query\+Node\+Type (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{path }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespaceUtility_a67bc10c23dfd988bfe9306dcfa0fb41c_icgraph}
+\end{center}
+\end{figure}

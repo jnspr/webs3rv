@@ -1,0 +1,33 @@
+\doxysection{http\+\_\+constants.\+hpp}
+\hypertarget{http__constants_8hpp_source}{}\label{http__constants_8hpp_source}\index{source/http\_constants.hpp@{source/http\_constants.hpp}}
+\mbox{\hyperlink{http__constants_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ HTTP\_CONSTANTS\_hpp}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ HTTP\_CONSTANTS\_hpp}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{slice_8hpp}{slice.hpp}}"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{comment}{/*\ Enumeration\ of\ valid\ HTTP\ methods\ */}}
+\DoxyCodeLine{00007\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59}{HttpMethod}}}
+\DoxyCodeLine{00008\ \{}
+\DoxyCodeLine{00009\ \ \ \ \ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59adf943b4c6d7c563a977ae1f623a7315f}{HTTP\_METHOD\_NONE}},}
+\DoxyCodeLine{00010\ \ \ \ \ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59a90754abc55dbb76862fa50abee5af659}{HTTP\_METHOD\_GET}},}
+\DoxyCodeLine{00011\ \ \ \ \ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59a27e993d38ff6b43284014a10798b6223}{HTTP\_METHOD\_HEAD}},}
+\DoxyCodeLine{00012\ \ \ \ \ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59a1944682922ac79b2e682312d8f3f71e2}{HTTP\_METHOD\_POST}},}
+\DoxyCodeLine{00013\ \ \ \ \ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59af7557927b605c64f35f629b43823b1c9}{HTTP\_METHOD\_PUT}},}
+\DoxyCodeLine{00014\ \ \ \ \ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59a761371f7807255b7912afbac2f665ffe}{HTTP\_METHOD\_DELETE}},}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59a3755246bea87120e8311dc914d573fbf}{HTTP\_METHOD\_CONNECT}},}
+\DoxyCodeLine{00016\ \ \ \ \ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59af6b02f8ff0467dbdaebb24f0a996cdd4}{HTTP\_METHOD\_OPTIONS}},}
+\DoxyCodeLine{00017\ \ \ \ \ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59a95b5b19305a14de1400aedfdec1c1eed}{HTTP\_METHOD\_TRACE}},}
+\DoxyCodeLine{00018\ \ \ \ \ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59ac1adf0f44043552b637a6235ae3ff283}{HTTP\_METHOD\_PATCH}},}
+\DoxyCodeLine{00019\ \};}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{/*\ Parses\ an\ HTTP\ method\ from\ the\ given\ string\ slice\ */}}
+\DoxyCodeLine{00022\ \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59}{HttpMethod}}\ \mbox{\hyperlink{http__constants_8hpp_a12677e39a3eb1ec25bb8a926df09b3cc}{parseHttpMethod}}(\mbox{\hyperlink{classSlice}{Slice}}\ slice);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{/*\ Returns\ the\ name\ of\ a\ HTTP\ method\ as\ a\ constant\ string\ */}}
+\DoxyCodeLine{00025\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{http__constants_8hpp_a6befde2b37ef4af80c21a219f1e49948}{httpMethodToString}}(\mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59}{HttpMethod}}\ method);}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ HTTP\_CONSTANTS\_hpp}}
+
+\end{DoxyCode}

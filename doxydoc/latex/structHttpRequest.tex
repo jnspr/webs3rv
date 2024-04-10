@@ -1,0 +1,146 @@
+\doxysection{Http\+Request Struct Reference}
+\hypertarget{structHttpRequest}{}\label{structHttpRequest}\index{HttpRequest@{HttpRequest}}
+
+
+{\ttfamily \#include $<$http\+\_\+request.\+hpp$>$}
+
+
+
+Collaboration diagram for Http\+Request\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{structHttpRequest__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classHttpRequest_1_1Header}{Header}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+const \mbox{\hyperlink{classHttpRequest_1_1Header}{Header}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structHttpRequest_a7ab3112bd2ee19d766a7094853d50ac0}{find\+Header}} (\mbox{\hyperlink{classSlice}{Slice}} key) const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static const \mbox{\hyperlink{classHttpRequest_1_1Header}{Header}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structHttpRequest_a93cb959304c608aa9e91513b63685ff7}{find\+Header\+In}} (const std\+::vector$<$ \mbox{\hyperlink{classHttpRequest_1_1Header}{Header}} $>$ \&\mbox{\hyperlink{structHttpRequest_a529cb9ffd6b0e37647859214078f9714}{headers}}, \mbox{\hyperlink{classSlice}{Slice}} key)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59}{Http\+Method}} \mbox{\hyperlink{structHttpRequest_acdd7e20e19bd37d971fde83a14eac8f5}{method}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structHttpRequest_a2ef69705c976ad26176b9cdf3bff31fa}{client\+Host}}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{structHttpRequest_aeac2a495776f47efb548bdce995a1526}{client\+Port}}
+\item 
+std\+::string \mbox{\hyperlink{structHttpRequest_a633a39fad320a631e60ada91b88c8bb5}{query}}
+\item 
+std\+::string \mbox{\hyperlink{structHttpRequest_a37890dfaf07185e3fb93213b1a621a35}{query\+Path}}
+\item 
+\mbox{\hyperlink{classSlice}{Slice}} \mbox{\hyperlink{structHttpRequest_abed36caca4aaac51ad2cc499bbb1bb3c}{query\+Parameters}}
+\item 
+bool \mbox{\hyperlink{structHttpRequest_a9a4d2bb9f624509f527c831d094f064a}{is\+Legacy}}
+\item 
+std\+::vector$<$ \mbox{\hyperlink{classHttpRequest_1_1Header}{Header}} $>$ \mbox{\hyperlink{structHttpRequest_a529cb9ffd6b0e37647859214078f9714}{headers}}
+\item 
+std\+::vector$<$ uint8\+\_\+t $>$ \mbox{\hyperlink{structHttpRequest_aa08e1a10e14a4b175a1403b3665631a0}{body}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{structHttpRequest_a7ab3112bd2ee19d766a7094853d50ac0}\label{structHttpRequest_a7ab3112bd2ee19d766a7094853d50ac0} 
+\index{HttpRequest@{HttpRequest}!findHeader@{findHeader}}
+\index{findHeader@{findHeader}!HttpRequest@{HttpRequest}}
+\doxysubsubsection{\texorpdfstring{findHeader()}{findHeader()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{classHttpRequest_1_1Header}{Header}} \texorpdfstring{$\ast$}{*} Http\+Request\+::find\+Header (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classSlice}{Slice}}}]{key }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{structHttpRequest_a7ab3112bd2ee19d766a7094853d50ac0_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{structHttpRequest_a93cb959304c608aa9e91513b63685ff7}\label{structHttpRequest_a93cb959304c608aa9e91513b63685ff7} 
+\index{HttpRequest@{HttpRequest}!findHeaderIn@{findHeaderIn}}
+\index{findHeaderIn@{findHeaderIn}!HttpRequest@{HttpRequest}}
+\doxysubsubsection{\texorpdfstring{findHeaderIn()}{findHeaderIn()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{classHttpRequest_1_1Header}{Http\+Request\+::\+Header}} \texorpdfstring{$\ast$}{*} Http\+Request\+::find\+Header\+In (\begin{DoxyParamCaption}\item[{const std\+::vector$<$ \mbox{\hyperlink{classHttpRequest_1_1Header}{Header}} $>$ \&}]{headers,  }\item[{\mbox{\hyperlink{classSlice}{Slice}}}]{key }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{structHttpRequest_a93cb959304c608aa9e91513b63685ff7_icgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structHttpRequest_aa08e1a10e14a4b175a1403b3665631a0}\label{structHttpRequest_aa08e1a10e14a4b175a1403b3665631a0} 
+\index{HttpRequest@{HttpRequest}!body@{body}}
+\index{body@{body}!HttpRequest@{HttpRequest}}
+\doxysubsubsection{\texorpdfstring{body}{body}}
+{\footnotesize\ttfamily std\+::vector$<$uint8\+\_\+t$>$ Http\+Request\+::body}
+
+\Hypertarget{structHttpRequest_a2ef69705c976ad26176b9cdf3bff31fa}\label{structHttpRequest_a2ef69705c976ad26176b9cdf3bff31fa} 
+\index{HttpRequest@{HttpRequest}!clientHost@{clientHost}}
+\index{clientHost@{clientHost}!HttpRequest@{HttpRequest}}
+\doxysubsubsection{\texorpdfstring{clientHost}{clientHost}}
+{\footnotesize\ttfamily uint32\+\_\+t Http\+Request\+::client\+Host}
+
+\Hypertarget{structHttpRequest_aeac2a495776f47efb548bdce995a1526}\label{structHttpRequest_aeac2a495776f47efb548bdce995a1526} 
+\index{HttpRequest@{HttpRequest}!clientPort@{clientPort}}
+\index{clientPort@{clientPort}!HttpRequest@{HttpRequest}}
+\doxysubsubsection{\texorpdfstring{clientPort}{clientPort}}
+{\footnotesize\ttfamily uint16\+\_\+t Http\+Request\+::client\+Port}
+
+\Hypertarget{structHttpRequest_a529cb9ffd6b0e37647859214078f9714}\label{structHttpRequest_a529cb9ffd6b0e37647859214078f9714} 
+\index{HttpRequest@{HttpRequest}!headers@{headers}}
+\index{headers@{headers}!HttpRequest@{HttpRequest}}
+\doxysubsubsection{\texorpdfstring{headers}{headers}}
+{\footnotesize\ttfamily std\+::vector$<$\mbox{\hyperlink{classHttpRequest_1_1Header}{Header}}$>$ Http\+Request\+::headers}
+
+\Hypertarget{structHttpRequest_a9a4d2bb9f624509f527c831d094f064a}\label{structHttpRequest_a9a4d2bb9f624509f527c831d094f064a} 
+\index{HttpRequest@{HttpRequest}!isLegacy@{isLegacy}}
+\index{isLegacy@{isLegacy}!HttpRequest@{HttpRequest}}
+\doxysubsubsection{\texorpdfstring{isLegacy}{isLegacy}}
+{\footnotesize\ttfamily bool Http\+Request\+::is\+Legacy}
+
+\Hypertarget{structHttpRequest_acdd7e20e19bd37d971fde83a14eac8f5}\label{structHttpRequest_acdd7e20e19bd37d971fde83a14eac8f5} 
+\index{HttpRequest@{HttpRequest}!method@{method}}
+\index{method@{method}!HttpRequest@{HttpRequest}}
+\doxysubsubsection{\texorpdfstring{method}{method}}
+{\footnotesize\ttfamily \mbox{\hyperlink{http__constants_8hpp_a4353a75834bb35c4acd80b51434eef59}{Http\+Method}} Http\+Request\+::method}
+
+\Hypertarget{structHttpRequest_a633a39fad320a631e60ada91b88c8bb5}\label{structHttpRequest_a633a39fad320a631e60ada91b88c8bb5} 
+\index{HttpRequest@{HttpRequest}!query@{query}}
+\index{query@{query}!HttpRequest@{HttpRequest}}
+\doxysubsubsection{\texorpdfstring{query}{query}}
+{\footnotesize\ttfamily std\+::string Http\+Request\+::query}
+
+\Hypertarget{structHttpRequest_abed36caca4aaac51ad2cc499bbb1bb3c}\label{structHttpRequest_abed36caca4aaac51ad2cc499bbb1bb3c} 
+\index{HttpRequest@{HttpRequest}!queryParameters@{queryParameters}}
+\index{queryParameters@{queryParameters}!HttpRequest@{HttpRequest}}
+\doxysubsubsection{\texorpdfstring{queryParameters}{queryParameters}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classSlice}{Slice}} Http\+Request\+::query\+Parameters}
+
+\Hypertarget{structHttpRequest_a37890dfaf07185e3fb93213b1a621a35}\label{structHttpRequest_a37890dfaf07185e3fb93213b1a621a35} 
+\index{HttpRequest@{HttpRequest}!queryPath@{queryPath}}
+\index{queryPath@{queryPath}!HttpRequest@{HttpRequest}}
+\doxysubsubsection{\texorpdfstring{queryPath}{queryPath}}
+{\footnotesize\ttfamily std\+::string Http\+Request\+::query\+Path}
+
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+source/\mbox{\hyperlink{http__request_8hpp}{http\+\_\+request.\+hpp}}\item 
+source/\mbox{\hyperlink{http__request_8cpp}{http\+\_\+request.\+cpp}}\end{DoxyCompactItemize}

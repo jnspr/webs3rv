@@ -1,0 +1,59 @@
+\doxysection{source/http\+\_\+response.hpp File Reference}
+\hypertarget{http__response_8hpp}{}\label{http__response_8hpp}\index{source/http\_response.hpp@{source/http\_response.hpp}}
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$sstream$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include "{}slice.\+hpp"{}}\newline
+Include dependency graph for http\+\_\+response.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{http__response_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{http__response_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classHttpResponse}{Http\+Response}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7}{Http\+Response\+State}} \{ \mbox{\hyperlink{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7a9ac60e66a33df51fbe7672dbc96f6d9d}{HTTP\+\_\+\+RESPONSE\+\_\+\+UNINITIALIZED}}
+, \mbox{\hyperlink{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7a57e2c30a4259d01f9c24543cdaef3dbd}{HTTP\+\_\+\+RESPONSE\+\_\+\+INITIALIZED}}
+, \mbox{\hyperlink{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7acd6d0d8db2e33a3373849ebb735f5acf}{HTTP\+\_\+\+RESPONSE\+\_\+\+FINALIZED}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7}\label{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7} 
+\index{http\_response.hpp@{http\_response.hpp}!HttpResponseState@{HttpResponseState}}
+\index{HttpResponseState@{HttpResponseState}!http\_response.hpp@{http\_response.hpp}}
+\doxysubsubsection{\texorpdfstring{HttpResponseState}{HttpResponseState}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7}{Http\+Response\+State}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_RESPONSE\_UNINITIALIZED@{HTTP\_RESPONSE\_UNINITIALIZED}!http\_response.hpp@{http\_response.hpp}}\index{http\_response.hpp@{http\_response.hpp}!HTTP\_RESPONSE\_UNINITIALIZED@{HTTP\_RESPONSE\_UNINITIALIZED}}}\Hypertarget{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7a9ac60e66a33df51fbe7672dbc96f6d9d}\label{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7a9ac60e66a33df51fbe7672dbc96f6d9d} 
+HTTP\+\_\+\+RESPONSE\+\_\+\+UNINITIALIZED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_RESPONSE\_INITIALIZED@{HTTP\_RESPONSE\_INITIALIZED}!http\_response.hpp@{http\_response.hpp}}\index{http\_response.hpp@{http\_response.hpp}!HTTP\_RESPONSE\_INITIALIZED@{HTTP\_RESPONSE\_INITIALIZED}}}\Hypertarget{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7a57e2c30a4259d01f9c24543cdaef3dbd}\label{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7a57e2c30a4259d01f9c24543cdaef3dbd} 
+HTTP\+\_\+\+RESPONSE\+\_\+\+INITIALIZED&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{HTTP\_RESPONSE\_FINALIZED@{HTTP\_RESPONSE\_FINALIZED}!http\_response.hpp@{http\_response.hpp}}\index{http\_response.hpp@{http\_response.hpp}!HTTP\_RESPONSE\_FINALIZED@{HTTP\_RESPONSE\_FINALIZED}}}\Hypertarget{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7acd6d0d8db2e33a3373849ebb735f5acf}\label{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7acd6d0d8db2e33a3373849ebb735f5acf} 
+HTTP\+\_\+\+RESPONSE\+\_\+\+FINALIZED&\\
+\hline
+
+\end{DoxyEnumFields}

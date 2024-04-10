@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,32,119,60"/>
+<area shape="rect" id="Node000001" href="$classConfigException.html" title=" " alt="" coords="167,5,293,33"/>
+<area shape="poly" id="edge4_Node000000_Node000001" title=" " alt="" coords="134,32,166,27,167,32,135,37"/>
+<area shape="rect" id="Node000002" href="$classHttpException.html" title=" " alt="" coords="173,57,287,85"/>
+<area shape="poly" id="edge5_Node000000_Node000002" title=" " alt="" coords="135,54,173,60,172,65,134,59"/>
+</map>

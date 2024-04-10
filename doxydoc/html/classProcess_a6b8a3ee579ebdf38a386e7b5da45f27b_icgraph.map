@@ -1,0 +1,7 @@
+<map id="Process::closeInput" name="Process::closeInput">
+<area shape="rect" id="Node000001" title=" " alt="" coords="242,32,388,60"/>
+<area shape="rect" id="Node000002" href="$classCgiProcess.html#a5292e669006357ae1c8c2dcedd6b9de0" title=" " alt="" coords="5,5,194,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="226,38,194,34,195,28,227,32"/>
+<area shape="rect" id="Node000003" href="$classProcess.html#a990776d181dbbde7ff8ac12713d814b3" title=" " alt="" coords="29,57,170,85"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="227,59,171,66,170,60,226,54"/>
+</map>

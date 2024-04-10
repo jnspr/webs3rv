@@ -1,0 +1,96 @@
+\doxysection{cgi\+\_\+process.\+hpp}
+\hypertarget{cgi__process_8hpp_source}{}\label{cgi__process_8hpp_source}\index{source/cgi\_process.hpp@{source/cgi\_process.hpp}}
+\mbox{\hyperlink{cgi__process_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ CGI\_PROCESS\_hpp}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ CGI\_PROCESS\_hpp}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{process_8hpp}{process.hpp}}"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{dispatcher_8hpp}{dispatcher.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{http__client_8hpp}{http\_client.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{http__request_8hpp}{http\_request.hpp}}"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{utility_8hpp}{utility.hpp}}"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{routing_8hpp}{routing.hpp}}"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <stddef.h>}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classHttpClient}{HttpClient}};}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcd}{CgiProcessState}}}
+\DoxyCodeLine{00017\ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcdad6899238670643914cfa6f223310dcdc}{CGI\_PROCESS\_RUNNING}},}
+\DoxyCodeLine{00019\ \ \ \ \ \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcda87986219fd7bf02604f44707e2f59b43}{CGI\_PROCESS\_FAILURE}},}
+\DoxyCodeLine{00020\ \ \ \ \ \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcda12143421e19ec7481ae10c4b54350329}{CGI\_PROCESS\_TIMEOUT}},}
+\DoxyCodeLine{00021\ \ \ \ \ \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcdad422506740e3cb93268aae2c134b3798}{CGI\_PROCESS\_SUCCESS}},}
+\DoxyCodeLine{00022\ \};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structCgiPathInfo}{CgiPathInfo}}}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \ \ \ \ std::string\ \mbox{\hyperlink{structCgiPathInfo_ae13728a5408bb854c2275271096742a5}{workingDirectory}};}
+\DoxyCodeLine{00027\ \ \ \ \ std::string\ \mbox{\hyperlink{structCgiPathInfo_a45220de308c6705af5d49f3a2df3292e}{fileName}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{structCgiPathInfo_ab93d5f2c957eb5c5deddcf30ec649da7}{CgiPathInfo}}(\textcolor{keyword}{const}\ std::string\ \&nodePath);}
+\DoxyCodeLine{00030\ \};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classCgiProcess}{CgiProcess}}:\ \textcolor{keyword}{public}\ \mbox{\hyperlink{structSink}{Sink}}}
+\DoxyCodeLine{00033\ \{}
+\DoxyCodeLine{00034\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classApplication}{Application}};}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classHttpClient}{HttpClient}};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{/*\ Constructs\ a\ CGI\ process\ from\ the\ given\ client,\ request\ and\ route\ result\ */}}
+\DoxyCodeLine{00039\ \ \ \ \ \mbox{\hyperlink{classCgiProcess_a3778c93ded7b9a2e32f4626f6c7f9995}{CgiProcess}}(\mbox{\hyperlink{classHttpClient}{HttpClient}}\ *client,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{structHttpRequest}{HttpRequest}}\ \&request,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classRoutingInfo}{RoutingInfo}}\ \&routingInfo);}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{comment}{/*\ Handles\ one\ or\ multiple\ events\ */}}
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classCgiProcess_a5292e669006357ae1c8c2dcedd6b9de0}{handleEvents}}(uint32\_t\ eventMask);}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{comment}{/*\ Handles\ an\ exception\ that\ occurred\ in\ \`{}handleEvent()`\ */}}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classCgiProcess_a4831e36c575f49f245de203278fb61e9}{handleException}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *message);}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{/*\ Gets\ the\ process\ state\ */}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcd}{CgiProcessState}}\ \mbox{\hyperlink{classCgiProcess_abfdc2ef3f8824abce203187b3d243377}{getState}}()}
+\DoxyCodeLine{00049\ \ \ \ \ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_state;}
+\DoxyCodeLine{00051\ \ \ \ \ \}}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{/*\ Sets\ the\ process\ state\ */}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classCgiProcess_a28ff6039c3b6dda93942fd436772ead9}{setState}}(\mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcd}{CgiProcessState}}\ state)}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \_state\ =\ state;}
+\DoxyCodeLine{00057\ \ \ \ \ \}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \textcolor{comment}{/*\ Gets\ the\ underlying\ process\ */}}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classProcess}{Process}}\ \&\mbox{\hyperlink{classCgiProcess_a0f119b5a86b8dd38b4d6f001a626f1c4}{getProcess}}()}
+\DoxyCodeLine{00061\ \ \ \ \ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_process;}
+\DoxyCodeLine{00063\ \ \ \ \ \}}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{comment}{/*\ Gets\ the\ associated\ timeout\ object\ */}}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{inline}\ \mbox{\hyperlink{classTimeout}{Timeout}}\ \&\mbox{\hyperlink{classCgiProcess_afe2aac10f70c3a7857ce7098546ec664}{getTimeout}}()}
+\DoxyCodeLine{00067\ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_timeout;}
+\DoxyCodeLine{00069\ \ \ \ \ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00073\ \ \ \ \ \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcd}{CgiProcessState}}\ \ \ \ \ \ \_state;}
+\DoxyCodeLine{00074\ \ \ \ \ \mbox{\hyperlink{structCgiPathInfo}{CgiPathInfo}}\ \ \ \ \ \ \ \ \ \ \_pathInfo;}
+\DoxyCodeLine{00075\ \ \ \ \ \mbox{\hyperlink{classHttpClient}{HttpClient}}\ \ \ \ \ \ \ \ \ \ *\_client;}
+\DoxyCodeLine{00076\ \ \ \ \ \mbox{\hyperlink{classProcess}{Process}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \_process;}
+\DoxyCodeLine{00077\ \ \ \ \ std::vector<uint8\_t>\ \_buffer;}
+\DoxyCodeLine{00078\ \ \ \ \ \mbox{\hyperlink{classTimeout}{Timeout}}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \_timeout;}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_bodyOffset;}
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_isInOutputPhase;}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \textcolor{comment}{/*\ Creates\ a\ vector\ of\ strings\ for\ the\ process\ arguments\ */}}
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{static}\ std::vector<std::string>\ setupArguments(\textcolor{keyword}{const}\ \mbox{\hyperlink{structHttpRequest}{HttpRequest}}\ \&request,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classRoutingInfo}{RoutingInfo}}\ \&routingInfo,\ \textcolor{keyword}{const}\ std::string\ \&fileName);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{comment}{/*\ Creates\ a\ vector\ of\ strings\ for\ the\ process\ environment\ */}}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{static}\ std::vector<std::string>\ setupEnvironment(\textcolor{keyword}{const}\ \mbox{\hyperlink{structHttpRequest}{HttpRequest}}\ \&request,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classRoutingInfo}{RoutingInfo}}\ \&routingInfo);}
+\DoxyCodeLine{00088\ \};}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CGI\_PROCESS\_hpp}}
+
+\end{DoxyCode}

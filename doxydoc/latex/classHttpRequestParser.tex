@@ -1,0 +1,103 @@
+\doxysection{Http\+Request\+Parser Class Reference}
+\hypertarget{classHttpRequestParser}{}\label{classHttpRequestParser}\index{HttpRequestParser@{HttpRequestParser}}
+
+
+{\ttfamily \#include $<$http\+\_\+request\+\_\+parser.\+hpp$>$}
+
+
+
+Collaboration diagram for Http\+Request\+Parser\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=198pt]{classHttpRequestParser__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classHttpRequestParser_a31ec3df70f81ae1417d5c18d9ee04428}{Http\+Request\+Parser}} (const \mbox{\hyperlink{structServerConfig}{Server\+Config}} \&config, uint32\+\_\+t host, uint16\+\_\+t port)
+\item 
+void \mbox{\hyperlink{classHttpRequestParser_a457e957050c52f4962dfca96968fb654}{reset}} ()
+\item 
+bool \mbox{\hyperlink{classHttpRequestParser_ace596a1d7eb3c74e884941b9b50fbd64}{commit}} (\mbox{\hyperlink{classSlice}{Slice}} \&data)
+\item 
+\mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1}{Http\+Request\+Phase}} \mbox{\hyperlink{classHttpRequestParser_aa0081bca641c4d8364cbdd2e3661021c}{get\+Phase}} () const
+\item 
+const \mbox{\hyperlink{structHttpRequest}{Http\+Request}} \& \mbox{\hyperlink{classHttpRequestParser_ab5bb209bd9ab9e44678ff2aff76413f8}{get\+Request}} () const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classHttpRequestParser_a31ec3df70f81ae1417d5c18d9ee04428}\label{classHttpRequestParser_a31ec3df70f81ae1417d5c18d9ee04428} 
+\index{HttpRequestParser@{HttpRequestParser}!HttpRequestParser@{HttpRequestParser}}
+\index{HttpRequestParser@{HttpRequestParser}!HttpRequestParser@{HttpRequestParser}}
+\doxysubsubsection{\texorpdfstring{HttpRequestParser()}{HttpRequestParser()}}
+{\footnotesize\ttfamily Http\+Request\+Parser\+::\+Http\+Request\+Parser (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structServerConfig}{Server\+Config}} \&}]{config,  }\item[{uint32\+\_\+t}]{host,  }\item[{uint16\+\_\+t}]{port }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=342pt]{classHttpRequestParser_a31ec3df70f81ae1417d5c18d9ee04428_cgraph}
+\end{center}
+\end{figure}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classHttpRequestParser_ace596a1d7eb3c74e884941b9b50fbd64}\label{classHttpRequestParser_ace596a1d7eb3c74e884941b9b50fbd64} 
+\index{HttpRequestParser@{HttpRequestParser}!commit@{commit}}
+\index{commit@{commit}!HttpRequestParser@{HttpRequestParser}}
+\doxysubsubsection{\texorpdfstring{commit()}{commit()}}
+{\footnotesize\ttfamily bool Http\+Request\+Parser\+::commit (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classSlice}{Slice}} \&}]{data }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=323pt]{classHttpRequestParser_ace596a1d7eb3c74e884941b9b50fbd64_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{classHttpRequestParser_aa0081bca641c4d8364cbdd2e3661021c}\label{classHttpRequestParser_aa0081bca641c4d8364cbdd2e3661021c} 
+\index{HttpRequestParser@{HttpRequestParser}!getPhase@{getPhase}}
+\index{getPhase@{getPhase}!HttpRequestParser@{HttpRequestParser}}
+\doxysubsubsection{\texorpdfstring{getPhase()}{getPhase()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{http__request__parser_8hpp_a234347af42fceae45cbd712101670ea1}{Http\+Request\+Phase}} Http\+Request\+Parser\+::get\+Phase (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{classHttpRequestParser_ab5bb209bd9ab9e44678ff2aff76413f8}\label{classHttpRequestParser_ab5bb209bd9ab9e44678ff2aff76413f8} 
+\index{HttpRequestParser@{HttpRequestParser}!getRequest@{getRequest}}
+\index{getRequest@{getRequest}!HttpRequestParser@{HttpRequestParser}}
+\doxysubsubsection{\texorpdfstring{getRequest()}{getRequest()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{structHttpRequest}{Http\+Request}} \& Http\+Request\+Parser\+::get\+Request (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classHttpRequestParser_ab5bb209bd9ab9e44678ff2aff76413f8_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{classHttpRequestParser_a457e957050c52f4962dfca96968fb654}\label{classHttpRequestParser_a457e957050c52f4962dfca96968fb654} 
+\index{HttpRequestParser@{HttpRequestParser}!reset@{reset}}
+\index{reset@{reset}!HttpRequestParser@{HttpRequestParser}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily void Http\+Request\+Parser\+::reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=342pt]{classHttpRequestParser_a457e957050c52f4962dfca96968fb654_icgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+source/\mbox{\hyperlink{http__request__parser_8hpp}{http\+\_\+request\+\_\+parser.\+hpp}}\item 
+source/\mbox{\hyperlink{http__request__parser_8cpp}{http\+\_\+request\+\_\+parser.\+cpp}}\end{DoxyCompactItemize}

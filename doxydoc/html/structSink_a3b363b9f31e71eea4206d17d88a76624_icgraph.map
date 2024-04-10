@@ -1,0 +1,9 @@
+<map id="Sink::handleException" name="Sink::handleException">
+<area shape="rect" id="Node000001" title=" " alt="" coords="524,5,690,33"/>
+<area shape="rect" id="Node000002" href="$classDispatcher.html#a883e13e23a209047583eb37f946d4337" title=" " alt="" coords="322,5,476,33"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="509,22,477,22,477,17,509,17"/>
+<area shape="rect" id="Node000003" href="$classApplication.html#a5be376956a17bc564595fb420cce1ba7" title=" " alt="" coords="108,5,274,33"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="307,22,274,22,274,17,307,17"/>
+<area shape="rect" id="Node000004" href="$main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title=" " alt="" coords="5,5,60,33"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="92,22,60,22,60,17,92,17"/>
+</map>

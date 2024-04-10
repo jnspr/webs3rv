@@ -1,0 +1,127 @@
+\doxysection{Http\+Response Class Reference}
+\hypertarget{classHttpResponse}{}\label{classHttpResponse}\index{HttpResponse@{HttpResponse}}
+
+
+{\ttfamily \#include $<$http\+\_\+response.\+hpp$>$}
+
+
+
+Collaboration diagram for Http\+Response\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=188pt]{classHttpResponse__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classHttpResponse_ab2e6cd363b5ea437643017766f882066}{Http\+Response}} ()
+\item 
+\mbox{\hyperlink{classHttpResponse_a7dc8102dcf63b07b9bf3c3dfed468857}{\texorpdfstring{$\sim$}{\string~}\+Http\+Response}} ()
+\item 
+void \mbox{\hyperlink{classHttpResponse_a88fd98828ea717b196de7944c09c7fdf}{initialize}} (int status\+Code, \mbox{\hyperlink{classSlice}{Slice}} status\+Message, const std\+::string \&body)
+\item 
+void \mbox{\hyperlink{classHttpResponse_a4ac6b8e07ea83232875d676624504811}{initialize}} (int status\+Code, \mbox{\hyperlink{classSlice}{Slice}} status\+Message, const void \texorpdfstring{$\ast$}{*}body\+Buffer, size\+\_\+t body\+Size)
+\item 
+void \mbox{\hyperlink{classHttpResponse_a7fd85381949e58ff83c661312abadbf6}{initialize}} (int status\+Code, \mbox{\hyperlink{classSlice}{Slice}} status\+Message, int body\+Fileno, size\+\_\+t body\+Size)
+\item 
+void \mbox{\hyperlink{classHttpResponse_ae9e60787d23035de57928eb1340fe69b}{add\+Header}} (\mbox{\hyperlink{classSlice}{Slice}} key, \mbox{\hyperlink{classSlice}{Slice}} value)
+\item 
+uint64\+\_\+t \mbox{\hyperlink{classHttpResponse_acc815b9b5c1ec533085fd019ef77b606}{finalize\+Header}} ()
+\item 
+bool \mbox{\hyperlink{classHttpResponse_a5799dc9da19cbcb19469f499cfc9a806}{has\+Data}} ()
+\item 
+void \mbox{\hyperlink{classHttpResponse_a804dfc806ec3ca7f64aecbc0e4e7883c}{transfer\+To\+Socket}} (int fileno)
+\item 
+\mbox{\hyperlink{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7}{Http\+Response\+State}} \mbox{\hyperlink{classHttpResponse_ae50b58679d57c153588c3d93385b6ccf}{get\+State}} () const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classHttpResponse_ab2e6cd363b5ea437643017766f882066}\label{classHttpResponse_ab2e6cd363b5ea437643017766f882066} 
+\index{HttpResponse@{HttpResponse}!HttpResponse@{HttpResponse}}
+\index{HttpResponse@{HttpResponse}!HttpResponse@{HttpResponse}}
+\doxysubsubsection{\texorpdfstring{HttpResponse()}{HttpResponse()}}
+{\footnotesize\ttfamily Http\+Response\+::\+Http\+Response (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\Hypertarget{classHttpResponse_a7dc8102dcf63b07b9bf3c3dfed468857}\label{classHttpResponse_a7dc8102dcf63b07b9bf3c3dfed468857} 
+\index{HttpResponse@{HttpResponse}!````~HttpResponse@{\texorpdfstring{$\sim$}{\string~}HttpResponse}}
+\index{````~HttpResponse@{\texorpdfstring{$\sim$}{\string~}HttpResponse}!HttpResponse@{HttpResponse}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}HttpResponse()}{\string~HttpResponse()}}
+{\footnotesize\ttfamily Http\+Response\+::\texorpdfstring{$\sim$}{\string~}\+Http\+Response (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classHttpResponse_ae9e60787d23035de57928eb1340fe69b}\label{classHttpResponse_ae9e60787d23035de57928eb1340fe69b} 
+\index{HttpResponse@{HttpResponse}!addHeader@{addHeader}}
+\index{addHeader@{addHeader}!HttpResponse@{HttpResponse}}
+\doxysubsubsection{\texorpdfstring{addHeader()}{addHeader()}}
+{\footnotesize\ttfamily void Http\+Response\+::add\+Header (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classSlice}{Slice}}}]{key,  }\item[{\mbox{\hyperlink{classSlice}{Slice}}}]{value }\end{DoxyParamCaption})}
+
+\Hypertarget{classHttpResponse_acc815b9b5c1ec533085fd019ef77b606}\label{classHttpResponse_acc815b9b5c1ec533085fd019ef77b606} 
+\index{HttpResponse@{HttpResponse}!finalizeHeader@{finalizeHeader}}
+\index{finalizeHeader@{finalizeHeader}!HttpResponse@{HttpResponse}}
+\doxysubsubsection{\texorpdfstring{finalizeHeader()}{finalizeHeader()}}
+{\footnotesize\ttfamily uint64\+\_\+t Http\+Response\+::finalize\+Header (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\Hypertarget{classHttpResponse_ae50b58679d57c153588c3d93385b6ccf}\label{classHttpResponse_ae50b58679d57c153588c3d93385b6ccf} 
+\index{HttpResponse@{HttpResponse}!getState@{getState}}
+\index{getState@{getState}!HttpResponse@{HttpResponse}}
+\doxysubsubsection{\texorpdfstring{getState()}{getState()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{http__response_8hpp_a8e6b9e0ae2ed953380580061420c51e7}{Http\+Response\+State}} Http\+Response\+::get\+State (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{classHttpResponse_a5799dc9da19cbcb19469f499cfc9a806}\label{classHttpResponse_a5799dc9da19cbcb19469f499cfc9a806} 
+\index{HttpResponse@{HttpResponse}!hasData@{hasData}}
+\index{hasData@{hasData}!HttpResponse@{HttpResponse}}
+\doxysubsubsection{\texorpdfstring{hasData()}{hasData()}}
+{\footnotesize\ttfamily bool Http\+Response\+::has\+Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=332pt]{classHttpResponse_a5799dc9da19cbcb19469f499cfc9a806_cgraph}
+\end{center}
+\end{figure}
+\Hypertarget{classHttpResponse_a88fd98828ea717b196de7944c09c7fdf}\label{classHttpResponse_a88fd98828ea717b196de7944c09c7fdf} 
+\index{HttpResponse@{HttpResponse}!initialize@{initialize}}
+\index{initialize@{initialize}!HttpResponse@{HttpResponse}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily void Http\+Response\+::initialize (\begin{DoxyParamCaption}\item[{int}]{status\+Code,  }\item[{\mbox{\hyperlink{classSlice}{Slice}}}]{status\+Message,  }\item[{const std\+::string \&}]{body }\end{DoxyParamCaption})}
+
+\Hypertarget{classHttpResponse_a4ac6b8e07ea83232875d676624504811}\label{classHttpResponse_a4ac6b8e07ea83232875d676624504811} 
+\index{HttpResponse@{HttpResponse}!initialize@{initialize}}
+\index{initialize@{initialize}!HttpResponse@{HttpResponse}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily void Http\+Response\+::initialize (\begin{DoxyParamCaption}\item[{int}]{status\+Code,  }\item[{\mbox{\hyperlink{classSlice}{Slice}}}]{status\+Message,  }\item[{const void \texorpdfstring{$\ast$}{*}}]{body\+Buffer,  }\item[{size\+\_\+t}]{body\+Size }\end{DoxyParamCaption})}
+
+\Hypertarget{classHttpResponse_a7fd85381949e58ff83c661312abadbf6}\label{classHttpResponse_a7fd85381949e58ff83c661312abadbf6} 
+\index{HttpResponse@{HttpResponse}!initialize@{initialize}}
+\index{initialize@{initialize}!HttpResponse@{HttpResponse}}
+\doxysubsubsection{\texorpdfstring{initialize()}{initialize()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily void Http\+Response\+::initialize (\begin{DoxyParamCaption}\item[{int}]{status\+Code,  }\item[{\mbox{\hyperlink{classSlice}{Slice}}}]{status\+Message,  }\item[{int}]{body\+Fileno,  }\item[{size\+\_\+t}]{body\+Size }\end{DoxyParamCaption})}
+
+\Hypertarget{classHttpResponse_a804dfc806ec3ca7f64aecbc0e4e7883c}\label{classHttpResponse_a804dfc806ec3ca7f64aecbc0e4e7883c} 
+\index{HttpResponse@{HttpResponse}!transferToSocket@{transferToSocket}}
+\index{transferToSocket@{transferToSocket}!HttpResponse@{HttpResponse}}
+\doxysubsubsection{\texorpdfstring{transferToSocket()}{transferToSocket()}}
+{\footnotesize\ttfamily void Http\+Response\+::transfer\+To\+Socket (\begin{DoxyParamCaption}\item[{int}]{fileno }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=340pt]{classHttpResponse_a804dfc806ec3ca7f64aecbc0e4e7883c_cgraph}
+\end{center}
+\end{figure}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+source/\mbox{\hyperlink{http__response_8hpp}{http\+\_\+response.\+hpp}}\item 
+source/\mbox{\hyperlink{http__response_8cpp}{http\+\_\+response.\+cpp}}\end{DoxyCompactItemize}

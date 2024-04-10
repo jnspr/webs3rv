@@ -1,0 +1,101 @@
+\doxysection{config\+\_\+parser.\+hpp}
+\hypertarget{config__parser_8hpp_source}{}\label{config__parser_8hpp_source}\index{source/config\_parser.hpp@{source/config\_parser.hpp}}
+\mbox{\hyperlink{config__parser_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ CONFIG\_PARSER\_hpp}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ CONFIG\_PARSER\_hpp}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{config_8hpp}{config.hpp}}"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{http__constants_8hpp}{http\_constants.hpp}}"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{config__tokenizer_8hpp}{config\_tokenizer.hpp}}"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{config__parser__utility_8hpp}{config\_parser\_utility.hpp}}"{}}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classConfigParser}{ConfigParser}}}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00015\ \ \ \ \ std::vector<Token>\ \_tokens;}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \_current;}
+\DoxyCodeLine{00017\ \ \ \ \ std::string\ \_config\_input;}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{comment}{//\ Parsing\ ServerConfig}}
+\DoxyCodeLine{00020\ \ \ \ \ \mbox{\hyperlink{structServerConfig}{ServerConfig}}\ parseServerConfig();}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{void}\ parsePortOrIp(\mbox{\hyperlink{structServerConfig}{ServerConfig}}\ \&serverConfig);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{comment}{//\ Parsing\ LocalRouteConfig}}
+\DoxyCodeLine{00024\ \ \ \ \ \mbox{\hyperlink{structLocalRouteConfig}{LocalRouteConfig}}\ parseLocalRouteConfig(\mbox{\hyperlink{structServerConfig}{ServerConfig}}\ \&serverConfig);}
+\DoxyCodeLine{00025\ \ \ \ \ std::set<HttpMethod>\ parseAllowedHttpMethods(\mbox{\hyperlink{structServerConfig}{ServerConfig}}\ \&serverConfig,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structLocalRouteConfig}{LocalRouteConfig}}\ \&localRouteConfig);}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{bool}\ parseDirectoryListing();}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{bool}\ parseAllowUpload();}
+\DoxyCodeLine{00029\ \ \ \ \ std::map<std::string,\ std::string>\ parseCgiFileExtensions();}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{//\ Parsing\ RedirectRouteConfig}}
+\DoxyCodeLine{00032\ \ \ \ \ \mbox{\hyperlink{structRedirectRouteConfig}{RedirectRouteConfig}}\ parseRedirectRouteConfig(\mbox{\hyperlink{structLocalRouteConfig}{LocalRouteConfig}}\ \&localRouteConfig);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{comment}{//\ Token\ handling}}
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{keywordtype}{void}\ expect(\mbox{\hyperlink{config__tokenizer_8hpp_a7a47dce04185ce6008048622cc792f25}{TokenKind}}\ kind);}
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keywordtype}{void}\ moveToNextToken();}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{structToken}{Token}}\ \&currentToken();}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{//\ Parsing\ data\ types}}
+\DoxyCodeLine{00040\ \ \ \ \ std::string\ parseString();}
+\DoxyCodeLine{00041\ \ \ \ \ std::vector<std::string>\ parseServerNames();}
+\DoxyCodeLine{00042\ \ \ \ \ std::string\ parseLocalRoutePath();}
+\DoxyCodeLine{00043\ \ \ \ \ uint16\_t\ parseUint16();}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ parseSizeT();}
+\DoxyCodeLine{00045\ \ \ \ \ std::map<int,\ std::string>\ parseErrorRedirects();}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classConfigParser_a6bf43717a0296911588f8efbb052699b}{ConfigParser}}(\textcolor{keyword}{const}\ std::vector<Token>\ \&\_tokens);}
+\DoxyCodeLine{00049\ \ \ \ \ \mbox{\hyperlink{structApplicationConfig}{ApplicationConfig}}\ \mbox{\hyperlink{classConfigParser_a5a60e486c84055da37b7149b645d8c8e}{parse}}();}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{structApplicationConfig}{ApplicationConfig}}\ \mbox{\hyperlink{classConfigParser_a42ecc3fe9822f97cfdd6d45879abbeee}{createConfig}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *configPath);}
+\DoxyCodeLine{00052\ \};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classConfigException}{ConfigException}}:\ \textcolor{keyword}{public}\ std::exception}
+\DoxyCodeLine{00055\ \{}
+\DoxyCodeLine{00056\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{comment}{/*\ Constructs\ a\ parser\ exception\ using\ the\ given\ reason,\ source\ and\ offset\ */}}
+\DoxyCodeLine{00058\ \ \ \ \ \mbox{\hyperlink{classConfigException_ac705e3ae7984ca89e105f355ff64b48c}{ConfigException}}(\textcolor{keyword}{const}\ std::string\ \&reason,\ \textcolor{keyword}{const}\ std::string\ \&source,\ \textcolor{keywordtype}{size\_t}\ offset);}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{comment}{/*\ Constructs\ a\ parser\ exception\ using\ the\ given\ reason\ and\ offset\ */}}
+\DoxyCodeLine{00061\ \ \ \ \ \mbox{\hyperlink{classConfigException_ac705e3ae7984ca89e105f355ff64b48c}{ConfigException}}(\textcolor{keyword}{const}\ std::string\ \&reason,\ \textcolor{keywordtype}{size\_t}\ offset);}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{/*\ Constructs\ a\ parser\ exception\ using\ the\ given\ reason\ */}}
+\DoxyCodeLine{00064\ \ \ \ \ \mbox{\hyperlink{classConfigException_ac705e3ae7984ca89e105f355ff64b48c}{ConfigException}}(\textcolor{keyword}{const}\ std::string\ \&reason);}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{/*\ Empty\ method;\ declares\ the\ destructor\ as\ non-\/throwing\ */}}
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{classConfigException_a6317b1cff108825dcce738bfc893edc1}{\string~ConfigException}}()\ \textcolor{keywordflow}{throw}();}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{/*\ Gets\ the\ cause\ of\ the\ error\ as\ a\ C-\/style\ string\ */}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *\mbox{\hyperlink{classConfigException_ab99558eadd9e892d57896b48fa3fcbf7}{what}}()\ \textcolor{keyword}{const}\ \textcolor{keywordflow}{throw}();}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{comment}{/*\ Gets\ the\ cause\ of\ the\ error\ */}}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ std::string\ \&\mbox{\hyperlink{classConfigException_ac04ee252bb8f4817555b1caddfe5d15e}{getReason}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00074\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_reason;}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \ \ \ \ \textcolor{comment}{/*\ Gets\ the\ offending\ source\ string\ */}}
+\DoxyCodeLine{00079\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keyword}{const}\ std::string\ \&\mbox{\hyperlink{classConfigException_aed543c20b27911ee8a01e23fae337df8}{getSource}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00080\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_source;}
+\DoxyCodeLine{00082\ \ \ \ \ \}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{comment}{/*\ Gets\ the\ offending\ offset\ */}}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classConfigException_af5c163af041f5df847381f7c9cd79dec}{getOffset}}()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00086\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_offset;}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+\DoxyCodeLine{00089\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00090\ \ \ \ \ std::string\ \_reason;}
+\DoxyCodeLine{00091\ \ \ \ \ std::string\ \_source;}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \_offset;}
+\DoxyCodeLine{00093\ \};}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CONFIG\_PARSER\_hpp}}
+
+\end{DoxyCode}

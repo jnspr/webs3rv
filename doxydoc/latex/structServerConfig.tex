@@ -1,0 +1,106 @@
+\doxysection{Server\+Config Struct Reference}
+\hypertarget{structServerConfig}{}\label{structServerConfig}\index{ServerConfig@{ServerConfig}}
+
+
+{\ttfamily \#include $<$config.\+hpp$>$}
+
+
+
+Collaboration diagram for Server\+Config\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{structServerConfig__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structServerConfig_af61bcd662c3be06dd4219770350e65e6}{Server\+Config}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{structServerConfig_a253f945866dcb0a0d7c372c2073a74cf}{name}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structServerConfig_ae802277603979ecd0ae48a3cff2dc5b7}{host}}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{structServerConfig_ab49ab0a1fa996da2794a5a8003386702}{port}}
+\item 
+std\+::map$<$ int, std\+::string $>$ \mbox{\hyperlink{structServerConfig_a50ac91f4762e4a8ac2fb18c6e9b43f48}{error\+Pages}}
+\item 
+size\+\_\+t \mbox{\hyperlink{structServerConfig_a46b82b19aff639acf1c1b88dfa46a14e}{max\+Body\+Size}}
+\item 
+std\+::vector$<$ \mbox{\hyperlink{structLocalRouteConfig}{Local\+Route\+Config}} $>$ \mbox{\hyperlink{structServerConfig_a21d16b1f773ee12b291d360bc9ea4032}{local\+Routes}}
+\item 
+std\+::vector$<$ \mbox{\hyperlink{structRedirectRouteConfig}{Redirect\+Route\+Config}} $>$ \mbox{\hyperlink{structServerConfig_ad1821fc32bea52b39c45c20b3b833a11}{redirect\+Routes}}
+\item 
+std\+::set$<$ \mbox{\hyperlink{config__tokenizer_8hpp_a7a47dce04185ce6008048622cc792f25}{Token\+Kind}} $>$ \mbox{\hyperlink{structServerConfig_a4b4f6554cf56e6662c9f38757278e5ed}{parsed\+Tokens}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{structServerConfig_af61bcd662c3be06dd4219770350e65e6}\label{structServerConfig_af61bcd662c3be06dd4219770350e65e6} 
+\index{ServerConfig@{ServerConfig}!ServerConfig@{ServerConfig}}
+\index{ServerConfig@{ServerConfig}!ServerConfig@{ServerConfig}}
+\doxysubsubsection{\texorpdfstring{ServerConfig()}{ServerConfig()}}
+{\footnotesize\ttfamily Server\+Config\+::\+Server\+Config (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{structServerConfig_a50ac91f4762e4a8ac2fb18c6e9b43f48}\label{structServerConfig_a50ac91f4762e4a8ac2fb18c6e9b43f48} 
+\index{ServerConfig@{ServerConfig}!errorPages@{errorPages}}
+\index{errorPages@{errorPages}!ServerConfig@{ServerConfig}}
+\doxysubsubsection{\texorpdfstring{errorPages}{errorPages}}
+{\footnotesize\ttfamily std\+::map$<$int, std\+::string$>$ Server\+Config\+::error\+Pages}
+
+\Hypertarget{structServerConfig_ae802277603979ecd0ae48a3cff2dc5b7}\label{structServerConfig_ae802277603979ecd0ae48a3cff2dc5b7} 
+\index{ServerConfig@{ServerConfig}!host@{host}}
+\index{host@{host}!ServerConfig@{ServerConfig}}
+\doxysubsubsection{\texorpdfstring{host}{host}}
+{\footnotesize\ttfamily uint32\+\_\+t Server\+Config\+::host}
+
+\Hypertarget{structServerConfig_a21d16b1f773ee12b291d360bc9ea4032}\label{structServerConfig_a21d16b1f773ee12b291d360bc9ea4032} 
+\index{ServerConfig@{ServerConfig}!localRoutes@{localRoutes}}
+\index{localRoutes@{localRoutes}!ServerConfig@{ServerConfig}}
+\doxysubsubsection{\texorpdfstring{localRoutes}{localRoutes}}
+{\footnotesize\ttfamily std\+::vector$<$\mbox{\hyperlink{structLocalRouteConfig}{Local\+Route\+Config}}$>$ Server\+Config\+::local\+Routes}
+
+\Hypertarget{structServerConfig_a46b82b19aff639acf1c1b88dfa46a14e}\label{structServerConfig_a46b82b19aff639acf1c1b88dfa46a14e} 
+\index{ServerConfig@{ServerConfig}!maxBodySize@{maxBodySize}}
+\index{maxBodySize@{maxBodySize}!ServerConfig@{ServerConfig}}
+\doxysubsubsection{\texorpdfstring{maxBodySize}{maxBodySize}}
+{\footnotesize\ttfamily size\+\_\+t Server\+Config\+::max\+Body\+Size}
+
+\Hypertarget{structServerConfig_a253f945866dcb0a0d7c372c2073a74cf}\label{structServerConfig_a253f945866dcb0a0d7c372c2073a74cf} 
+\index{ServerConfig@{ServerConfig}!name@{name}}
+\index{name@{name}!ServerConfig@{ServerConfig}}
+\doxysubsubsection{\texorpdfstring{name}{name}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::string$>$ Server\+Config\+::name}
+
+\Hypertarget{structServerConfig_a4b4f6554cf56e6662c9f38757278e5ed}\label{structServerConfig_a4b4f6554cf56e6662c9f38757278e5ed} 
+\index{ServerConfig@{ServerConfig}!parsedTokens@{parsedTokens}}
+\index{parsedTokens@{parsedTokens}!ServerConfig@{ServerConfig}}
+\doxysubsubsection{\texorpdfstring{parsedTokens}{parsedTokens}}
+{\footnotesize\ttfamily std\+::set$<$\mbox{\hyperlink{config__tokenizer_8hpp_a7a47dce04185ce6008048622cc792f25}{Token\+Kind}}$>$ Server\+Config\+::parsed\+Tokens}
+
+\Hypertarget{structServerConfig_ab49ab0a1fa996da2794a5a8003386702}\label{structServerConfig_ab49ab0a1fa996da2794a5a8003386702} 
+\index{ServerConfig@{ServerConfig}!port@{port}}
+\index{port@{port}!ServerConfig@{ServerConfig}}
+\doxysubsubsection{\texorpdfstring{port}{port}}
+{\footnotesize\ttfamily uint16\+\_\+t Server\+Config\+::port}
+
+\Hypertarget{structServerConfig_ad1821fc32bea52b39c45c20b3b833a11}\label{structServerConfig_ad1821fc32bea52b39c45c20b3b833a11} 
+\index{ServerConfig@{ServerConfig}!redirectRoutes@{redirectRoutes}}
+\index{redirectRoutes@{redirectRoutes}!ServerConfig@{ServerConfig}}
+\doxysubsubsection{\texorpdfstring{redirectRoutes}{redirectRoutes}}
+{\footnotesize\ttfamily std\+::vector$<$\mbox{\hyperlink{structRedirectRouteConfig}{Redirect\+Route\+Config}}$>$ Server\+Config\+::redirect\+Routes}
+
+
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+source/\mbox{\hyperlink{config_8hpp}{config.\+hpp}}\item 
+source/\mbox{\hyperlink{config_8cpp}{config.\+cpp}}\end{DoxyCompactItemize}

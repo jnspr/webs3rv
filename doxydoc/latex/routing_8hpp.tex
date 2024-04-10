@@ -1,0 +1,63 @@
+\doxysection{source/routing.hpp File Reference}
+\hypertarget{routing_8hpp}{}\label{routing_8hpp}\index{source/routing.hpp@{source/routing.hpp}}
+{\ttfamily \#include "{}config.\+hpp"{}}\newline
+{\ttfamily \#include "{}utility.\+hpp"{}}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$stdexcept$>$}\newline
+Include dependency graph for routing.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{routing_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{routing_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classRoutingInfo}{Routing\+Info}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{routing_8hpp_a766db2fd54d545264c42b521665923c1}{Routing\+Status}} \{ \mbox{\hyperlink{routing_8hpp_a766db2fd54d545264c42b521665923c1a79b28150b2233a6343dfeefe4e1aa7ca}{ROUTING\+\_\+\+STATUS\+\_\+\+NOT\+\_\+\+FOUND}}
+, \mbox{\hyperlink{routing_8hpp_a766db2fd54d545264c42b521665923c1a42e28ca0bd85633b2677fb313cee6074}{ROUTING\+\_\+\+STATUS\+\_\+\+NO\+\_\+\+ACCESS}}
+, \mbox{\hyperlink{routing_8hpp_a766db2fd54d545264c42b521665923c1a6a0aa1f04816e35159621fe352d64ddb}{ROUTING\+\_\+\+STATUS\+\_\+\+FOUND\+\_\+\+LOCAL}}
+, \mbox{\hyperlink{routing_8hpp_a766db2fd54d545264c42b521665923c1ad902f3c9729a91c683205ec6a5b59b65}{ROUTING\+\_\+\+STATUS\+\_\+\+FOUND\+\_\+\+REDIRECT}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{routing_8hpp_a766db2fd54d545264c42b521665923c1}\label{routing_8hpp_a766db2fd54d545264c42b521665923c1} 
+\index{routing.hpp@{routing.hpp}!RoutingStatus@{RoutingStatus}}
+\index{RoutingStatus@{RoutingStatus}!routing.hpp@{routing.hpp}}
+\doxysubsubsection{\texorpdfstring{RoutingStatus}{RoutingStatus}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{routing_8hpp_a766db2fd54d545264c42b521665923c1}{Routing\+Status}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ROUTING\_STATUS\_NOT\_FOUND@{ROUTING\_STATUS\_NOT\_FOUND}!routing.hpp@{routing.hpp}}\index{routing.hpp@{routing.hpp}!ROUTING\_STATUS\_NOT\_FOUND@{ROUTING\_STATUS\_NOT\_FOUND}}}\Hypertarget{routing_8hpp_a766db2fd54d545264c42b521665923c1a79b28150b2233a6343dfeefe4e1aa7ca}\label{routing_8hpp_a766db2fd54d545264c42b521665923c1a79b28150b2233a6343dfeefe4e1aa7ca} 
+ROUTING\+\_\+\+STATUS\+\_\+\+NOT\+\_\+\+FOUND&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ROUTING\_STATUS\_NO\_ACCESS@{ROUTING\_STATUS\_NO\_ACCESS}!routing.hpp@{routing.hpp}}\index{routing.hpp@{routing.hpp}!ROUTING\_STATUS\_NO\_ACCESS@{ROUTING\_STATUS\_NO\_ACCESS}}}\Hypertarget{routing_8hpp_a766db2fd54d545264c42b521665923c1a42e28ca0bd85633b2677fb313cee6074}\label{routing_8hpp_a766db2fd54d545264c42b521665923c1a42e28ca0bd85633b2677fb313cee6074} 
+ROUTING\+\_\+\+STATUS\+\_\+\+NO\+\_\+\+ACCESS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ROUTING\_STATUS\_FOUND\_LOCAL@{ROUTING\_STATUS\_FOUND\_LOCAL}!routing.hpp@{routing.hpp}}\index{routing.hpp@{routing.hpp}!ROUTING\_STATUS\_FOUND\_LOCAL@{ROUTING\_STATUS\_FOUND\_LOCAL}}}\Hypertarget{routing_8hpp_a766db2fd54d545264c42b521665923c1a6a0aa1f04816e35159621fe352d64ddb}\label{routing_8hpp_a766db2fd54d545264c42b521665923c1a6a0aa1f04816e35159621fe352d64ddb} 
+ROUTING\+\_\+\+STATUS\+\_\+\+FOUND\+\_\+\+LOCAL&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{ROUTING\_STATUS\_FOUND\_REDIRECT@{ROUTING\_STATUS\_FOUND\_REDIRECT}!routing.hpp@{routing.hpp}}\index{routing.hpp@{routing.hpp}!ROUTING\_STATUS\_FOUND\_REDIRECT@{ROUTING\_STATUS\_FOUND\_REDIRECT}}}\Hypertarget{routing_8hpp_a766db2fd54d545264c42b521665923c1ad902f3c9729a91c683205ec6a5b59b65}\label{routing_8hpp_a766db2fd54d545264c42b521665923c1ad902f3c9729a91c683205ec6a5b59b65} 
+ROUTING\+\_\+\+STATUS\+\_\+\+FOUND\+\_\+\+REDIRECT&\\
+\hline
+
+\end{DoxyEnumFields}

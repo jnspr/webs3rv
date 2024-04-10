@@ -1,0 +1,60 @@
+\doxysection{dispatcher.\+hpp}
+\hypertarget{dispatcher_8hpp_source}{}\label{dispatcher_8hpp_source}\index{source/dispatcher.hpp@{source/dispatcher.hpp}}
+\mbox{\hyperlink{dispatcher_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ EVENT\_DISPATCHER\_hpp}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ EVENT\_DISPATCHER\_hpp}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <sys/epoll.h>}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{comment}{/*\ Alias\ for\ a\ vector\ of\ epoll\ events\ */}}
+\DoxyCodeLine{00010\ \textcolor{keyword}{typedef}\ std::vector<epoll\_event>\ \mbox{\hyperlink{dispatcher_8hpp_ab26bd297e0877c547c44501e8a64a256}{EventBuffer}};}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structSink}{Sink}}}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{comment}{/*\ Handles\ one\ or\ multiple\ events\ */}}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structSink_a53f151d598b7bc170c17372e6f986a77}{handleEvents}}(uint32\_t\ eventMask)\ =\ 0;}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{comment}{/*\ Handles\ an\ exception\ that\ occurred\ in\ \`{}handleEvent()`\ */}}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structSink_a3b363b9f31e71eea4206d17d88a76624}{handleException}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *message)\ =\ 0;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{comment}{/*\ Destructor\ for\ deriving\ classes\ */}}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structSink_adce733e2b51eecaf518592be4bd6f9ff}{\string~Sink}}();}
+\DoxyCodeLine{00022\ \};}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classDispatcher}{Dispatcher}}}
+\DoxyCodeLine{00025\ \{}
+\DoxyCodeLine{00026\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{comment}{/*\ Constructs\ an\ event\ dispatcher\ using\ the\ given\ buffer\ size\ */}}
+\DoxyCodeLine{00028\ \ \ \ \ \mbox{\hyperlink{classDispatcher_a8fa487fffe21274503c6974fed351e74}{Dispatcher}}(\textcolor{keywordtype}{size\_t}\ bufferSize);}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{comment}{/*\ Releases\ the\ dispatcher's\ resources\ */}}
+\DoxyCodeLine{00031\ \ \ \ \ \mbox{\hyperlink{classDispatcher_a52fc4e8bef278fa415723b39b61c28a7}{\string~Dispatcher}}();}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{/*\ Subscribes\ the\ an\ event\ sink\ to\ receive\ the\ given\ events\ on\ a\ file\ descriptor\ */}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classDispatcher_afd3359475db2803f065474b8805e9418}{subscribe}}(\textcolor{keywordtype}{int}\ fileno,\ uint32\_t\ eventMask,\ \mbox{\hyperlink{structSink}{Sink}}\ *sink);}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{/*\ Changes\ the\ given\ file\ descriptor's\ received\ events\ and\ event\ sink\ */}}
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classDispatcher_acdc53b77a0b2e052c576ef2bc84d4b2f}{modify}}(\textcolor{keywordtype}{int}\ fileno,\ uint32\_t\ eventMask,\ \mbox{\hyperlink{structSink}{Sink}}\ *sink);}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{/*\ Unsubscribes\ the\ given\ file\ descriptor's\ event\ sink\ from\ receiving\ events\ */}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classDispatcher_a0a09a0627e55e037d7c4752b3b26326a}{unsubscribe}}(\textcolor{keywordtype}{int}\ fileno);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{comment}{/*\ Waits\ (in\ the\ given\ timeout)\ for\ events\ to\ occur\ and\ dispatches\ them\ */}}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classDispatcher_a883e13e23a209047583eb37f946d4337}{dispatch}}(\textcolor{keywordtype}{int}\ timeout\ =\ -\/1);}
+\DoxyCodeLine{00044\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00045\ \ \ \ \ \mbox{\hyperlink{dispatcher_8hpp_ab26bd297e0877c547c44501e8a64a256}{EventBuffer}}\ \_buffer;}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \_bufferSize;}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{int}\ \ \ \ \ \ \ \ \ \_epollFileno;}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{comment}{/*\ Disable\ copy-\/construction\ and\ copy-\/assignment\ */}}
+\DoxyCodeLine{00050\ \ \ \ \ \mbox{\hyperlink{classDispatcher_a8fa487fffe21274503c6974fed351e74}{Dispatcher}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classDispatcher}{Dispatcher}}\ \&other);}
+\DoxyCodeLine{00051\ \ \ \ \ \mbox{\hyperlink{classDispatcher}{Dispatcher}}\ \&operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{classDispatcher}{Dispatcher}}\ \&other);}
+\DoxyCodeLine{00052\ \};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ EVENT\_DISPATCHER\_hpp}}
+
+\end{DoxyCode}

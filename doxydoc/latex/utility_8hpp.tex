@@ -1,0 +1,99 @@
+\doxysection{source/utility.hpp File Reference}
+\hypertarget{utility_8hpp}{}\label{utility_8hpp}\index{source/utility.hpp@{source/utility.hpp}}
+{\ttfamily \#include "{}slice.\+hpp"{}}\newline
+{\ttfamily \#include "{}config.\+hpp"{}}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$cstddef$>$}\newline
+{\ttfamily \#include $<$sstream$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$cstdio$>$}\newline
+{\ttfamily \#include $<$netdb.\+h$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+Include dependency graph for utility.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{utility_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{utility_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classUtility_1_1AddrInfo}{Utility\+::\+Addr\+Info}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespaceUtility}{Utility}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{utility_8hpp_acac9cbaeea226ed297804c012dc12b16}{Node\+Type}} \{ \newline
+\mbox{\hyperlink{utility_8hpp_acac9cbaeea226ed297804c012dc12b16a7fad7b79af0b36b3dc5db29634df1d68}{NODE\+\_\+\+TYPE\+\_\+\+REGULAR}}
+, \mbox{\hyperlink{utility_8hpp_acac9cbaeea226ed297804c012dc12b16a604e80ae239e53a55a7e3d34f081feb6}{NODE\+\_\+\+TYPE\+\_\+\+DIRECTORY}}
+, \mbox{\hyperlink{utility_8hpp_acac9cbaeea226ed297804c012dc12b16a884a7e1d180d919b86a8122431bab701}{NODE\+\_\+\+TYPE\+\_\+\+NOT\+\_\+\+FOUND}}
+, \mbox{\hyperlink{utility_8hpp_acac9cbaeea226ed297804c012dc12b16aef9668cb0a5ba64b658673ad14afc15b}{NODE\+\_\+\+TYPE\+\_\+\+NO\+\_\+\+ACCESS}}
+, \newline
+\mbox{\hyperlink{utility_8hpp_acac9cbaeea226ed297804c012dc12b16adfc7ee7cfc8d38431099a92906d8d5f7}{NODE\+\_\+\+TYPE\+\_\+\+UNSUPPORTED}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{utility_8hpp_acac9cbaeea226ed297804c012dc12b16}{Node\+Type}} \mbox{\hyperlink{namespaceUtility_a67bc10c23dfd988bfe9306dcfa0fb41c}{Utility\+::query\+Node\+Type}} (const char \texorpdfstring{$\ast$}{*}path)
+\item 
+bool \mbox{\hyperlink{namespaceUtility_af2ddaa431a4b13a3eee7680296b86974}{Utility\+::check\+Path\+Level}} (\mbox{\hyperlink{classSlice}{Slice}} path)
+\item 
+std\+::string \mbox{\hyperlink{namespaceUtility_acd2bd6d90e34a8ba5250489c6f2f5767}{Utility\+::ipv4\+To\+String}} (uint32\+\_\+t ipv4\+Addr)
+\item 
+bool \mbox{\hyperlink{namespaceUtility_ab50ad98e16c6f90c7ec85fe2267ae66f}{Utility\+::parse\+Size}} (\mbox{\hyperlink{classSlice}{Slice}} string, size\+\_\+t \&out\+Result)
+\item 
+bool \mbox{\hyperlink{namespaceUtility_ad1f027888947f1668cbf89accdca3caa}{Utility\+::parse\+Hex\+Char}} (char character, uint8\+\_\+t \&out\+Result)
+\item 
+bool \mbox{\hyperlink{namespaceUtility_a1621e4b64c286e0d11e43dc49a2a7637}{Utility\+::parse\+Size\+Hex}} (\mbox{\hyperlink{classSlice}{Slice}} string, size\+\_\+t \&out\+Result)
+\item 
+bool \mbox{\hyperlink{namespaceUtility_a863ce3e7f473dcc2b3c9e36de7df0df0}{Utility\+::decode\+Url}} (\mbox{\hyperlink{classSlice}{Slice}} string, std\+::string \&out\+Result)
+\item 
+void \mbox{\hyperlink{namespaceUtility_a5e34972fcc8c2b0a3f94724742a8143c}{Utility\+::checkduplicatehost}} (const \mbox{\hyperlink{structApplicationConfig}{Application\+Config}} \&config)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{utility_8hpp_acac9cbaeea226ed297804c012dc12b16}\label{utility_8hpp_acac9cbaeea226ed297804c012dc12b16} 
+\index{utility.hpp@{utility.hpp}!NodeType@{NodeType}}
+\index{NodeType@{NodeType}!utility.hpp@{utility.hpp}}
+\doxysubsubsection{\texorpdfstring{NodeType}{NodeType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{utility_8hpp_acac9cbaeea226ed297804c012dc12b16}{Node\+Type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NODE\_TYPE\_REGULAR@{NODE\_TYPE\_REGULAR}!utility.hpp@{utility.hpp}}\index{utility.hpp@{utility.hpp}!NODE\_TYPE\_REGULAR@{NODE\_TYPE\_REGULAR}}}\Hypertarget{utility_8hpp_acac9cbaeea226ed297804c012dc12b16a7fad7b79af0b36b3dc5db29634df1d68}\label{utility_8hpp_acac9cbaeea226ed297804c012dc12b16a7fad7b79af0b36b3dc5db29634df1d68} 
+NODE\+\_\+\+TYPE\+\_\+\+REGULAR&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NODE\_TYPE\_DIRECTORY@{NODE\_TYPE\_DIRECTORY}!utility.hpp@{utility.hpp}}\index{utility.hpp@{utility.hpp}!NODE\_TYPE\_DIRECTORY@{NODE\_TYPE\_DIRECTORY}}}\Hypertarget{utility_8hpp_acac9cbaeea226ed297804c012dc12b16a604e80ae239e53a55a7e3d34f081feb6}\label{utility_8hpp_acac9cbaeea226ed297804c012dc12b16a604e80ae239e53a55a7e3d34f081feb6} 
+NODE\+\_\+\+TYPE\+\_\+\+DIRECTORY&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NODE\_TYPE\_NOT\_FOUND@{NODE\_TYPE\_NOT\_FOUND}!utility.hpp@{utility.hpp}}\index{utility.hpp@{utility.hpp}!NODE\_TYPE\_NOT\_FOUND@{NODE\_TYPE\_NOT\_FOUND}}}\Hypertarget{utility_8hpp_acac9cbaeea226ed297804c012dc12b16a884a7e1d180d919b86a8122431bab701}\label{utility_8hpp_acac9cbaeea226ed297804c012dc12b16a884a7e1d180d919b86a8122431bab701} 
+NODE\+\_\+\+TYPE\+\_\+\+NOT\+\_\+\+FOUND&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NODE\_TYPE\_NO\_ACCESS@{NODE\_TYPE\_NO\_ACCESS}!utility.hpp@{utility.hpp}}\index{utility.hpp@{utility.hpp}!NODE\_TYPE\_NO\_ACCESS@{NODE\_TYPE\_NO\_ACCESS}}}\Hypertarget{utility_8hpp_acac9cbaeea226ed297804c012dc12b16aef9668cb0a5ba64b658673ad14afc15b}\label{utility_8hpp_acac9cbaeea226ed297804c012dc12b16aef9668cb0a5ba64b658673ad14afc15b} 
+NODE\+\_\+\+TYPE\+\_\+\+NO\+\_\+\+ACCESS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NODE\_TYPE\_UNSUPPORTED@{NODE\_TYPE\_UNSUPPORTED}!utility.hpp@{utility.hpp}}\index{utility.hpp@{utility.hpp}!NODE\_TYPE\_UNSUPPORTED@{NODE\_TYPE\_UNSUPPORTED}}}\Hypertarget{utility_8hpp_acac9cbaeea226ed297804c012dc12b16adfc7ee7cfc8d38431099a92906d8d5f7}\label{utility_8hpp_acac9cbaeea226ed297804c012dc12b16adfc7ee7cfc8d38431099a92906d8d5f7} 
+NODE\+\_\+\+TYPE\+\_\+\+UNSUPPORTED&\\
+\hline
+
+\end{DoxyEnumFields}

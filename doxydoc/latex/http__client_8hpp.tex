@@ -1,0 +1,80 @@
+\doxysection{source/http\+\_\+client.hpp File Reference}
+\hypertarget{http__client_8hpp}{}\label{http__client_8hpp}\index{source/http\_client.hpp@{source/http\_client.hpp}}
+{\ttfamily \#include "{}config.\+hpp"{}}\newline
+{\ttfamily \#include "{}timeout.\+hpp"{}}\newline
+{\ttfamily \#include "{}dispatcher.\+hpp"{}}\newline
+{\ttfamily \#include "{}cgi\+\_\+process.\+hpp"{}}\newline
+{\ttfamily \#include "{}http\+\_\+request.\+hpp"{}}\newline
+{\ttfamily \#include "{}routing.\+hpp"{}}\newline
+{\ttfamily \#include "{}http\+\_\+response.\+hpp"{}}\newline
+{\ttfamily \#include "{}http\+\_\+request\+\_\+parser.\+hpp"{}}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+Include dependency graph for http\+\_\+client.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{http__client_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{http__client_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classHttpClient}{Http\+Client}}
+\item 
+struct \mbox{\hyperlink{structuploadData}{upload\+Data}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{http__client_8hpp_a0e488bdf6f604e4afb04dcf11ee50781}{ISDIR}}~0
+\item 
+\#define \mbox{\hyperlink{http__client_8hpp_a04d2e2ee201eef14bc162e84f5fa394d}{ISFILE}}~1
+\item 
+\#define \mbox{\hyperlink{http__client_8hpp_a8fe83ac76edc595f6b98cd4a4127aed5}{ERROR}}~3
+\item 
+\#define \mbox{\hyperlink{http__client_8hpp_a1e98e8ca5f5638ec9c3eee87715cb083}{CURL}}~0
+\item 
+\#define \mbox{\hyperlink{http__client_8hpp_a4574bb4316cba41e7cc64d9c47630b84}{PYTHONSCRIPT}}~1
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\Hypertarget{http__client_8hpp_a1e98e8ca5f5638ec9c3eee87715cb083}\label{http__client_8hpp_a1e98e8ca5f5638ec9c3eee87715cb083} 
+\index{http\_client.hpp@{http\_client.hpp}!CURL@{CURL}}
+\index{CURL@{CURL}!http\_client.hpp@{http\_client.hpp}}
+\doxysubsubsection{\texorpdfstring{CURL}{CURL}}
+{\footnotesize\ttfamily \#define CURL~0}
+
+\Hypertarget{http__client_8hpp_a8fe83ac76edc595f6b98cd4a4127aed5}\label{http__client_8hpp_a8fe83ac76edc595f6b98cd4a4127aed5} 
+\index{http\_client.hpp@{http\_client.hpp}!ERROR@{ERROR}}
+\index{ERROR@{ERROR}!http\_client.hpp@{http\_client.hpp}}
+\doxysubsubsection{\texorpdfstring{ERROR}{ERROR}}
+{\footnotesize\ttfamily \#define ERROR~3}
+
+\Hypertarget{http__client_8hpp_a0e488bdf6f604e4afb04dcf11ee50781}\label{http__client_8hpp_a0e488bdf6f604e4afb04dcf11ee50781} 
+\index{http\_client.hpp@{http\_client.hpp}!ISDIR@{ISDIR}}
+\index{ISDIR@{ISDIR}!http\_client.hpp@{http\_client.hpp}}
+\doxysubsubsection{\texorpdfstring{ISDIR}{ISDIR}}
+{\footnotesize\ttfamily \#define ISDIR~0}
+
+\Hypertarget{http__client_8hpp_a04d2e2ee201eef14bc162e84f5fa394d}\label{http__client_8hpp_a04d2e2ee201eef14bc162e84f5fa394d} 
+\index{http\_client.hpp@{http\_client.hpp}!ISFILE@{ISFILE}}
+\index{ISFILE@{ISFILE}!http\_client.hpp@{http\_client.hpp}}
+\doxysubsubsection{\texorpdfstring{ISFILE}{ISFILE}}
+{\footnotesize\ttfamily \#define ISFILE~1}
+
+\Hypertarget{http__client_8hpp_a4574bb4316cba41e7cc64d9c47630b84}\label{http__client_8hpp_a4574bb4316cba41e7cc64d9c47630b84} 
+\index{http\_client.hpp@{http\_client.hpp}!PYTHONSCRIPT@{PYTHONSCRIPT}}
+\index{PYTHONSCRIPT@{PYTHONSCRIPT}!http\_client.hpp@{http\_client.hpp}}
+\doxysubsubsection{\texorpdfstring{PYTHONSCRIPT}{PYTHONSCRIPT}}
+{\footnotesize\ttfamily \#define PYTHONSCRIPT~1}
+

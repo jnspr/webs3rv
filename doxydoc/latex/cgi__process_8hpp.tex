@@ -1,0 +1,69 @@
+\doxysection{source/cgi\+\_\+process.hpp File Reference}
+\hypertarget{cgi__process_8hpp}{}\label{cgi__process_8hpp}\index{source/cgi\_process.hpp@{source/cgi\_process.hpp}}
+{\ttfamily \#include "{}process.\+hpp"{}}\newline
+{\ttfamily \#include "{}dispatcher.\+hpp"{}}\newline
+{\ttfamily \#include "{}http\+\_\+client.\+hpp"{}}\newline
+{\ttfamily \#include "{}http\+\_\+request.\+hpp"{}}\newline
+{\ttfamily \#include "{}utility.\+hpp"{}}\newline
+{\ttfamily \#include "{}routing.\+hpp"{}}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+Include dependency graph for cgi\+\_\+process.\+hpp\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cgi__process_8hpp__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{cgi__process_8hpp__dep__incl}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structCgiPathInfo}{Cgi\+Path\+Info}}
+\item 
+class \mbox{\hyperlink{classCgiProcess}{Cgi\+Process}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcd}{Cgi\+Process\+State}} \{ \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcdad6899238670643914cfa6f223310dcdc}{CGI\+\_\+\+PROCESS\+\_\+\+RUNNING}}
+, \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcda87986219fd7bf02604f44707e2f59b43}{CGI\+\_\+\+PROCESS\+\_\+\+FAILURE}}
+, \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcda12143421e19ec7481ae10c4b54350329}{CGI\+\_\+\+PROCESS\+\_\+\+TIMEOUT}}
+, \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcdad422506740e3cb93268aae2c134b3798}{CGI\+\_\+\+PROCESS\+\_\+\+SUCCESS}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcd}\label{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcd} 
+\index{cgi\_process.hpp@{cgi\_process.hpp}!CgiProcessState@{CgiProcessState}}
+\index{CgiProcessState@{CgiProcessState}!cgi\_process.hpp@{cgi\_process.hpp}}
+\doxysubsubsection{\texorpdfstring{CgiProcessState}{CgiProcessState}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcd}{Cgi\+Process\+State}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CGI\_PROCESS\_RUNNING@{CGI\_PROCESS\_RUNNING}!cgi\_process.hpp@{cgi\_process.hpp}}\index{cgi\_process.hpp@{cgi\_process.hpp}!CGI\_PROCESS\_RUNNING@{CGI\_PROCESS\_RUNNING}}}\Hypertarget{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcdad6899238670643914cfa6f223310dcdc}\label{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcdad6899238670643914cfa6f223310dcdc} 
+CGI\+\_\+\+PROCESS\+\_\+\+RUNNING&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CGI\_PROCESS\_FAILURE@{CGI\_PROCESS\_FAILURE}!cgi\_process.hpp@{cgi\_process.hpp}}\index{cgi\_process.hpp@{cgi\_process.hpp}!CGI\_PROCESS\_FAILURE@{CGI\_PROCESS\_FAILURE}}}\Hypertarget{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcda87986219fd7bf02604f44707e2f59b43}\label{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcda87986219fd7bf02604f44707e2f59b43} 
+CGI\+\_\+\+PROCESS\+\_\+\+FAILURE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CGI\_PROCESS\_TIMEOUT@{CGI\_PROCESS\_TIMEOUT}!cgi\_process.hpp@{cgi\_process.hpp}}\index{cgi\_process.hpp@{cgi\_process.hpp}!CGI\_PROCESS\_TIMEOUT@{CGI\_PROCESS\_TIMEOUT}}}\Hypertarget{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcda12143421e19ec7481ae10c4b54350329}\label{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcda12143421e19ec7481ae10c4b54350329} 
+CGI\+\_\+\+PROCESS\+\_\+\+TIMEOUT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CGI\_PROCESS\_SUCCESS@{CGI\_PROCESS\_SUCCESS}!cgi\_process.hpp@{cgi\_process.hpp}}\index{cgi\_process.hpp@{cgi\_process.hpp}!CGI\_PROCESS\_SUCCESS@{CGI\_PROCESS\_SUCCESS}}}\Hypertarget{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcdad422506740e3cb93268aae2c134b3798}\label{cgi__process_8hpp_ac10f7fbe40353cca8e776f886c661dcdad422506740e3cb93268aae2c134b3798} 
+CGI\+\_\+\+PROCESS\+\_\+\+SUCCESS&\\
+\hline
+
+\end{DoxyEnumFields}

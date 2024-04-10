@@ -1,0 +1,28 @@
+\doxysection{error\+\_\+db.\+hpp}
+\hypertarget{error__db_8hpp_source}{}\label{error__db_8hpp_source}\index{source/error\_db.hpp@{source/error\_db.hpp}}
+\mbox{\hyperlink{error__db_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ ERROR\_DB\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ ERROR\_DB\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classErrorDB}{ErrorDB}}\ \{}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{comment}{/*\ Constructs\ an\ error\ database\ with\ the\ default\ entries\ */}}
+\DoxyCodeLine{00011\ \ \ \ \ \mbox{\hyperlink{classErrorDB_a915291bc12f6388e64e3d1851b4c1245}{ErrorDB}}();}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{comment}{/*\ Gets\ the\ error\ message\ for\ the\ error\ number\ specified\ */}}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&\mbox{\hyperlink{classErrorDB_a6ad622590c327b65f98454ab500faea1}{getErrorType}}(\textcolor{keywordtype}{int}\ code);}
+\DoxyCodeLine{00015\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00016\ \ \ \ \ std::map<int,\ std::string>\ \ \ \ \ \ \ \ \ \_entries;}
+\DoxyCodeLine{00017\ \ \ \ \ std::string\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_defaultError;}
+\DoxyCodeLine{00018\ \};}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{classErrorDB}{ErrorDB}}\ \mbox{\hyperlink{error__db_8hpp_a37d5c6ae222a9880e9e3916779d16279}{g\_errorDB}};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ ERROR\_DB\_HPP}}
+
+\end{DoxyCode}
