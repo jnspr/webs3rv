@@ -17,6 +17,17 @@ HttpResponse::~HttpResponse()
         close(_bodyFileno);
 }
 
+/* Initialize the response class with body */
+void HttpResponse::initialize(int statusCode, Slice statusMessage, const std::string &body)
+{
+    initializeHeader(statusCode, statusMessage, body.size());
+    _bodyBuffer    = body;
+    _bodySlice     = Slice(_bodyBuffer);
+    _bodyFileno    = -1;
+    _bodyRemainder = body.size();
+    _state         = HTTP_RESPONSE_INITIALIZED;
+}
+
 /* Initialize the response class with bodyBuffer for cgi pages */
 void HttpResponse::initialize(int statusCode, Slice statusMessage, const void *bodyBuffer, size_t bodySize)
 {

@@ -24,6 +24,9 @@ public:
     /* Releases the response's resources */
     ~HttpResponse();
 
+    /* Initialize the response class with body */
+    void initialize(int statusCode, Slice statusMessage, const std::string &body);
+
     /* Initialize the response class with bodyBuffer for cgi pages */
     void initialize(int statusCode, Slice statusMessage, const void *bodyBuffer, size_t bodySize);
     
@@ -51,6 +54,7 @@ private:
     HttpResponseState _state;
     std::stringstream _headerStream;
     std::string       _headerString;
+    std::string       _bodyBuffer;
     Slice             _headerSlice;
     Slice             _bodySlice;
     int               _bodyFileno;
