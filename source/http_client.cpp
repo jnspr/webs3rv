@@ -5,6 +5,7 @@
 #include "utility.hpp"
 #include "mime_db.hpp"
 #include "error_db.hpp"
+#include "html_generator.hpp"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -75,8 +76,9 @@ void HttpClient::handleEvents(uint32_t eventMask)
         } catch (HttpException &exception)
         {
             const std::string &errorType = g_errorDB.getErrorType(exception.getStatusCode());
-            _response.initialize(exception.getStatusCode(), errorType, errorType.data(), errorType.size()); // FIXME
-            _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/plain"));
+            std::string errorPage = HtmlGenerator::errorPage(exception.getStatusCode());
+            _response.initialize(exception.getStatusCode(), errorType, errorPage);
+            _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/html"));
             _response.finalizeHeader();
             _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
         }
@@ -174,8 +176,10 @@ repeat:
             }
             else if (info.getLocalRoute()->allowListing)
             {
-                std::cout << "Autoindex is not implemented";
-                throw HttpException(500);
+                std::string autoindex = HtmlGenerator::directoryList(info.nodePath.c_str());
+                _response.initialize(200, C_SLICE("OK"), autoindex);
+                _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/html"));
+                _response.finalizeHeader();
             }
             else
                 throw HttpException(403);
