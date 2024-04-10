@@ -9,8 +9,7 @@ ServerConfig::ServerConfig()
 
 /* Initializes a local route configuration using the default parameters */
 LocalRouteConfig::LocalRouteConfig()
-    : indexFile("index.html")
-    , allowUpload(false)
+    : allowUpload(false)
     , allowListing(false)
 {
 }
