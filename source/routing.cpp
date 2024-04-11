@@ -63,7 +63,6 @@ RoutingInfo RoutingInfo::findRoute(const ServerConfig &serverConfig, Slice query
         std::map<std::string, std::string>::const_iterator iterator = config.cgiTypes.begin();
         for (; iterator != config.cgiTypes.end(); iterator++)
         {
-            std::cout << queryPath << std::endl;
             if (queryPath.endsWith(iterator->first))
             {
                 info.hasCgiInterpreter = true;
