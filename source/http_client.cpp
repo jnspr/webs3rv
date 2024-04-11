@@ -15,7 +15,16 @@
 
 /* Constructs a HTTP client using the given socket file descriptor */
 HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno, uint32_t host, uint16_t port)
-    : _application(application), _config(config), _fileno(fileno), _timeout(TIMEOUT_REQUEST_MS), _waitingForClose(false), _markedForCleanup(false), _process(NULL), _host(host), _port(port), _parser(config, host, port)
+    : _application(application)
+    , _config(config)
+    , _fileno(fileno)
+    , _timeout(TIMEOUT_REQUEST_MS)
+    , _waitingForClose(false)
+    , _markedForCleanup(false)
+    , _process(NULL)
+    , _host(host)
+    , _port(port)
+    , _parser(config, host, port)
 {
 }
 
@@ -67,7 +76,6 @@ void HttpClient::handleEvents(uint32_t eventMask)
                 case HTTP_REQUEST_MALFORMED:
                     throw HttpException(400);
                 case HTTP_REQUEST_COMPLETED:
-                    //Debug::printRequest(_parser.getRequest());
                     handleRequest(_parser.getRequest());
                 default:
                     break;
@@ -117,17 +125,9 @@ repeat:
         switch (info.getLocalNodeType())
         {
         case NODE_TYPE_REGULAR:
-            std::cout << "NODE_TYPE_REGULAR" << std::endl;
             if (info.hasCgiInterpreter)
             {
                 _application.startCgiProcess(this, request, info);
-                // char cgiFdBuff[8192];
-                // ssize_t readint = read(_process->getProcess().getOutputFileno(), _process->_buffer, sizeof(_process->_buffer));
-                //_response.initialize(200, C_SLICE("OK"), static_cast<const void*>(_process->_buffer.data()), _process->_buffer.size());
-                //_response.addHeader(C_SLICE("Content-Type"), Slice("text/plain"));
-                //_response.finalizeHeader();
-                // std::cout << "buffer: " << Slice(cgiFdBuff, sizeof(cgiFdBuff)).toString() << "bufferLength: " << sizeof(cgiFdBuff) << std::endl;
-                // std::cout << "buffer: " << Slice(_process->_buffer,_process->_bufferLength).toString() << "bufferLength: " << _process->_bufferLength << std::endl;
             }
             else if (request.method == HTTP_METHOD_DELETE)
             {
@@ -145,12 +145,17 @@ repeat:
                     throw HttpException(500);
                 _response.initialize(200, C_SLICE("OK"), fileno, fileStat.st_size);
                 _response.addHeader(C_SLICE("Content-Type"), mimetype);
-                _response.finalizeHeader();
+                _timeout = Timeout(_response.finalizeHeader());
             }
             break;
         case NODE_TYPE_DIRECTORY:
-            std::cout << "NODE_TYPE_DIRECTORY" << std::endl;
-            if (request.method == HTTP_METHOD_POST)
+            if (!Slice(request.queryPath).endsWith(C_SLICE("/")))
+            {
+                _response.initialize(301, C_SLICE("Moved Permanently"), "", 0);
+                _response.addHeader(C_SLICE("Location"), Slice(request.queryPath + "/"));
+                _timeout = Timeout(_response.finalizeHeader());
+            }
+            else if (request.method == HTTP_METHOD_POST)
             {
                 std::cout << "allowUpload: " << info.getLocalRoute()->allowUpload << std::endl;
                 if (info.getLocalRoute()->allowUpload)
@@ -174,7 +179,7 @@ repeat:
                 std::string autoindex = HtmlGenerator::directoryList(info.nodePath.c_str());
                 _response.initialize(200, C_SLICE("OK"), autoindex);
                 _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/html"));
-                _response.finalizeHeader();
+                _timeout = Timeout(_response.finalizeHeader());
             }
             else
                 throw HttpException(403);
@@ -192,28 +197,8 @@ repeat:
 
     if (_response.getState() != HTTP_RESPONSE_FINALIZED && _process == NULL)
         throw HttpException(500);
-    std::cout << "sind wir drin?" << std::endl;
-    _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
-
-    // TODO: Implement check if file exists on route in ServerConfig::findRoute()
-    //       ^ Don't use stat() directly, use Utility::queryNodeType()
-
-    // TODO: Find route using ServerConfig::findRoute()
-    //       ^ Quit early when node type is NODE_TYPE_NO_ACCESS (HTTP 403)
-    //       ^ Only 404 when the route wasn't found
-    // TODO: Check allowed methods on route
-    // TODO: Handle node type
-    //       ^ Is directory?
-    //         ^ Index file configured?
-    //           ^ Quit if inaccessible (HTTP 403) or not found (HTTP 403), use it if present
-    //         ^ Index file not configured?
-    //           ^ Generate autoindex if enabled, quit with HTTP 403 if disabled
-    //       ^ Is file?
-    //         ^ Is CGI file extension? (use route's CGI map)
-    //           ^ Start CGI process
-    //         ^ Is regular file?
-    //           ^ Get MIME type and set Content-Type
-    //           ^ Send the file with Content-Length (not chunked)
+    if (_process == NULL)
+        _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
 }
 
 void HttpClient::uploadFile(const HttpRequest &request, const RoutingInfo &info)
@@ -244,6 +229,7 @@ void HttpClient::uploadFile(const HttpRequest &request, const RoutingInfo &info)
 
 void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
 {
+    // TODO: This needs refactoring
 
     printf("Parsing upload\n");
 
@@ -362,8 +348,7 @@ void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
 /* Handles an exception that occurred in `handleEvent()` */
 void HttpClient::handleException(const char *message)
 {
-    (void)message;
-    printf("Exception while handling HTTP client event: %s\n", message);
+    std::cout << "Exception while handling HTTP client event: " << message << std::endl;
     markForCleanup();
 }
 
@@ -371,48 +356,73 @@ void HttpClient::handleCgiState()
 {
     if (_process == NULL)
         return;
-    // TODO: Implement this
-    if (_process->getState() == CGI_PROCESS_SUCCESS)
+    switch (_process->getState())
     {
-        // start the response to client
-        std::cout << "im handle Cgi State" << std::endl;
-        Slice iterator(reinterpret_cast<const char *>(_process->_buffer.data()), _process->_buffer.size());
-        Slice header;
-        iterator.splitStart(C_SLICE("\r\n\r\n"), header);
-        std::cout << "-------- HEADER:\n"
-                  << header << "\n--------" << std::endl;
-        _response.initialize(200, C_SLICE("OK"), &iterator[0], iterator.getLength());
-        while (header.getLength() > 0)
+        case CGI_PROCESS_RUNNING:
+            break;
+        case CGI_PROCESS_SUCCESS:
         {
-            Slice line;
-            if (!header.splitStart(C_SLICE("\r\n"), line))
+            // TODO: This needs refactoring
+
+            Slice iterator(reinterpret_cast<const char *>(_process->_buffer.data()), _process->_buffer.size());
+            Slice header;
+            iterator.splitStart(C_SLICE("\r\n\r\n"), header);
+
+            bool initialized = false;
+
+            Slice statusSearch = header;
+            Slice temporary;
+            if (statusSearch.splitStart(C_SLICE("Status:"), temporary) && (temporary.endsWith(C_SLICE("\r\n")) || temporary.isEmpty()))
             {
-                line = header;
-                header = Slice();
+                Slice statusLine, statusCode, statusMessage;
+                if (!statusSearch.splitStart(C_SLICE("\r\n"), statusLine))
+                    statusLine = statusSearch;
+                statusLine.stripStart(' ');
+                if (!statusLine.splitStart(' ', statusCode))
+                    throw std::runtime_error("Malformed CGI status header");
+                statusMessage = statusLine;
+                size_t statusCodeNumber;
+                if (!Utility::parseSize(statusCode, statusCodeNumber))
+                    throw std::runtime_error("aslkdjaslkdjas");
+                _response.initialize(statusCodeNumber, statusMessage, &iterator[0], iterator.getLength());
             }
-            Slice key, value;
-            if (!line.splitStart(C_SLICE(":"), key))
-                continue;
-            value = value.stripStart(' ');
-            _response.addHeader(key, value);
+
+            if (!initialized)
+                _response.initialize(200, C_SLICE("OK"), &iterator[0], iterator.getLength());
+
+            while (header.getLength() > 0)
+            {
+                Slice line;
+                if (!header.splitStart(C_SLICE("\r\n"), line))
+                {
+                    line = header;
+                    header = Slice();
+                }
+                Slice key, value;
+                if (!line.splitStart(C_SLICE(":"), key))
+                    throw std::runtime_error("Malformed CGI header");
+                value = line;
+
+                if (key != C_SLICE("Status"))
+                {
+                    value = value.stripStart(' ');
+                    _response.addHeader(key, value);
+                }
+            }
+
+            _timeout = Timeout(_response.finalizeHeader());
+            _application._dispatcher.unsubscribe(_process->getProcess().getOutputFileno());
+            _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
         }
-        //_response.addHeader(C_SLICE("Content-Type"), Slice("text/plain"));
-        _response.finalizeHeader();
-        _application._dispatcher.unsubscribe(_process->getProcess().getOutputFileno());
-        std::cout << "im handle Cgi State after" << std::endl;
-        _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
-    }
-    else if (_process->getState() == CGI_PROCESS_FAILURE)
-    {
-        createErrorResponse(502);
-        _application.closeCgiProcess(this);
-    }
-    else if (_process->getState() == CGI_PROCESS_TIMEOUT)
-    {
-        createErrorResponse(502);
-        this->_markedForCleanup = true;
-        this->_cleanupNext = _application._cleanupClients;
-        _application._cleanupClients = this;
+        break;
+        case CGI_PROCESS_FAILURE:
+            _application.closeCgiProcess(this);
+            createErrorResponse(502);
+            break;
+        case CGI_PROCESS_TIMEOUT:
+            _application.closeCgiProcess(this);
+            createErrorResponse(504);
+            break;
     }
 }
 
@@ -430,10 +440,15 @@ void HttpClient::markForCleanup()
 /* Create error response */
 void HttpClient::createErrorResponse(size_t statusCode)
 {
-    const std::string &errorType = g_errorDB.getErrorType(statusCode);
+    // Find the error message
+    const std::string &errorMessage = g_errorDB.getErrorType(statusCode);
     std::string errorPage = HtmlGenerator::errorPage(statusCode);
-    _response.initialize(statusCode, errorType, errorPage);
+
+    // Build the response and set its timeout
+    _response.initialize(statusCode, errorMessage, errorPage);
     _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/html"));
-    _response.finalizeHeader();
+    _timeout = Timeout(_response.finalizeHeader());
+
+    // Switch the dispatcher to POLLOUT
     _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
 }

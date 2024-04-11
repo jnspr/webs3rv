@@ -2,8 +2,10 @@
 #include "http_client.hpp"
 #include "slice.hpp"
 #include "application.hpp"
-#include <string.h>
 
+#include <string.h>
+#include <stdlib.h>
+#include <limits.h>
 #include <unistd.h>
 
 CgiPathInfo::CgiPathInfo(const std::string &nodePath)
@@ -24,8 +26,10 @@ CgiProcess::CgiProcess(HttpClient *client, const HttpRequest &request, const Rou
     : _state(CGI_PROCESS_RUNNING)
     , _pathInfo(routingInfo.nodePath)
     , _client(client)
-    , _process(setupArguments(request, routingInfo, _pathInfo.fileName), setupEnvironment(request, routingInfo)
-    , _pathInfo.workingDirectory)
+    , _request(request)
+    , _process(setupArguments(request, routingInfo, _pathInfo.fileName),
+               setupEnvironment(request, routingInfo),
+               _pathInfo.workingDirectory)
     , _timeout(TIMEOUT_CGI_MS)
     , _bodyOffset(0)
     , _isInOutputPhase(false)
@@ -38,58 +42,81 @@ void CgiProcess::handleEvents(uint32_t eventMask)
     if (_state != CGI_PROCESS_RUNNING)
         return;
 
-    if (eventMask & EPOLLOUT)
+    switch (_process.getStatus())
     {
-        const std::vector<uint8_t> &requestBody = _client->_parser.getRequest().body;
-        ssize_t result = write(_process.getInputFileno(), &requestBody[_bodyOffset], requestBody.size() - _bodyOffset);
-        if (result < 0)
-            throw std::runtime_error("Unable to write to CGI process");
-        size_t writeLength = static_cast<size_t>(result);
-        _bodyOffset += writeLength;
+        case PROCESS_RUNNING:
+            if (eventMask & EPOLLOUT)
+            {
+                // Write the request body to the process' standard input pipe
+                ssize_t result = write(_process.getInputFileno(), &_request.body[_bodyOffset], _request.body.size() - _bodyOffset);
+                if (result < 0)
+                    throw std::runtime_error("Unable to write to CGI process");
+                _bodyOffset += static_cast<size_t>(result);
 
-        // switch to output phase
-        // TODO(jnspr): check exception safety etc etc
-        _client->_application._dispatcher.unsubscribe(_process.getInputFileno());
-        _process.closeInput();
-        _isInOutputPhase = true;
+                // If the whole body was written, close the input pipe and switch into output phase
+                if (_bodyOffset >= _request.body.size())
+                {
+                    _client->_application._dispatcher.unsubscribe(_process.getInputFileno());
+                    _process.closeInput();
+                    _isInOutputPhase = true;
 
-        _client->_application._dispatcher.subscribe(_process.getOutputFileno(), EPOLLIN | EPOLLHUP, this);
-        return;
-    }
-    if (getProcess().getStatus() == PROCESS_EXIT_SUCCESS)
-    {
-        _state = CGI_PROCESS_SUCCESS;
-        _client->handleCgiState();
-    }
-    else if (getProcess().getStatus() == PROCESS_EXIT_FAILURE)
-    {
-        _state = CGI_PROCESS_FAILURE;
-        _client->handleCgiState();
-    }
-    else if (getProcess().getStatus() == PROCESS_RUNNING)
-    {
-        char data[8192];
-        ssize_t result = read(getProcess().getOutputFileno(), data, sizeof(data));
-        if (result < 0)
-            throw std::runtime_error("Unable to read from CGI process");
+                    _client->_application._dispatcher.subscribe(_process.getOutputFileno(), EPOLLIN | EPOLLHUP, this);
+                }
+            }
+            if (eventMask & EPOLLIN)
+            {
+                char buffer[8192];
 
-        // Copy the bytes into the body buffer
-        size_t copyLength = static_cast<size_t>(result);
-        size_t oldLength = _buffer.size();
-        if (SIZE_MAX - oldLength < copyLength)
-            throw std::runtime_error("Body exeed from CGI process");
-        _buffer.resize(oldLength + copyLength);
-        memcpy(&_buffer[oldLength], &data[0], copyLength);
+                // Read up to 8KiB from the process' standard output pipe
+                ssize_t result = read(_process.getOutputFileno(), buffer, sizeof(buffer));
+                if (result == 0)
+                {
+                    // TODO: Correctly handle successful process exit
+                    _process.getStatus();
+                }
+                if (result < 0)
+                    throw std::runtime_error("Unable to read from CGI process");
+                size_t length = static_cast<size_t>(result);
+
+                // Push the data into the response buffer
+                size_t oldLength = _buffer.size();
+                if (SIZE_MAX - oldLength < length)
+                    throw std::runtime_error("Response body too large");
+                size_t newLength = oldLength + length;
+                if (newLength > (2ull * 1024ull * 1024ull * 1024ull))
+                    throw std::runtime_error("Response body too large");
+                _buffer.resize(oldLength + length);
+                memcpy(&_buffer[oldLength], buffer, length);
+            }
+            break;
+        case PROCESS_EXIT_SUCCESS:
+            _state = CGI_PROCESS_SUCCESS;
+            _client->handleCgiState();
+            break;
+        case PROCESS_EXIT_FAILURE:
+            _state = CGI_PROCESS_FAILURE;
+            _client->handleCgiState();
+            break;
     }
 }
 
 /* Handles an exception that occurred in `handleEvent()` */
 void CgiProcess::handleException(const char *message)
 {
-    (void)message;
+    std::cout << "Exception while handling CGI process event: " << message << std::endl;
     if (_state != CGI_PROCESS_RUNNING)
         return;
     _state = CGI_PROCESS_FAILURE;
+    _client->handleCgiState();
+    // FIXME: The client will hang on exceptions here
+}
+
+/* Transitions the process into timeout state */
+void CgiProcess::handleTimeout()
+{
+    if (_state != CGI_PROCESS_RUNNING)
+        return;
+    _state = CGI_PROCESS_TIMEOUT;
     _client->handleCgiState();
 }
 
@@ -100,7 +127,18 @@ std::vector<std::string> CgiProcess::setupArguments(const HttpRequest &request, 
     std::vector<std::string> result;
     result.push_back(routingInfo.cgiInterpreter);
     result.push_back(fileName);
+    if (request.method == HTTP_METHOD_GET && !request.queryParameters.isEmpty())
+        result.push_back('?' + request.queryParameters.toString());
     return result;
+}
+
+// FIXME: It's probably not fine to use realpath() since the subject doesn't list it as an allowed function
+static std::string getAbsolutePath(const char *path)
+{
+    char buffer[PATH_MAX];
+    if (realpath(path, buffer) == NULL)
+        throw std::runtime_error("Unable to resolve path");
+    return std::string(buffer);
 }
 
 /* Creates a vector of strings for the process environment */
@@ -108,31 +146,54 @@ std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request
 {
     std::vector<std::string> result;
 
-    result.push_back("GATEWAY_INTERFACE=CGI/1.1");
-    result.push_back("SERVER_SOFTWARE=JPwebs3rv/1.0");
-    result.push_back("SERVER_NAME=" + Utility::numberToString(routingInfo.serverConfig->host));
-    if (request.isLegacy)
-        result.push_back("SERVER_PROTOCOL=HTTP/1.0");
-    else
-        result.push_back("SERVER_PROTOCOL=HTTP/1.1");
-    result.push_back("SERVER_PORT=" + Utility::numberToString(routingInfo.serverConfig->port));
-    result.push_back("REQUEST_METHOD=" + std::string(httpMethodToString(request.method)));
     const HttpRequest::Header *contentType = request.findHeader(C_SLICE("Content-Type"));
-    if (contentType == NULL)
-        result.push_back("CONTENT_TYPE=NULL");
-    else
-        result.push_back("CONTENT_TYPE=" + contentType->getValue());
+    const HttpRequest::Header *host = request.findHeader(C_SLICE("Host"));
+
+    // Add the standard CGI environment variables
+    result.push_back("AUTH_TYPE=");
     result.push_back("CONTENT_LENGTH=" + Utility::numberToString(request.body.size()));
-    result.push_back("SCRIPT_NAME=" + request.queryPath);
+    if (contentType != NULL)
+        result.push_back("CONTENT_TYPE=" + contentType->getValue());
+    result.push_back("GATEWAY_INTERFACE=CGI/1.1");
+    // TODO: PHP (WordPress) and Python both work fine without these variables, but consider populating them anyway
     result.push_back("PATH_INFO=");
-    if (request.queryParameters.isEmpty())
-        result.push_back("PATH_TRANSLATED=NULL");
+    result.push_back("PATH_TRANSLATED=");
+    result.push_back("QUERY_STRING=" + request.queryParameters.toString());
+    result.push_back("REMOTE_ADDR=" + Utility::ipv4ToString(request.clientHost));
+    result.push_back("REMOTE_HOST=" + Utility::ipv4ToString(request.clientHost));
+    result.push_back("REQUEST_METHOD=" + std::string(httpMethodToString(request.method)));
+    result.push_back("SCRIPT_NAME=" + request.queryPath);
+    result.push_back("DOCUMENT_ROOT=" + getAbsolutePath(routingInfo.getLocalRoute()->rootDirectory.c_str()));
+    result.push_back("SCRIPT_FILENAME=" + getAbsolutePath(routingInfo.nodePath.c_str()));
+    if (host != NULL)
+        result.push_back("HTTP_HOST=" + host->getValue());
     else
-        result.push_back("PATH_TRANSLATED=" + routingInfo.nodePath + request.queryParameters.toString());
-    result.push_back("QUERY_STRING=?" + request.queryParameters.toString());
-    /* Will not be used and no DNS lookup performed*/
-    result.push_back("REMOTE_HOST=NULL");
-    result.push_back("REMOTE_ADDR=" + Utility::numberToString(request.clientHost));
+        result.push_back("HTTP_HOST=NULL");
+    if (host != NULL)
+    {
+        // TODO: This could be taken from the server_name
+        result.push_back("SERVER_NAME=" + host->getValue());
+    }
+    result.push_back("SERVER_PORT=" + Utility::numberToString(routingInfo.serverConfig->port));
+    result.push_back("SERVER_PROTOCOL=HTTP/1.1");
+    result.push_back("SERVER_SOFTWARE=webs3rv/1.0");
+    result.push_back("REDIRECT_STATUS=200");
+
+    // Add the HTTP request headers to the environment
+    std::vector<HttpRequest::Header>::const_iterator header = request.headers.begin();
+    for (; header != request.headers.end(); header++)
+    {
+        std::string key = "HTTP_" + header->getKey();
+        std::string value = header->getValue();
+        for (size_t i = 0; i < key.size(); i++)
+        {
+            if (key[i] == '-')
+                key[i] = '_';
+            else
+                key[i] = toupper(key[i]);
+        }
+        result.push_back(key + "=" + value);
+    }
 
     return result;
 }

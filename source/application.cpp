@@ -63,7 +63,7 @@ void Application::mainLoop()
 
     HttpClient *headClient, *nextClient;
     for (;;)
-    {
+    { 
         // Wait up to 5 seconds to dispatch any event(s)
         _dispatcher.dispatch(5000);
 
@@ -75,17 +75,13 @@ void Application::mainLoop()
             if (headClient->_process != NULL)
             {
                 if (headClient->_process->getTimeout().isExpired())
-                {
-                    headClient->_process->setState(CGI_PROCESS_TIMEOUT);
-                    headClient->handleCgiState();
-                }
+                    headClient->_process->handleTimeout();
             }
 
             // Destroy the client if it is timeout
             if (headClient->_timeout.isExpired())
-            {
                 headClient->markForCleanup();
-            }
+
             headClient = headClient->_next;
         }
 

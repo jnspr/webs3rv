@@ -68,11 +68,13 @@ public:
         return _timeout;
     }
 
-
+    /* Transitions the process into timeout state */
+    void handleTimeout();
 private:
     CgiProcessState      _state;
     CgiPathInfo          _pathInfo;
     HttpClient          *_client;
+    const HttpRequest   &_request;
     Process              _process;
     std::vector<uint8_t> _buffer;
     Timeout              _timeout;
