@@ -75,12 +75,7 @@ void HttpClient::handleEvents(uint32_t eventMask)
             }
         } catch (HttpException &exception)
         {
-            const std::string &errorType = g_errorDB.getErrorType(exception.getStatusCode());
-            std::string errorPage = HtmlGenerator::errorPage(exception.getStatusCode());
-            _response.initialize(exception.getStatusCode(), errorType, errorPage);
-            _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/html"));
-            _response.finalizeHeader();
-            _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
+            createErrorResponse(exception.getStatusCode());
         }
     }
 
@@ -409,10 +404,12 @@ void HttpClient::handleCgiState()
     }
     else if (_process->getState() == CGI_PROCESS_FAILURE)
     {
+        createErrorResponse(502);
         _application.closeCgiProcess(this);
     }
     else if (_process->getState() == CGI_PROCESS_TIMEOUT)
     {
+        createErrorResponse(502);
         this->_markedForCleanup = true;
         this->_cleanupNext = _application._cleanupClients;
         _application._cleanupClients = this;
@@ -428,4 +425,15 @@ void HttpClient::markForCleanup()
     _cleanupNext = _application._cleanupClients;
     _application._cleanupClients = this;
     _markedForCleanup = true;
+}
+
+/* Create error response */
+void HttpClient::createErrorResponse(size_t statusCode)
+{
+    const std::string &errorType = g_errorDB.getErrorType(statusCode);
+    std::string errorPage = HtmlGenerator::errorPage(statusCode);
+    _response.initialize(statusCode, errorType, errorPage);
+    _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/html"));
+    _response.finalizeHeader();
+    _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
 }

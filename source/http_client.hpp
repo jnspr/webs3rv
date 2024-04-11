@@ -87,6 +87,9 @@ private:
     /* Disable copy-construction and copy-assignment */
     HttpClient(const HttpClient &other);
     HttpClient &operator=(const HttpClient &other);
+
+    /* Create error response */
+    void createErrorResponse(size_t statusCode);
 };
 
 /* Struct for parsing Uploads */
