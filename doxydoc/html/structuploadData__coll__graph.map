@@ -1,9 +1,0 @@
-<map id="uploadData" name="uploadData">
-<area shape="rect" id="Node000001" title=" " alt="" coords="174,455,285,524"/>
-<area shape="rect" id="Node000002" href="$classSlice.html" title=" " alt="" coords="5,5,125,288"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="52,287,55,325,62,362,75,397,93,429,106,444,122,456,159,472,157,477,120,460,103,448,89,433,70,400,57,363,50,326,47,288"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="201,112,258,181"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="232,181,232,438,227,438,227,181"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="302,112,343,181"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="329,181,332,232,330,296,320,366,310,400,296,432,288,444,284,441,291,430,304,398,314,365,325,296,327,232,324,181"/>
-</map>

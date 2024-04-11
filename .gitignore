@@ -2,3 +2,4 @@
 /.idea
 /webserv
 /build/*.o
+/doc/html

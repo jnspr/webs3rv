@@ -1,7 +1,0 @@
-<map id="Application::configure" name="Application::configure">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,32,168,60"/>
-<area shape="rect" id="Node000002" href="$classHttpServer.html#a838123d524b958255100d36dedfc11a4" title=" " alt="" coords="217,5,376,33"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="168,33,201,29,201,34,168,38"/>
-<area shape="rect" id="Node000003" href="$classDispatcher.html#afd3359475db2803f065474b8805e9418" title=" " alt="" coords="216,57,377,85"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="168,53,200,57,200,62,168,58"/>
-</map>

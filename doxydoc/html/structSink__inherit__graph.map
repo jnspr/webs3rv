@@ -1,9 +1,0 @@
-<map id="Sink" name="Sink">
-<area shape="rect" id="Node000001" title=" " alt="" coords="159,5,303,117"/>
-<area shape="rect" id="Node000002" href="$classCgiProcess.html" title=" " alt="" coords="5,165,149,363"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="182,131,151,170,147,167,178,128"/>
-<area shape="rect" id="Node000003" href="$classHttpClient.html" title=" " alt="" coords="174,197,287,331"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="233,132,233,197,228,197,228,132"/>
-<area shape="rect" id="Node000004" href="$classHttpServer.html" title=" " alt="" coords="312,208,429,320"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="280,128,335,207,330,210,275,131"/>
-</map>
