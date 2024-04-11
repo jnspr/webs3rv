@@ -68,8 +68,11 @@ uint64_t HttpResponse::finalizeHeader()
     _headerSlice = _headerString;
     _state = HTTP_RESPONSE_FINALIZED;
 
-    /* Returns the relative timeout for the client in seconds (5 seconds per mb)*/
-    return ((this->_bodyRemainder / 1000) * 5 );
+    /* Returns the relative timeout for the client in seconds */
+    double timeout = static_cast<double>(this->_bodyRemainder) / (1024.0 * 1024.0);
+    if (timeout < 1000)
+        return 1000;
+    return static_cast<uint64_t>(timeout);
 }
 
 /* Check if the response has data to send */
