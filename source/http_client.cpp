@@ -131,8 +131,10 @@ repeat:
             }
             else if (request.method == HTTP_METHOD_DELETE)
             {
-                if (unlink(info.nodePath.c_str()) == -1)
-                    throw std::runtime_error("Error deleting file");
+                 if (unlink(info.nodePath.c_str()) == -1)
+                    throw HttpException(403);
+                _response.initialize(204, C_SLICE("No Content"), "", 0);
+                _timeout = Timeout(_response.finalizeHeader());
             }
             else
             {
