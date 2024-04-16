@@ -18,7 +18,7 @@ public:
     friend class CgiProcess;
 
     /* Constructs the main application object */
-    Application(const ApplicationConfig &config);
+    Application(ApplicationConfig &config);
 
     /* Releases all application resources */
     ~Application();
@@ -29,7 +29,7 @@ public:
     /* Enters the application's main loop until an exit condition occurs */
     void mainLoop();
 private:
-    const ApplicationConfig   &_config;
+    ApplicationConfig         &_config;
     Dispatcher                 _dispatcher;
     std::vector<HttpServer *>  _servers;
     HttpClient                *_clients;

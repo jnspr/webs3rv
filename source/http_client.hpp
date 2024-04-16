@@ -31,7 +31,7 @@ public:
     friend class CgiProcess;
 
     /* Constructs a HTTP client using the given socket file descriptor */
-    HttpClient(Application &application, const ServerConfig &config, int fileno, uint32_t host, uint16_t port);
+    HttpClient(Application &application, const ServerConfig *config, int fileno, uint32_t host, uint16_t port);
 
     /* Closes the client's file descriptor */
     ~HttpClient();
@@ -49,7 +49,7 @@ public:
     }
 private:
     Application        &_application;
-    const ServerConfig &_config;
+    const ServerConfig *_config;
     int                 _fileno;
     Timeout             _timeout;
     HttpClient         *_next;

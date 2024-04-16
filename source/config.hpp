@@ -47,8 +47,12 @@ struct ServerConfig
     std::vector<LocalRouteConfig>    localRoutes;
     std::vector<RedirectRouteConfig> redirectRoutes;
     std::set<TokenKind>              parsedTokens;
+    ServerConfig                    *nextEndpoint;
 
     ServerConfig();
+
+    /* Searches for the right server configuration based on the name, returns `this` if not found */
+    const ServerConfig *findServer(Slice name) const;
 };
 
 /* Global application configuration; can contain many virtual servers */

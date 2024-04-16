@@ -6,6 +6,7 @@
 #include "mime_db.hpp"
 #include "error_db.hpp"
 #include "html_generator.hpp"
+#include "config.hpp"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -14,7 +15,7 @@
 #include <fcntl.h>
 
 /* Constructs a HTTP client using the given socket file descriptor */
-HttpClient::HttpClient(Application &application, const ServerConfig &config, int fileno, uint32_t host, uint16_t port)
+HttpClient::HttpClient(Application &application, const ServerConfig *config, int fileno, uint32_t host, uint16_t port)
     : _application(application)
     , _config(config)
     , _fileno(fileno)
@@ -24,7 +25,7 @@ HttpClient::HttpClient(Application &application, const ServerConfig &config, int
     , _process(NULL)
     , _host(host)
     , _port(port)
-    , _parser(config, host, port)
+    , _parser(*config, host, port)
 {
 }
 
@@ -76,7 +77,13 @@ void HttpClient::handleEvents(uint32_t eventMask)
                 case HTTP_REQUEST_MALFORMED:
                     throw HttpException(400);
                 case HTTP_REQUEST_COMPLETED:
+                {
+                    // Adjust the server configuration to match the requested server by its host, taking the first one if not found
+                    const HttpRequest::Header *host = _parser.getRequest().findHeader(C_SLICE("Host"));
+                    if (host != NULL)
+                        _config = _config->findServer(host->getValue());
                     handleRequest(_parser.getRequest());
+                }
                 default:
                     break;
                 }
@@ -108,7 +115,7 @@ void HttpClient::handleRequest(const HttpRequest &request)
     if (!Utility::checkPathLevel(request.queryPath))
         throw std::runtime_error("Client tried to access above-root directory");
 
-    RoutingInfo info = info.findRoute(_config, request.queryPath);
+    RoutingInfo info = info.findRoute(*_config, request.queryPath);
 
     // HACK: For reusing the existing handling logic when the path must be changed
 repeat:
@@ -170,7 +177,7 @@ repeat:
                 // HACK: Temporary solution for directory index access, refactor after the
                 //       whole handling logic is done
                 std::string newPath = request.queryPath + '/' + info.getLocalRoute()->indexFile;
-                info = RoutingInfo::findRoute(_config, newPath);
+                info = RoutingInfo::findRoute(*_config, newPath);
                 // HACK: Prevent infinite loop on misconfigured server
                 if (info.status != ROUTING_STATUS_FOUND_LOCAL || info.getLocalNodeType() != NODE_TYPE_DIRECTORY)
                     goto repeat;

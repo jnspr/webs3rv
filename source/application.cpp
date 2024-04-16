@@ -1,7 +1,8 @@
 #include "application.hpp"
+#include "endpoint.hpp"
 
 /* Constructs the main application object */
-Application::Application(const ApplicationConfig &config)
+Application::Application(ApplicationConfig &config)
     : _config(config), _dispatcher(128), _clients(NULL), _cleanupClients(NULL), _wasConfigured(false)
 {
     // Check if the configuration is valid
@@ -14,23 +15,39 @@ Application::Application(const ApplicationConfig &config)
 /* Sets up the server according to the constructor-supplied configuration */
 void Application::configure()
 {
+    std::map<uint64_t, ServerConfig *> bindings;
+
     if (_wasConfigured)
         throw std::logic_error("Invalid usage; .configure() must only be called once");
 
     // Create a HTTP server for each configuration entry
     for (size_t index = 0; index < _config.servers.size(); index++)
     {
-        const ServerConfig &serverConfig = _config.servers[index];
-        HttpServer *server = new HttpServer(*this, serverConfig);
-        try
+        ServerConfig &serverConfig = _config.servers[index];
+        uint64_t hostAndPort = static_cast<uint64_t>(serverConfig.host) | (static_cast<uint64_t>(serverConfig.port) << 32);
+
+        const std::map<uint64_t, ServerConfig *>::iterator result = bindings.find(hostAndPort);
+        if (result == bindings.end())
         {
-            _servers.push_back(server);
+            // The server hasn't been bound yet, so bind it and insert the binding into the map
+            HttpServer *server = new HttpServer(*this, serverConfig);
+            try
+            {
+                _servers.push_back(server);
+            }
+            catch (...)
+            {
+                delete server;
+            }
+            _dispatcher.subscribe(server->getFileno(), EPOLLIN, server);
         }
-        catch (...)
+        else
         {
-            delete server;
+            // The server has been bound already, link it to the last server's next endpoint
+            result->second->nextEndpoint = &serverConfig;
         }
-        _dispatcher.subscribe(server->getFileno(), EPOLLIN, server);
+        // Update the endpoint head link
+        bindings[hostAndPort] = &serverConfig;
     }
 
     _wasConfigured = true;
@@ -102,7 +119,7 @@ void Application::takeClient(int fileno, const ServerConfig &config, uint32_t ho
 {
     // Wrap the client into an object
     (void)config;
-    HttpClient *client = new HttpClient(*this, config, fileno, host, port);
+    HttpClient *client = new HttpClient(*this, &config, fileno, host, port);
 
     // Subscribe client sink to read events
     try
