@@ -151,6 +151,7 @@ void Application::startCgiProcess(HttpClient *client, const HttpRequest &request
     try
     {
         _dispatcher.subscribe(process->getProcess().getInputFileno(), EPOLLOUT | EPOLLHUP, process);
+        process->_subscribeFlags |= SUBSCRIBE_FLAG_INPUT;
     }
     catch (...)
     {
@@ -163,12 +164,6 @@ void Application::startCgiProcess(HttpClient *client, const HttpRequest &request
 /*Close CGI processes for the given client */
 void Application::closeCgiProcess(HttpClient *client)
 {
-    // Unsubscribe the process from the dispatcher
-    if (client->_process->_isInOutputPhase)
-        _dispatcher.unsubscribe(client->_process->getProcess().getOutputFileno());
-    else
-        _dispatcher.unsubscribe(client->_process->getProcess().getInputFileno());
-
     // Destroy the process
     delete client->_process;
     client->_process = NULL;

@@ -11,6 +11,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define SUBSCRIBE_FLAG_INPUT  (1 << 0)
+#define SUBSCRIBE_FLAG_OUTPUT (1 << 1)
+
 class HttpClient;
 
 enum CgiProcessState
@@ -37,6 +40,9 @@ public:
 
     /* Constructs a CGI process from the given client, request and route result */
     CgiProcess(HttpClient *client, const HttpRequest &request, const RoutingInfo &routingInfo);
+
+    /* Destroys the process */
+    ~CgiProcess();
 
     /* Handles one or multiple events */
     void handleEvents(uint32_t eventMask);
@@ -79,8 +85,7 @@ private:
     std::vector<uint8_t> _buffer;
     Timeout              _timeout;
     size_t               _bodyOffset;
-    bool                 _isInOutputPhase;
-
+    unsigned int         _subscribeFlags;
 
     /* Creates a vector of strings for the process arguments */
     static std::vector<std::string> setupArguments(const HttpRequest &request, const RoutingInfo &routingInfo, const std::string &fileName);

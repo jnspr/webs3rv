@@ -32,8 +32,17 @@ CgiProcess::CgiProcess(HttpClient *client, const HttpRequest &request, const Rou
                _pathInfo.workingDirectory)
     , _timeout(TIMEOUT_CGI_MS)
     , _bodyOffset(0)
-    , _isInOutputPhase(false)
+    , _subscribeFlags(0)
 {
+}
+
+/* Destroys the process */
+CgiProcess::~CgiProcess()
+{
+    if (_subscribeFlags & SUBSCRIBE_FLAG_INPUT && _process.getInputFileno() >= 0)
+        _client->_application._dispatcher.unsubscribe(_process.getInputFileno());
+    if (_subscribeFlags & SUBSCRIBE_FLAG_OUTPUT && _process.getOutputFileno() >= 0)
+        _client->_application._dispatcher.unsubscribe(_process.getOutputFileno());
 }
 
 /* Handles one or multiple events */
@@ -57,10 +66,11 @@ void CgiProcess::handleEvents(uint32_t eventMask)
                 if (_bodyOffset >= _request.body.size())
                 {
                     _client->_application._dispatcher.unsubscribe(_process.getInputFileno());
+                    _subscribeFlags &= ~SUBSCRIBE_FLAG_INPUT;
                     _process.closeInput();
-                    _isInOutputPhase = true;
 
                     _client->_application._dispatcher.subscribe(_process.getOutputFileno(), EPOLLIN | EPOLLHUP, this);
+                    _subscribeFlags |= SUBSCRIBE_FLAG_OUTPUT;
                 }
             }
             if (eventMask & EPOLLIN)

@@ -414,6 +414,7 @@ void HttpClient::handleCgiState()
 
             _timeout = Timeout(_response.finalizeHeader());
             _application._dispatcher.unsubscribe(_process->getProcess().getOutputFileno());
+            _process->_subscribeFlags &= ~SUBSCRIBE_FLAG_OUTPUT;
             _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
         }
         break;
