@@ -187,7 +187,7 @@ bool Utility::decodeUrl(Slice string, std::string &outResult)
 
 void Utility::checkduplicatehost(const ApplicationConfig &config)
 {
-    for(size_t i = 0; i < config.servers.size(); i++)
+    /*for(size_t i = 0; i < config.servers.size(); i++)
     {
         for (size_t j = 0; j < config.servers.size(); j++)
         {
@@ -195,7 +195,9 @@ void Utility::checkduplicatehost(const ApplicationConfig &config)
                 && config.servers[i].port == config.servers[j].port)
                 throw std::runtime_error("Multiple servers on the same address");
         }
-    }
+    }*/
+    (void)config;
+    // TODO: Adjust to check same address AND same name(s)
 }
 
 Utility::AddrInfo::AddrInfo(const char *hostname) : _hostname(hostname), _service("http"), _result(NULL){
