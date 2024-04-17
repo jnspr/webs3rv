@@ -478,14 +478,24 @@ void HttpClient::markForCleanup()
 /* Create error response */
 void HttpClient::createErrorResponse(size_t statusCode)
 {
-    // Find the error message
-    const std::string &errorMessage = g_errorDB.getErrorType(statusCode);
-    std::string errorPage = HtmlGenerator::errorPage(statusCode);
+    // Check if for the error code was a static error page defined in the config file
+    std::map<int, std::string>::const_iterator findResult;
+    findResult = _config->errorPages.find(statusCode);
+    if (findResult != _config->errorPages.end())
+    {
+        setupFileResponse(statusCode, g_errorDB.getErrorType(statusCode), findResult->second);
+    }
+    else
+    {
+        // Find the error message
+        const std::string &errorMessage = g_errorDB.getErrorType(statusCode);
+        std::string errorPage = HtmlGenerator::errorPage(statusCode);
 
-    // Build the response and set its timeout
-    _response.initialize(statusCode, errorMessage, errorPage);
-    _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/html"));
-    _timeout = Timeout(_response.finalizeHeader());
+        // Build the response and set its timeout
+        _response.initialize(statusCode, errorMessage, errorPage);
+        _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/html"));
+        _timeout = Timeout(_response.finalizeHeader());
+    }
 
     // Switch the dispatcher to POLLOUT
     _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
