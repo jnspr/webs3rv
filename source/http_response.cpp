@@ -38,16 +38,24 @@ void HttpResponse::initialize(int statusCode, Slice statusMessage, const void *b
     _state = HTTP_RESPONSE_INITIALIZED;
 }
 
-/* Initialize the response class with bodyFileno for static pages */
+/* Initialize the response class with bodyFileno for static pages (takes ownership of the file descriptor) */
 void HttpResponse::initialize(int statusCode, Slice statusMessage, int bodyFileno, size_t bodySize)
 {
-    if (bodyFileno < 0)
-        throw std::logic_error("Attempt to initialize HTTP response with bad file descriptor");
-    initializeHeader(statusCode, statusMessage, bodySize);
-    _bodySlice = Slice();
-    _bodyFileno = bodyFileno;
-    _bodyRemainder = bodySize;
-    _state = HTTP_RESPONSE_INITIALIZED;
+    try
+    {
+        if (bodyFileno < 0)
+            throw std::logic_error("Attempt to initialize HTTP response with bad file descriptor");
+        initializeHeader(statusCode, statusMessage, bodySize);
+        _bodySlice = Slice();
+        _bodyFileno = bodyFileno;
+        _bodyRemainder = bodySize;
+        _state = HTTP_RESPONSE_INITIALIZED;
+    }
+    catch (...)
+    {
+        close(bodyFileno);
+        throw;
+    }
 }
 
 /* Add a header field to the header response */

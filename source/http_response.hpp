@@ -30,7 +30,7 @@ public:
     /* Initialize the response class with bodyBuffer for cgi pages */
     void initialize(int statusCode, Slice statusMessage, const void *bodyBuffer, size_t bodySize);
     
-    /* Initialize the response class with bodyFileno for static pages */
+    /* Initialize the response class with bodyFileno for static pages (takes ownership of the file descriptor) */
     void initialize(int statusCode, Slice statusMessage, int bodyFileno, size_t bodySize);
     
     /* Add a header field to the header response */
