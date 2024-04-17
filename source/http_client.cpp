@@ -478,14 +478,23 @@ void HttpClient::markForCleanup()
 /* Create error response */
 void HttpClient::createErrorResponse(size_t statusCode)
 {
+    bool alreadyHandled = false;
+
     // Check if for the error code was a static error page defined in the config file
-    std::map<int, std::string>::const_iterator findResult;
-    findResult = _config->errorPages.find(statusCode);
+    std::map<int, std::string>::const_iterator findResult = _config->errorPages.find(statusCode);
     if (findResult != _config->errorPages.end())
     {
-        setupFileResponse(statusCode, g_errorDB.getErrorType(statusCode), findResult->second);
+        try
+        {
+            setupFileResponse(statusCode, g_errorDB.getErrorType(statusCode), findResult->second);
+            alreadyHandled = true;
+        }
+        catch (...)
+        {
+        }
     }
-    else
+
+    if (!alreadyHandled)
     {
         // Find the error message
         const std::string &errorMessage = g_errorDB.getErrorType(statusCode);
