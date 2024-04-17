@@ -11,6 +11,13 @@ typedef std::vector<epoll_event> EventBuffer;
 
 struct Sink
 {
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    bool needsToWrite;
+
+    /* Initializes the `needsToWrite` flag to false */
+    Sink();
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
+
     /* Handles one or multiple events */
     virtual void handleEvents(uint32_t eventMask) = 0;
 

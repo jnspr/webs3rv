@@ -3,6 +3,14 @@
 #include <unistd.h>
 #include <stdexcept>
 
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+/* Initializes the `needsToWrite` flag to false */
+Sink::Sink()
+{
+    needsToWrite = false;
+}
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
+
 /* Destructor for deriving classes */
 Sink::~Sink()
 {
@@ -32,8 +40,16 @@ void Dispatcher::subscribe(int fileno, uint32_t eventMask, Sink *sink)
     event.data.ptr = sink;
     event.events   = eventMask;
 
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    event.events |= EPOLLOUT;
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
+
     if (epoll_ctl(_epollFileno, EPOLL_CTL_ADD, fileno, &event) != 0)
         throw std::runtime_error("Unable to add file descriptor to poll");
+
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    sink->needsToWrite = (eventMask & EPOLLOUT) == EPOLLOUT;
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
 }
 
 /* Changes the given file descriptor's received events and event sink */
@@ -44,8 +60,16 @@ void Dispatcher::modify(int fileno, uint32_t eventMask, Sink *sink)
     event.data.ptr = sink;
     event.events   = eventMask;
 
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    event.events |= EPOLLOUT;
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
+
     if (epoll_ctl(_epollFileno, EPOLL_CTL_MOD, fileno, &event) != 0)
         throw std::runtime_error("Unable to modify file descriptor on poll");
+
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    sink->needsToWrite = (eventMask & EPOLLOUT) == EPOLLOUT;
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
 }
 
 /* Unsubscribes the given file descriptor's event sink from receiving events */
@@ -76,7 +100,15 @@ void Dispatcher::dispatch(int timeout)
         Sink *sink = static_cast<Sink *>(event->data.ptr);
         try
         {
-            sink->handleEvents(event->events);
+            uint32_t eventMask = event->events;
+
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+            if (!sink->needsToWrite)
+                eventMask &= ~EPOLLOUT;
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
+
+            if ((eventMask & (EPOLLIN | EPOLLOUT | EPOLLHUP)) != 0)
+                sink->handleEvents(eventMask);
         } catch (const std::exception &exception)
         {
             sink->handleException(exception.what());
