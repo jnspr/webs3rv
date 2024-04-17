@@ -81,7 +81,13 @@ void HttpClient::handleEvents(uint32_t eventMask)
                     // Adjust the server configuration to match the requested server by its host, taking the first one if not found
                     const HttpRequest::Header *host = _parser.getRequest().findHeader(C_SLICE("Host"));
                     if (host != NULL)
-                        _config = _config->findServer(host->getValue());
+                    {
+                        Slice serverName = host->getValue();
+                        Slice port;
+                        serverName.splitEndnoDel(':', port);
+                        (void)port;
+                        _config = _config->findServer(serverName);
+                    }
                     handleRequest(_parser.getRequest());
                 }
                 default:
