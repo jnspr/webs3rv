@@ -30,7 +30,10 @@ Process::~Process()
     closeInput();
     closeOutput();
     if (getStatus() == PROCESS_RUNNING)
+    {
         kill(_pid, SIGKILL);
+        waitpid(_pid, NULL, 0);
+    }
 }
 
 /* Closes the child's standard input */
