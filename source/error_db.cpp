@@ -5,6 +5,7 @@ ErrorDB::ErrorDB(): _defaultError("Unknown Error")
 {
     _entries[200] = "OK";
     _entries[404] = "Not Found";
+    _entries[405] = "Method Not Allowed";
     _entries[500] = "Internal Server Error";
     _entries[501] = "Not Implemented";
     _entries[502] = "Bad Gateway";
