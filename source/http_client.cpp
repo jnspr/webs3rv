@@ -201,7 +201,18 @@ repeat:
     {
         std::set<HttpMethod>::iterator it = info.getRedirectRoute()->allowedMethods.find(request.method);
         if (it == info.getRedirectRoute()->allowedMethods.end())
-            throw std::runtime_error("Method not allowed");
+            throw HttpException(405);
+
+        Slice routeRelativeQuery = Slice(request.query)
+            .cut(info.getRedirectRoute()->path.size());
+        routeRelativeQuery.consumeStart(C_SLICE("/"));
+
+        Slice rewritePrefix = Slice(info.getRedirectRoute()->redirectLocation)
+            .stripEnd('/');
+
+        _response.initialize(302, C_SLICE("Found"), "", 0);
+        _response.addHeader(C_SLICE("Location"),  rewritePrefix.toString() + '/' + routeRelativeQuery.toString());
+        _timeout = Timeout(_response.finalizeHeader());
     }
 
     if (_response.getState() != HTTP_RESPONSE_FINALIZED && _process == NULL)
