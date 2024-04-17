@@ -69,6 +69,9 @@ private:
     /* Handles the request*/
     void handleRequest(const HttpRequest &request); // take reference for all the requests
 
+    /* Initializes the response object to use a static file */
+    void setupFileResponse(size_t statusCode, Slice statusMessage, const std::string &path);
+
     /* Uploads a file sent by a POST request*/
     void uploadFile(const HttpRequest &request, const RoutingInfo &info);
 

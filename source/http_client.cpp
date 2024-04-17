@@ -151,16 +151,7 @@ repeat:
             }
             else
             {
-                std::string mimetype = g_mimeDB.getMimeType(Slice(info.nodePath));
-                struct stat fileStat;
-                if (stat(info.nodePath.c_str(), &fileStat) == -1)
-                    throw HttpException(500);
-                int fileno = open(info.nodePath.c_str(), O_RDONLY | O_CLOEXEC);
-                if (fileno == -1)
-                    throw HttpException(500);
-                _response.initialize(200, C_SLICE("OK"), fileno, fileStat.st_size);
-                _response.addHeader(C_SLICE("Content-Type"), mimetype);
-                _timeout = Timeout(_response.finalizeHeader());
+                setupFileResponse(200, C_SLICE("OK"), info.nodePath);
             }
             break;
         case NODE_TYPE_DIRECTORY:
@@ -225,6 +216,26 @@ repeat:
         throw HttpException(500);
     if (_process == NULL)
         _application._dispatcher.modify(_fileno, EPOLLOUT | EPOLLHUP, this);
+}
+
+void HttpClient::setupFileResponse(size_t statusCode, Slice statusMessage, const std::string &path)
+{
+    std::string mimeType = g_mimeDB.getMimeType(path);
+
+    // Obtain the file's size
+    struct stat fileStat;
+    if (stat(path.c_str(), &fileStat) == -1)
+        throw HttpException(500);
+
+    // Open the file
+    int fileno = open(path.c_str(), O_RDONLY | O_CLOEXEC);
+    if (fileno == -1)
+        throw HttpException(500);
+
+    // Setup a file descriptor response (takes ownership of the file descriptor)
+    _response.initialize(statusCode, statusMessage, fileno, fileStat.st_size);
+    _response.addHeader(C_SLICE("Content-Type"), mimeType);
+    _timeout = Timeout(_response.finalizeHeader());
 }
 
 void HttpClient::uploadFile(const HttpRequest &request, const RoutingInfo &info)
