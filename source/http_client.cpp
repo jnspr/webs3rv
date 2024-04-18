@@ -145,6 +145,7 @@ repeat:
             if (info.hasCgiInterpreter)
             {
                 _application.startCgiProcess(this, request, info);
+                _timeout.stop();
             }
             else if (request.method == HTTP_METHOD_DELETE)
             {
