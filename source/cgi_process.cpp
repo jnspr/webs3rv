@@ -56,11 +56,16 @@ void CgiProcess::handleEvents(uint32_t eventMask)
         case PROCESS_RUNNING:
             if (eventMask & EPOLLOUT)
             {
-                // Write the request body to the process' standard input pipe
-                ssize_t result = write(_process.getInputFileno(), &_request.body[_bodyOffset], _request.body.size() - _bodyOffset);
-                if (result < 0)
-                    throw std::runtime_error("Unable to write to CGI process");
-                _bodyOffset += static_cast<size_t>(result);
+                if (_bodyOffset < _request.body.size())
+                {
+                    // Write the request body to the process' standard input pipe
+                    ssize_t result = write(_process.getInputFileno(), &_request.body[_bodyOffset], _request.body.size() - _bodyOffset);
+                    if (result == 0)
+                        throw std::runtime_error("Unexpected end of stream");
+                    if (result < 0)
+                        throw std::runtime_error("Unable to write to CGI process");
+                    _bodyOffset += static_cast<size_t>(result);
+                }
 
                 // If the whole body was written, close the input pipe and switch into output phase
                 if (_bodyOffset >= _request.body.size())
