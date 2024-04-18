@@ -164,7 +164,11 @@ repeat:
                 if (info.getLocalRoute()->allowUpload)
                 {
                     UploadHandler::handleUpload(request, info);
-                    // TODO: Send response
+
+                    // Redirect the client to the upload directory
+                    _response.initialize(303, C_SLICE("See Other"), "", 0);
+                    _response.addHeader(C_SLICE("Location"), request.queryPath);
+                    _response.finalizeHeader();
                 }
                 else
                     throw HttpException(403);
