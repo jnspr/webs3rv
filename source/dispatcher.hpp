@@ -12,6 +12,7 @@ typedef std::vector<epoll_event> EventBuffer;
 struct Sink
 {
 #ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    bool needsToRead;
     bool needsToWrite;
 
     /* Initializes the `needsToWrite` flag to false */

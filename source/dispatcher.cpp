@@ -7,6 +7,7 @@
 /* Initializes the `needsToWrite` flag to false */
 Sink::Sink()
 {
+    needsToRead = false;
     needsToWrite = false;
 }
 #endif // __42_LIKES_WASTING_CPU_CYCLES__
@@ -41,13 +42,14 @@ void Dispatcher::subscribe(int fileno, uint32_t eventMask, Sink *sink)
     event.events   = eventMask;
 
 #ifdef __42_LIKES_WASTING_CPU_CYCLES__
-    event.events |= EPOLLOUT;
+    event.events |= EPOLLIN | EPOLLOUT;
 #endif // __42_LIKES_WASTING_CPU_CYCLES__
 
     if (epoll_ctl(_epollFileno, EPOLL_CTL_ADD, fileno, &event) != 0)
         throw std::runtime_error("Unable to add file descriptor to poll");
 
 #ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    sink->needsToRead = (eventMask & EPOLLIN) == EPOLLIN;
     sink->needsToWrite = (eventMask & EPOLLOUT) == EPOLLOUT;
 #endif // __42_LIKES_WASTING_CPU_CYCLES__
 }
@@ -61,13 +63,14 @@ void Dispatcher::modify(int fileno, uint32_t eventMask, Sink *sink)
     event.events   = eventMask;
 
 #ifdef __42_LIKES_WASTING_CPU_CYCLES__
-    event.events |= EPOLLOUT;
+    event.events |= EPOLLIN | EPOLLOUT;
 #endif // __42_LIKES_WASTING_CPU_CYCLES__
 
     if (epoll_ctl(_epollFileno, EPOLL_CTL_MOD, fileno, &event) != 0)
         throw std::runtime_error("Unable to modify file descriptor on poll");
 
 #ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    sink->needsToRead = (eventMask & EPOLLIN) == EPOLLIN;
     sink->needsToWrite = (eventMask & EPOLLOUT) == EPOLLOUT;
 #endif // __42_LIKES_WASTING_CPU_CYCLES__
 }
@@ -103,6 +106,8 @@ void Dispatcher::dispatch(int timeout)
             uint32_t eventMask = event->events;
 
 #ifdef __42_LIKES_WASTING_CPU_CYCLES__
+            if (!sink->needsToRead)
+                eventMask &= ~EPOLLIN;
             if (!sink->needsToWrite)
                 eventMask &= ~EPOLLOUT;
 #endif // __42_LIKES_WASTING_CPU_CYCLES__
