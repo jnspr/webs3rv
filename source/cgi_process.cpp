@@ -72,6 +72,9 @@ void CgiProcess::handleEvents(uint32_t eventMask)
                     _client->_application._dispatcher.subscribe(_process.getOutputFileno(), EPOLLIN | EPOLLHUP, this);
                     _subscribeFlags |= SUBSCRIBE_FLAG_OUTPUT;
                 }
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+                return;
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
             }
             if (eventMask & EPOLLIN)
             {
@@ -97,6 +100,9 @@ void CgiProcess::handleEvents(uint32_t eventMask)
                     throw std::runtime_error("Response body too large");
                 _buffer.resize(oldLength + length);
                 memcpy(&_buffer[oldLength], buffer, length);
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+                return;
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
             }
             break;
         case PROCESS_EXIT_SUCCESS:

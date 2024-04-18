@@ -99,6 +99,9 @@ void HttpClient::handleEvents(uint32_t eventMask)
         {
             createErrorResponse(exception.getStatusCode());
         }
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+        return;
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
     }
 
     if (eventMask & EPOLLOUT)
