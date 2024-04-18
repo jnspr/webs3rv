@@ -213,7 +213,7 @@ repeat:
         Slice rewritePrefix = Slice(info.getRedirectRoute()->redirectLocation)
             .stripEnd('/');
 
-        _response.initialize(302, C_SLICE("Found"), "", 0);
+        _response.initialize(307, C_SLICE("Temporary Redirect"), "", 0);
         _response.addHeader(C_SLICE("Location"),  rewritePrefix.toString() + '/' + routeRelativeQuery.toString());
         _timeout = Timeout(_response.finalizeHeader());
     }
