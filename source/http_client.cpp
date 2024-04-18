@@ -7,6 +7,7 @@
 #include "error_db.hpp"
 #include "html_generator.hpp"
 #include "config.hpp"
+#include "upload_handler.hpp"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -155,19 +156,21 @@ repeat:
             }
             break;
         case NODE_TYPE_DIRECTORY:
-            if (!Slice(request.queryPath).endsWith(C_SLICE("/")))
+            if (request.method == HTTP_METHOD_POST)
+            {
+                if (info.getLocalRoute()->allowUpload)
+                {
+                    UploadHandler::handleUpload(request, info);
+                    // TODO: Send response
+                }
+                else
+                    throw HttpException(403);
+            }
+            else if (!Slice(request.queryPath).endsWith(C_SLICE("/")))
             {
                 _response.initialize(301, C_SLICE("Moved Permanently"), "", 0);
                 _response.addHeader(C_SLICE("Location"), Slice(request.queryPath + "/"));
                 _timeout = Timeout(_response.finalizeHeader());
-            }
-            else if (request.method == HTTP_METHOD_POST)
-            {
-                std::cout << "allowUpload: " << info.getLocalRoute()->allowUpload << std::endl;
-                if (info.getLocalRoute()->allowUpload)
-                    uploadFile(request, info);
-                else
-                    throw HttpException(403);
             }
             else if (!info.getLocalRoute()->indexFile.empty())
             {
@@ -236,150 +239,6 @@ void HttpClient::setupFileResponse(size_t statusCode, Slice statusMessage, const
     _response.initialize(statusCode, statusMessage, fileno, fileStat.st_size);
     _response.addHeader(C_SLICE("Content-Type"), mimeType);
     _timeout = Timeout(_response.finalizeHeader());
-}
-
-void HttpClient::uploadFile(const HttpRequest &request, const RoutingInfo &info)
-{
-
-    uploadData data;
-    data.isfinished = 0;
-    printf("Uploading file\n");
-
-    while (data.isfinished == 0)
-    {
-        parseupload(request, data);
-
-        std::string path = info.nodePath + '/' + data.filename.stripStart('/').toString();
-
-        int fd = open(path.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0666);
-        if (fd == -1)
-            throw std::runtime_error("Unable to open file");
-        int writereturn = write(fd, data.fileContent.toString().c_str(), data.fileContent.getLength());
-        if (writereturn == -1)
-            throw std::runtime_error("Unable to write to file");
-        printf("Write return: %d\n", writereturn);
-        close(fd);
-        // data.isfinished = 1; //debugging only
-        // printf("Mybuffer:\n%s \n", mybuffer);
-    }
-}
-
-void HttpClient::parseupload(const HttpRequest &request, uploadData &data)
-{
-    // TODO: This needs refactoring
-
-    printf("Parsing upload\n");
-
-    int uploadtype = CURL;
-    // creates a slice from the bodybuffer
-    // if (data.fileContent)
-    Slice sliceBod;
-    if (data.rest.isEmpty())
-    {
-        sliceBod = Slice((char *)request.body.data(), request.body.size());
-        // std::cout << "slicebod before first slice: " << sliceBod << std::endl;
-        if (sliceBod.startsWith(C_SLICE("--")))
-            sliceBod.splitStart(C_SLICE("\r\n"), data.boundary);
-        else
-            throw std::runtime_error("Error in Upload body");
-    }
-    else
-        sliceBod = data.rest;
-    std::cout << "Boundary: \n"
-              << data.boundary << std::endl;
-    std::cout << "slicebod after first slice: " << sliceBod << std::endl;
-    Slice checkData;
-    sliceBod.splitStart(C_SLICE(" "), checkData);
-    std::cout << "Checkdata: \n"
-              << checkData << std::endl;
-    if (checkData == C_SLICE("Content-Disposition:"))
-    {
-        sliceBod.splitStart(C_SLICE(";"), data.contentDisposition);
-        std::cout << "Content Dispositon: \n"
-                  << data.contentDisposition << std::endl;
-        std::cout << "slicebod content dispositon slice: " << sliceBod << std::endl;
-        sliceBod.stripStart(' ');
-        sliceBod.splitStart(C_SLICE("="), checkData);
-        std::cout << "Checkdata: \n"
-                  << checkData << std::endl;
-        if (checkData == C_SLICE("name"))
-        {
-            sliceBod.splitStart(C_SLICE(";"), data.name);
-            data.name.removeDoubleQuotes();
-            std::cout << "Name: \n"
-                      << data.name << std::endl;
-            std::cout << "slicebod name slice: " << sliceBod << std::endl;
-            sliceBod.stripStart(' ');
-        }
-        sliceBod.splitStart(C_SLICE("="), checkData);
-        std::cout << "Checkdata: \n"
-                  << checkData << std::endl;
-        if (checkData == C_SLICE("filename"))
-        {
-            sliceBod.splitStart(C_SLICE("\r\n"), data.filename);
-            data.filename.removeDoubleQuotes();
-            std::cout << "Filename: \n"
-                      << data.filename << std::endl;
-            std::cout << "slicebod filename slice: " << sliceBod << std::endl;
-        }
-        Slice sliceTest = sliceBod;
-        sliceTest.splitStart(C_SLICE(" "), checkData);
-        if (checkData == C_SLICE("Content-Type:"))
-        {
-            uploadtype = CURL;
-            sliceBod.splitStart(C_SLICE(" "), checkData);
-            sliceBod.splitStart(C_SLICE("\r\n"), data.contentType);
-            sliceBod.splitStart(C_SLICE("\r\n"), data.contentType);
-        }
-        else
-        {
-            uploadtype = PYTHONSCRIPT;
-            sliceBod.splitStart(C_SLICE("\r\n"), data.contentType);
-        }
-
-        std::cout << "Contenttype: \n"
-                  << data.contentType << std::endl;
-        std::cout << "slicebod contenttype slice: \n"
-                  << sliceBod << std::endl;
-        // maybe add error checks here
-        std::string boundary_end_string;
-        if (uploadtype == PYTHONSCRIPT)
-            boundary_end_string = "\r\n" + data.boundary.toString();
-        else
-            boundary_end_string = data.boundary.toString();
-
-        Slice boundary_end = Slice(boundary_end_string.c_str(), data.boundary.getLength());
-
-        if (sliceBod.splitStart(boundary_end, data.fileContent))
-        {
-            if (data.morethanonefile == 1)
-            {
-                Slice trash;
-                data.fileContent.splitEndnoDel('\r', trash);
-            }
-            std::cout << "File Content: \n"
-                      << data.fileContent << std::endl;
-            std::cout << "slicebod after filecontent: \n"
-                      << sliceBod << std::endl;
-            if (sliceBod.startsWith(C_SLICE("--")))
-            {
-                data.isfinished = 1;
-                std::cout << "isfinished = " << data.isfinished << std::endl;
-            }
-            else
-            {
-                sliceBod.splitStart(C_SLICE("\n"), data.rest);
-                data.rest = sliceBod;
-                data.morethanonefile = 1;
-                std::cout << "isfinished = " << data.isfinished << std::endl;
-                std::cout << "slicebod: \n"
-                          << sliceBod << std::endl;
-            }
-            return;
-        }
-        else
-            throw std::runtime_error("Incomplete upload body");
-    }
 }
 
 /* Handles an exception that occurred in `handleEvent()` */

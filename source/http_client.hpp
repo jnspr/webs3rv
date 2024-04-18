@@ -14,15 +14,6 @@
 
 class Application;
 class CgiProcess;
-struct uploadData;
-
-#define ISDIR 0
-#define ISFILE 1
-#define ERROR 3
-
-#define CURL 0
-#define PYTHONSCRIPT 1
-
 
 class HttpClient: public Sink
 {
@@ -72,12 +63,6 @@ private:
     /* Initializes the response object to use a static file */
     void setupFileResponse(size_t statusCode, Slice statusMessage, const std::string &path);
 
-    /* Uploads a file sent by a POST request*/
-    void uploadFile(const HttpRequest &request, const RoutingInfo &info);
-
-    /* Parses the upload body*/
-    void parseupload(const HttpRequest &request, uploadData &data);
-
     /* Handles an exception that occurred in `handleEvent()` */
     void handleException(const char *message);
 
@@ -93,26 +78,6 @@ private:
 
     /* Create error response */
     void createErrorResponse(size_t statusCode);
-};
-
-/* Struct for parsing Uploads */
-struct uploadData
-{
-    Slice boundary;
-    Slice contentDisposition;
-    Slice name;
-    Slice filename;
-    Slice contentType;
-    Slice fileContent;
-    ssize_t fileSize;
-    bool    isfinished;
-    bool    morethanonefile;
-    Slice   rest;
-
-    uploadData()
-    {
-        this->fileSize = 0;
-    }
 };
 
 #endif // HTTP_CLIENT_hpp
