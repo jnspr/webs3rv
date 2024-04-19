@@ -3,3 +3,5 @@
 /webserv
 /build/*.o
 /doc/html
+/example/wordpress/mariadb/*
+!/example/wordpress/mariadb/.gitkeep

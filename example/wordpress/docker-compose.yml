@@ -1,0 +1,21 @@
+services:
+  mariadb:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_USER: wordpress
+      MARIADB_DATABASE: wordpress
+      MARIADB_PASSWORD: secret
+      MARIADB_ROOT_PASSWORD: secret
+    volumes:
+      - database:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  database:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./mariadb
