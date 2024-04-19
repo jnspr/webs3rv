@@ -13,6 +13,8 @@ ApplicationConfig ConfigParser::parse()
     {
         if (_tokens[_current].kind == KW_SERVER)
             applicationConfig.servers.push_back(parseServerConfig(applicationConfig));
+        else if (_tokens[_current].kind == SY_COMMEND)
+            moveToNextToken();
         else
             throw ConfigException("Error: Unexpected token in config", _config_input, _tokens[_current].offset);
     }    
