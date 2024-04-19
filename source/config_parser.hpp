@@ -8,6 +8,9 @@
 
 #include <sstream>
 #include <stdint.h>
+#include <algorithm> 
+#include <vector>
+#include <string>
 
 class ConfigParser
 {
@@ -17,7 +20,7 @@ private:
     std::string _config_input;
 
     // Parsing ServerConfig
-    ServerConfig parseServerConfig();
+    ServerConfig parseServerConfig(ApplicationConfig &applicationConfig);
     void parsePortOrIp(ServerConfig &serverConfig);
 
     // Parsing LocalRouteConfig
@@ -43,6 +46,10 @@ private:
     uint16_t parseUint16();
     size_t parseSizeT();
     std::map<int, std::string> parseErrorRedirects();
+
+    // Check if there are virtual servers with the same ip+port+server_name
+    bool isDuplicateIpPortServerName(ApplicationConfig applicationConfig, ServerConfig serverConfig);
+
 
 public:
     explicit ConfigParser(const std::vector<Token> &_tokens);

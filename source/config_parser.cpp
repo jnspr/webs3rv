@@ -8,22 +8,24 @@ ConfigParser::ConfigParser(const std::vector<Token> &tokens) : _tokens(tokens), 
 // Methods
 ApplicationConfig ConfigParser::parse()
 {
-    ApplicationConfig config;
+    ApplicationConfig applicationConfig;
     while (_current < _tokens.size())
     {
         if (_tokens[_current].kind == KW_SERVER)
-            config.servers.push_back(parseServerConfig());
+            applicationConfig.servers.push_back(parseServerConfig(applicationConfig));
         else
             throw ConfigException("Error: Unexpected token in config", _config_input, _tokens[_current].offset);
-    }
-    return config;
+    }    
+
+    return applicationConfig;
 }
 
 // Parsing ServerConfig
-ServerConfig ConfigParser::parseServerConfig()
+ServerConfig ConfigParser::parseServerConfig(ApplicationConfig &applicationConfig)
 {
     ServerConfig serverConfig;
     std::map<int, std::string> currentErrorRedirect;
+    size_t serverToken = _current;
 
     moveToNextToken();
     expect(SY_BRACE_OPEN);
@@ -71,6 +73,8 @@ ServerConfig ConfigParser::parseServerConfig()
         }
     }
 
+    if (isDuplicateIpPortServerName(applicationConfig, serverConfig))
+        throw ConfigException("Error: Duplicate ip+port+server_name", _config_input, _tokens[serverToken].offset);
     expect(SY_BRACE_CLOSE);
     isServerTokensMissing(serverConfig.parsedTokens, _tokens[_current - 1].offset, _config_input);
     return serverConfig;
@@ -407,4 +411,48 @@ ConfigException::~ConfigException() throw() {}
 const char *ConfigException::what() const throw()
 {
     return _reason.c_str();
+}
+
+
+// Check if there are virtual servers with the same ip+port+server_name
+bool ConfigParser::isDuplicateIpPortServerName(ApplicationConfig applicationConfig, ServerConfig serverConfig) 
+{
+    if (applicationConfig.servers.size() == 0)
+        return false;
+
+    std::map<std::pair<uint32_t, uint16_t>, std::set<std::string> > virtualServers; // ip+port -> server_name
+
+    // Create the map
+    for (std::vector<ServerConfig>::iterator serverIt = applicationConfig.servers.begin();
+         serverIt != applicationConfig.servers.end(); ++serverIt)
+    {
+        std::pair<uint32_t, uint16_t> ipPortPair = std::make_pair(serverIt->host, serverIt->port);
+        if (serverIt->name.size() == 0)
+           serverIt->name.push_back("");
+        virtualServers[ipPortPair].insert(serverIt->name.begin(), serverIt->name.end());
+    }
+    
+    // Check if the new serverConfig is already in the map
+    std::pair<uint32_t, uint16_t> ipPortPair = std::make_pair(serverConfig.host, serverConfig.port);
+    if (serverConfig.name.size() == 0)
+        serverConfig.name.push_back("");
+
+    // Check if the ip+port pair is already in the map
+    if (virtualServers.find(ipPortPair) != virtualServers.end())
+    {
+        
+        // Check if the server_name is already in the vector of the ip+port pair
+        for (std::vector<std::string>::iterator serverNameIt = serverConfig.name.begin();
+             serverNameIt != serverConfig.name.end(); ++serverNameIt)
+        {
+            if (virtualServers[ipPortPair].find(*serverNameIt) != virtualServers[ipPortPair].end())
+                return true;
+            else
+                virtualServers[ipPortPair].insert(*serverNameIt);
+        }
+    }
+    else
+        virtualServers[ipPortPair].insert(serverConfig.name.begin(), serverConfig.name.end());
+
+    return false;
 }
