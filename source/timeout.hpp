@@ -10,7 +10,7 @@
 #define TIMEOUT_CLOSING_MS 500
 
 /* The timeout for a CGI process to respond */
-#define TIMEOUT_CGI_MS 5000
+#define TIMEOUT_CGI_MS 10000
 
 class Timeout
 {
