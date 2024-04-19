@@ -12,14 +12,19 @@ echo ':: Running `docker-compose down`'
 docker-compose down 2>/dev/null >/dev/null
 
 # Build and run a temporary container for database deletion
-echo ':: Building temporary image (nonroot_cleanup)'
-cd nonroot_cleanup
-    docker build -t nonroot_cleanup . 2>/dev/null >/dev/null
+echo ':: Building temporary image (nonroot_helper)'
+cd nonroot_helper
+    docker build -t nonroot_helper . 2>/dev/null >/dev/null
 cd ..
-
-echo ':: Running temporary container, deletion log:'
-docker run --rm -it -v ./mariadb:/var/lib/mysql nonroot_cleanup
+echo ':: Running temporary container'
+docker run --rm -it -v ./mariadb:/var/lib/mysql nonroot_helper
 
 # Delete the temporary container's image
 echo ':: Removing temporary image'
-docker image rm nonroot_cleanup 2>/dev/null >/dev/null
+docker image rm nonroot_helper 2>/dev/null >/dev/null
+
+# Re-create the initial database directory
+echo ':: Re-creating the initial database directory'
+rm -rf mariadb
+mkdir mariadb
+touch mariadb/.gitkeep
