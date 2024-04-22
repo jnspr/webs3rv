@@ -232,17 +232,7 @@ void HttpClient::setupFileResponse(size_t statusCode, Slice statusMessage, const
 {
     std::string mimeType = g_mimeDB.getMimeType(path);
 
-    /*// Obtain the file's size
-    struct stat fileStat;
-    if (stat(path.c_str(), &fileStat) == -1)
-        throw HttpException(500);
-
-    // Open the file
-    int fileno = open(path.c_str(), O_RDONLY | O_CLOEXEC);
-    if (fileno == -1)
-        throw HttpException(500);*/
-
-    // Setup a file descriptor response (takes ownership of the file descriptor)
+    // Setup a file stream response
     _response.initializeFileStream(statusCode, statusMessage, path.c_str());
     _response.addHeader(C_SLICE("Content-Type"), mimeType);
     _timeout = Timeout(_response.finalizeHeader());
