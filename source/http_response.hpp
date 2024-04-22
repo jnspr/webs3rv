@@ -35,8 +35,12 @@ public:
        NOTE: The lifetime of this slice MUST match the response's */
     void initializeUnowned(int statusCode, Slice statusMessage, Slice body);
 
-    /* Initialize the response object with a file stream of the given path */
+    /* Initializes the response object with a file stream of the given path */
     void initializeFileStream(int statusCode, Slice statusMessage, const char *path);
+
+    /* Initializes the response object with CGI output data
+       NOTE: The lifetime of this slice MUST match the response's */
+    void initializeUnownedCgi(Slice response);
 
     /* Add a header field to the header response */
     void addHeader(Slice key, Slice value);

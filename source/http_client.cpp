@@ -265,54 +265,7 @@ void HttpClient::handleCgiState()
             break;
         case CGI_PROCESS_SUCCESS:
         {
-            // TODO: This needs refactoring
-
-            Slice iterator(reinterpret_cast<const char *>(_process->_buffer.data()), _process->_buffer.size());
-            Slice header;
-            iterator.splitStart(C_SLICE("\r\n\r\n"), header);
-
-            bool initialized = false;
-
-            Slice statusSearch = header;
-            Slice temporary;
-            if (statusSearch.splitStart(C_SLICE("Status:"), temporary) && (temporary.endsWith(C_SLICE("\r\n")) || temporary.isEmpty()))
-            {
-                Slice statusLine, statusCode, statusMessage;
-                if (!statusSearch.splitStart(C_SLICE("\r\n"), statusLine))
-                    statusLine = statusSearch;
-                statusLine.stripStart(' ');
-                if (!statusLine.splitStart(' ', statusCode))
-                    throw std::runtime_error("Malformed CGI status header");
-                statusMessage = statusLine;
-                size_t statusCodeNumber;
-                if (!Utility::parseSize(statusCode, statusCodeNumber))
-                    throw std::runtime_error("aslkdjaslkdjas");
-                _response.initializeUnowned(statusCodeNumber, statusMessage, iterator);
-            }
-
-            if (!initialized)
-                _response.initializeUnowned(200, C_SLICE("OK"), iterator);
-
-            while (header.getLength() > 0)
-            {
-                Slice line;
-                if (!header.splitStart(C_SLICE("\r\n"), line))
-                {
-                    line = header;
-                    header = Slice();
-                }
-                Slice key, value;
-                if (!line.splitStart(C_SLICE(":"), key))
-                    throw std::runtime_error("Malformed CGI header");
-                value = line;
-
-                if (key != C_SLICE("Status"))
-                {
-                    value = value.stripStart(' ');
-                    _response.addHeader(key, value);
-                }
-            }
-
+            _response.initializeUnownedCgi(Slice(_process->_buffer));
             _timeout = Timeout(_response.finalizeHeader());
             _application._dispatcher.unsubscribe(_process->getProcess().getOutputFileno());
             _process->_subscribeFlags &= ~SUBSCRIBE_FLAG_OUTPUT;

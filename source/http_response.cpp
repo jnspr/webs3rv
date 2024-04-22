@@ -1,3 +1,4 @@
+#include "utility.hpp"
 #include "http_response.hpp"
 #include "http_exception.hpp"
 
@@ -31,7 +32,7 @@ void HttpResponse::initializeUnowned(int statusCode, Slice statusMessage, Slice 
     _state = HTTP_RESPONSE_INITIALIZED;
 }
 
-/* Initialize the response object with a file stream of the given path */
+/* Initializes the response object with a file stream of the given path */
 void HttpResponse::initializeFileStream(int statusCode, Slice statusMessage, const char *path)
 {
     // Open the file stream at the file's end to obtain its length
@@ -49,6 +50,67 @@ void HttpResponse::initializeFileStream(int statusCode, Slice statusMessage, con
     _bodySlice     = Slice();
     _bodyRemainder = length;
     _state         = HTTP_RESPONSE_INITIALIZED;
+}
+
+/* Initializes the response object with CGI output data
+   NOTE: The lifetime of this slice MUST match the response's */
+void HttpResponse::initializeUnownedCgi(Slice response)
+{
+    Slice temporary;
+
+    // Split header and body
+    Slice header;
+    if (!response.splitStart(C_SLICE("\r\n\r\n"), header))
+        throw std::runtime_error("Invalid CGI response");
+
+    // Establish default status code and message
+    size_t statusCode = 200;
+    Slice statusMessage = C_SLICE("OK");
+
+    // Search for (and parse) the status header
+    Slice statusLine = header;
+    if (statusLine.splitStart(C_SLICE("Status:"), temporary))
+    {
+        // Shrink the slice below the line ending
+        temporary = statusLine.stripStart(' ');
+        if (!temporary.splitStart(C_SLICE("\r\n"), statusLine))
+            statusLine = temporary;
+
+        // Split status code and message and parse status code
+        Slice statusCodeSlice;
+        statusMessage = statusLine;
+        if (!statusMessage.splitStart(' ', statusCodeSlice))
+            throw std::runtime_error("Invalid CGI status header");
+        if (!Utility::parseSize(statusCodeSlice, statusCode))
+            throw std::runtime_error("Invalid CGI status code");
+    }
+
+    // Initialize the response to the found status and body
+    initializeUnowned(statusCode, statusMessage, response);
+
+    // Add CGI headers
+    while (header.getLength() > 0)
+    {
+        // Consume the next line (key-value pair)
+        Slice pair;
+        if (!header.splitStart(C_SLICE("\r\n"), pair))
+        {
+            pair = header;
+            header = Slice();
+        }
+
+        // Split key and value
+        Slice key, value = pair;
+        if (!value.splitStart(':', key))
+            throw std::runtime_error("Invalid CGI header");
+
+        // Add the header to the response, ignoring the "Status" header
+        if (key != C_SLICE("Status"))
+        {
+            value.consumeStart(C_SLICE(" "));
+            addHeader(key, value);
+        }
+    }
 }
 
 /* Add a header field to the header response */
