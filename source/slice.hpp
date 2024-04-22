@@ -1,8 +1,10 @@
 #ifndef SLICE_hpp
 #define SLICE_hpp
 
+#include <vector>
 #include <string>
 #include <stddef.h>
+#include <stdint.h>
 
 /* Slice of unowned string memory */
 class Slice
@@ -26,6 +28,13 @@ public:
     inline Slice(const std::string &string)
         : _string(string.c_str())
         , _length(string.length())
+    {
+    }
+
+    /* Constructs a slice from the given std::vector of bytes */
+    inline Slice(const std::vector<uint8_t> &vector)
+        : _string(reinterpret_cast<const char *>(vector.data()))
+        , _length(vector.size())
     {
     }
 

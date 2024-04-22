@@ -124,7 +124,7 @@ static void handleField(Slice field, const RoutingInfo &routingInfo)
 /* Handles the upload of one or multiple files */
 void UploadHandler::handleUpload(const HttpRequest &request, const RoutingInfo &routingInfo)
 {
-    Slice body = Slice(reinterpret_cast<const char *>(request.body.data()), request.body.size());
+    Slice body(request.body);
     Slice field;
 
     // Extract the form boundary from the request's content type header
