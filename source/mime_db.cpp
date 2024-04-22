@@ -1,4 +1,5 @@
 #include "mime_db.hpp"
+#include <iostream>
 
 /* Constructs a mime database with the default entries */
 MimeDB::MimeDB(): _defaultType("application/octet-stream")
@@ -60,13 +61,21 @@ MimeDB::MimeDB(): _defaultType("application/octet-stream")
 /* Gets the mime type of a file path according to the entries */
 const std::string &MimeDB::getMimeType(Slice path)
 {
-    // FIXME: This is O(n), could be faster by stripping off extension and using .find()
-    std::map<std::string, std::string>::const_iterator iterator = _entries.begin();
-    for (; iterator != _entries.end(); iterator++)
-    {
-        if (path.endsWith(iterator->first))
-            return iterator->second;
-    }
+    // Split off the last path component as the filename
+    Slice filename;
+    if (!path.splitEnd('/', filename))
+        filename = path;
+
+    // Split off the extension
+    Slice extension;
+    if (!filename.splitEnd('.', extension))
+        extension = filename;
+    std::string extensionString = extension.toString();
+
+    // Find the extension in the map or use the default type
+    std::map<std::string, std::string>::const_iterator iterator = _entries.find(extensionString);
+    if (iterator != _entries.end())
+        return iterator->second;
     return _defaultType;
 }
 
