@@ -85,7 +85,7 @@ void HttpClient::handleEvents(uint32_t eventMask)
                     {
                         Slice serverName = host->getValue();
                         Slice port;
-                        serverName.splitEndnoDel(':', port);
+                        serverName.splitEnd(':', port);
                         (void)port;
                         _config = _config->findServer(serverName);
                     }
