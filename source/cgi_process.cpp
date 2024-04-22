@@ -89,8 +89,17 @@ void CgiProcess::handleEvents(uint32_t eventMask)
                 ssize_t result = read(_process.getOutputFileno(), buffer, sizeof(buffer));
                 if (result == 0)
                 {
-                    // TODO: Correctly handle successful process exit
-                    _process.getStatus();
+                    // This can never happen, see the following example:
+                    // - Child process exits with status 0
+                    //   The pipes are closed as a side-effect
+                    // - Due to the pipes closing, an EPOLLIN or EPOLLOUT event is generated
+                    // - The event handler (this function) calls `_process.getStatus()`
+                    //   `Process` will call `waitpid()` which leads to `PROCESS_EXIT_SUCCESS`
+                    //   and thus, never to `PROCESS_RUNNING` again
+                    // - The zero-length read event is never processed and the process is marked
+                    //   for destruction, leading to its destructor being called after the event
+                    //   buffer is fully processed by `Dispatcher`
+                    throw std::runtime_error("Unexpected end of stream");
                 }
                 if (result < 0)
                     throw std::runtime_error("Unable to read from CGI process");
@@ -125,11 +134,25 @@ void CgiProcess::handleEvents(uint32_t eventMask)
 void CgiProcess::handleException(const char *message)
 {
     std::cout << "Exception while handling CGI process event: " << message << std::endl;
+
+    // Only report failure once
     if (_state != CGI_PROCESS_RUNNING)
-        return;
-    _state = CGI_PROCESS_FAILURE;
-    _client->handleCgiState();
-    // FIXME: The client will hang on exceptions here
+    {
+        _state = CGI_PROCESS_FAILURE;
+        try
+        {
+            _client->handleCgiState();
+        }
+        // In case of catastrophic failure, drop the client
+        catch (const std::exception &exception)
+        {
+            _client->handleException(exception.what());
+        }
+        catch (...)
+        {
+            _client->handleException("Thrown type is not derived from std::exception");
+        }
+    }
 }
 
 /* Transitions the process into timeout state */
@@ -153,15 +176,6 @@ std::vector<std::string> CgiProcess::setupArguments(const HttpRequest &request, 
     return result;
 }
 
-// FIXME: It's probably not fine to use realpath() since the subject doesn't list it as an allowed function
-static std::string getAbsolutePath(const char *path)
-{
-    char buffer[PATH_MAX];
-    if (realpath(path, buffer) == NULL)
-        throw std::runtime_error("Unable to resolve path");
-    return std::string(buffer);
-}
-
 /* Creates a vector of strings for the process environment */
 std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request, const RoutingInfo &routingInfo)
 {
@@ -170,31 +184,31 @@ std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request
     const HttpRequest::Header *contentType = request.findHeader(C_SLICE("Content-Type"));
     const HttpRequest::Header *host = request.findHeader(C_SLICE("Host"));
 
+    Slice nodePath(routingInfo.nodePath);
+    Slice filename;
+    if (!nodePath.splitEnd('/', filename))
+        filename = nodePath;
+
     // Add the standard CGI environment variables
     result.push_back("AUTH_TYPE=");
     result.push_back("CONTENT_LENGTH=" + Utility::numberToString(request.body.size()));
     if (contentType != NULL)
         result.push_back("CONTENT_TYPE=" + contentType->getValue());
     result.push_back("GATEWAY_INTERFACE=CGI/1.1");
-    // TODO: PHP (WordPress) and Python both work fine without these variables, but consider populating them anyway
-    result.push_back("PATH_INFO=");
-    result.push_back("PATH_TRANSLATED=");
+    result.push_back("PATH_INFO=NULL");
+    result.push_back("PATH_TRANSLATED=NULL");
     result.push_back("QUERY_STRING=" + request.queryParameters.toString());
     result.push_back("REMOTE_ADDR=" + Utility::ipv4ToString(request.clientHost));
     result.push_back("REMOTE_HOST=" + Utility::ipv4ToString(request.clientHost));
     result.push_back("REQUEST_METHOD=" + std::string(httpMethodToString(request.method)));
     result.push_back("SCRIPT_NAME=" + request.queryPath);
-    result.push_back("DOCUMENT_ROOT=" + getAbsolutePath(routingInfo.getLocalRoute()->rootDirectory.c_str()));
-    result.push_back("SCRIPT_FILENAME=" + getAbsolutePath(routingInfo.nodePath.c_str()));
+    result.push_back("SCRIPT_FILENAME=" + filename.toString());
     if (host != NULL)
         result.push_back("HTTP_HOST=" + host->getValue());
     else
         result.push_back("HTTP_HOST=NULL");
     if (host != NULL)
-    {
-        // TODO: This could be taken from the server_name
         result.push_back("SERVER_NAME=" + host->getValue());
-    }
     result.push_back("SERVER_PORT=" + Utility::numberToString(routingInfo.serverConfig->port));
     result.push_back("SERVER_PROTOCOL=HTTP/1.1");
     result.push_back("SERVER_SOFTWARE=webs3rv/1.0");
