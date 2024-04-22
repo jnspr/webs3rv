@@ -2,6 +2,7 @@
 #define HTTP_RESPONSE_hpp
 
 #include <string>
+#include <fstream>
 #include <sstream>
 #include <unistd.h>
 #include <stdint.h>
@@ -21,24 +22,28 @@ public:
     /* Constructs an uninitialized HTTP response */
     HttpResponse();
 
-    /* Releases the response's resources */
-    ~HttpResponse();
+    /* Initializes the response object with an empty body */
+    inline void initializeEmpty(int statusCode, Slice statusMessage)
+    {
+        initializeUnowned(statusCode, statusMessage, Slice());
+    }
 
-    /* Initialize the response class with body */
-    void initialize(int statusCode, Slice statusMessage, const std::string &body);
+    /* Initializes the response object with an owned string as body */
+    void initializeOwned(int statusCode, Slice statusMessage, const std::string &body);
 
-    /* Initialize the response class with bodyBuffer for cgi pages */
-    void initialize(int statusCode, Slice statusMessage, const void *bodyBuffer, size_t bodySize);
-    
-    /* Initialize the response class with bodyFileno for static pages (takes ownership of the file descriptor) */
-    void initialize(int statusCode, Slice statusMessage, int bodyFileno, size_t bodySize);
-    
+    /* Initializes the response object with a slice of unowned memory as body
+       NOTE: The lifetime of this slice MUST match the response's */
+    void initializeUnowned(int statusCode, Slice statusMessage, Slice body);
+
+    /* Initialize the response object with a file stream of the given path */
+    void initializeFileStream(int statusCode, Slice statusMessage, const char *path);
+
     /* Add a header field to the header response */
     void addHeader(Slice key, Slice value);
 
     /* Finalize Header */
     uint64_t finalizeHeader();
-    
+
     /* Check if the response has data to send */
     bool hasData();
 
@@ -57,7 +62,7 @@ private:
     std::string       _bodyBuffer;
     Slice             _headerSlice;
     Slice             _bodySlice;
-    int               _bodyFileno;
+    std::ifstream     _bodyStream;
     size_t            _bodyRemainder;
     char              _readBuffer[8192];
 

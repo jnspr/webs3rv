@@ -151,7 +151,7 @@ repeat:
             {
                  if (unlink(info.nodePath.c_str()) == -1)
                     throw HttpException(403);
-                _response.initialize(204, C_SLICE("No Content"), "", 0);
+                _response.initializeEmpty(204, C_SLICE("No Content"));
                 _timeout = Timeout(_response.finalizeHeader());
             }
             else
@@ -167,7 +167,7 @@ repeat:
                     UploadHandler::handleUpload(request, info);
 
                     // Redirect the client to the upload directory
-                    _response.initialize(303, C_SLICE("See Other"), "", 0);
+                    _response.initializeEmpty(303, C_SLICE("See Other"));
                     _response.addHeader(C_SLICE("Location"), request.queryPath);
                     _response.finalizeHeader();
                 }
@@ -176,7 +176,7 @@ repeat:
             }
             else if (!Slice(request.queryPath).endsWith(C_SLICE("/")))
             {
-                _response.initialize(301, C_SLICE("Moved Permanently"), "", 0);
+                _response.initializeEmpty(301, C_SLICE("Moved Permanently"));
                 _response.addHeader(C_SLICE("Location"), Slice(request.queryPath + "/"));
                 _timeout = Timeout(_response.finalizeHeader());
             }
@@ -193,8 +193,7 @@ repeat:
             }
             else if (info.getLocalRoute()->allowListing)
             {
-                std::string autoindex = HtmlGenerator::directoryList(info.nodePath.c_str());
-                _response.initialize(200, C_SLICE("OK"), autoindex);
+                _response.initializeOwned(200, C_SLICE("OK"), HtmlGenerator::directoryList(info.nodePath.c_str()));
                 _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/html"));
                 _timeout = Timeout(_response.finalizeHeader());
             }
@@ -218,7 +217,7 @@ repeat:
         Slice rewritePrefix = Slice(info.getRedirectRoute()->redirectLocation)
             .stripEnd('/');
 
-        _response.initialize(307, C_SLICE("Temporary Redirect"), "", 0);
+        _response.initializeEmpty(307, C_SLICE("Temporary Redirect"));
         _response.addHeader(C_SLICE("Location"),  rewritePrefix.toString() + '/' + routeRelativeQuery.toString());
         _timeout = Timeout(_response.finalizeHeader());
     }
@@ -233,7 +232,7 @@ void HttpClient::setupFileResponse(size_t statusCode, Slice statusMessage, const
 {
     std::string mimeType = g_mimeDB.getMimeType(path);
 
-    // Obtain the file's size
+    /*// Obtain the file's size
     struct stat fileStat;
     if (stat(path.c_str(), &fileStat) == -1)
         throw HttpException(500);
@@ -241,10 +240,10 @@ void HttpClient::setupFileResponse(size_t statusCode, Slice statusMessage, const
     // Open the file
     int fileno = open(path.c_str(), O_RDONLY | O_CLOEXEC);
     if (fileno == -1)
-        throw HttpException(500);
+        throw HttpException(500);*/
 
     // Setup a file descriptor response (takes ownership of the file descriptor)
-    _response.initialize(statusCode, statusMessage, fileno, fileStat.st_size);
+    _response.initializeFileStream(statusCode, statusMessage, path.c_str());
     _response.addHeader(C_SLICE("Content-Type"), mimeType);
     _timeout = Timeout(_response.finalizeHeader());
 }
@@ -288,11 +287,11 @@ void HttpClient::handleCgiState()
                 size_t statusCodeNumber;
                 if (!Utility::parseSize(statusCode, statusCodeNumber))
                     throw std::runtime_error("aslkdjaslkdjas");
-                _response.initialize(statusCodeNumber, statusMessage, &iterator[0], iterator.getLength());
+                _response.initializeUnowned(statusCodeNumber, statusMessage, iterator);
             }
 
             if (!initialized)
-                _response.initialize(200, C_SLICE("OK"), &iterator[0], iterator.getLength());
+                _response.initializeUnowned(200, C_SLICE("OK"), iterator);
 
             while (header.getLength() > 0)
             {
@@ -368,7 +367,7 @@ void HttpClient::createErrorResponse(size_t statusCode)
         std::string errorPage = HtmlGenerator::errorPage(statusCode);
 
         // Build the response and set its timeout
-        _response.initialize(statusCode, errorMessage, errorPage);
+        _response.initializeOwned(statusCode, errorMessage, errorPage);
         _response.addHeader(C_SLICE("Content-Type"), C_SLICE("text/html"));
         _timeout = Timeout(_response.finalizeHeader());
     }

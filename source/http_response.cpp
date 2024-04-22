@@ -1,4 +1,5 @@
 #include "http_response.hpp"
+#include "http_exception.hpp"
 
 #include <unistd.h>
 #include <stdexcept>
@@ -10,52 +11,44 @@ HttpResponse::HttpResponse()
 {
 }
 
-/* Releases the response's resources */
-HttpResponse::~HttpResponse()
-{
-    if ((_state == HTTP_RESPONSE_INITIALIZED || _state == HTTP_RESPONSE_FINALIZED) && _bodyFileno >= 0)
-        close(_bodyFileno);
-}
-
-/* Initialize the response class with body */
-void HttpResponse::initialize(int statusCode, Slice statusMessage, const std::string &body)
+/* Initializes the response object with an owned string */
+void HttpResponse::initializeOwned(int statusCode, Slice statusMessage, const std::string &body)
 {
     initializeHeader(statusCode, statusMessage, body.size());
     _bodyBuffer    = body;
     _bodySlice     = Slice(_bodyBuffer);
-    _bodyFileno    = -1;
     _bodyRemainder = body.size();
     _state         = HTTP_RESPONSE_INITIALIZED;
 }
 
-/* Initialize the response class with bodyBuffer for cgi pages */
-void HttpResponse::initialize(int statusCode, Slice statusMessage, const void *bodyBuffer, size_t bodySize)
+/* Initializes the response object with a slice of unowned memory
+   NOTE: The lifetime of this slice MUST match the response's */
+void HttpResponse::initializeUnowned(int statusCode, Slice statusMessage, Slice body)
 {
-    initializeHeader(statusCode, statusMessage, bodySize);
-    _bodySlice = Slice(static_cast<const char *>(bodyBuffer), bodySize);
-    _bodyFileno = -1;
-    _bodyRemainder = bodySize;
+    initializeHeader(statusCode, statusMessage, body.getLength());
+    _bodySlice     = body;
+    _bodyRemainder = body.getLength();
     _state = HTTP_RESPONSE_INITIALIZED;
 }
 
-/* Initialize the response class with bodyFileno for static pages (takes ownership of the file descriptor) */
-void HttpResponse::initialize(int statusCode, Slice statusMessage, int bodyFileno, size_t bodySize)
+/* Initialize the response object with a file stream of the given path */
+void HttpResponse::initializeFileStream(int statusCode, Slice statusMessage, const char *path)
 {
-    try
-    {
-        if (bodyFileno < 0)
-            throw std::logic_error("Attempt to initialize HTTP response with bad file descriptor");
-        initializeHeader(statusCode, statusMessage, bodySize);
-        _bodySlice = Slice();
-        _bodyFileno = bodyFileno;
-        _bodyRemainder = bodySize;
-        _state = HTTP_RESPONSE_INITIALIZED;
-    }
-    catch (...)
-    {
-        close(bodyFileno);
-        throw;
-    }
+    // Open the file stream at the file's end to obtain its length
+    _bodyStream.open(path, std::ios::binary | std::ios::ate);
+    if (!_bodyStream.is_open())
+        throw HttpException(500);
+    size_t length = _bodyStream.tellg();
+
+    // Seek back to the start
+    _bodyStream.seekg(0);
+    if (!_bodyStream.good())
+        throw HttpException(500);
+
+    initializeHeader(statusCode, statusMessage, length);
+    _bodySlice     = Slice();
+    _bodyRemainder = length;
+    _state         = HTTP_RESPONSE_INITIALIZED;
 }
 
 /* Add a header field to the header response */
@@ -108,10 +101,10 @@ void HttpResponse::transferToSocket(int fileno)
     if (_bodyRemainder > 0)
     {
         size_t bytesSent;
-        if (_bodyFileno == -1)
-            bytesSent = sendSliceToSocket(fileno, _bodySlice);
-        else
+        if (_bodyStream.is_open())
             bytesSent = streamFileToSocket(fileno);
+        else
+            bytesSent = sendSliceToSocket(fileno, _bodySlice);
 
         // Reduce the number of remaining bytes but check for underflow first
         if (bytesSent > _bodyRemainder)
@@ -152,12 +145,13 @@ size_t HttpResponse::streamFileToSocket(int fileno)
 {
     if (_bodySlice.isEmpty())
     {
-        ssize_t bytesRead = read(_bodyFileno, _readBuffer, sizeof(_readBuffer));
-        if (bytesRead == -1)
+        _bodyStream.read(_readBuffer, sizeof(_readBuffer));
+        if (_bodyStream.bad())
             throw std::runtime_error("Unable to read file");
+        size_t bytesRead = _bodyStream.gcount();
         if (bytesRead == 0)
             throw std::runtime_error("Unexpected end of file");
-        _bodySlice = Slice(_readBuffer, static_cast<size_t>(bytesRead));
+        _bodySlice = Slice(_readBuffer, bytesRead);
     }
     return sendSliceToSocket(fileno, _bodySlice);
 }
