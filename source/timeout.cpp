@@ -37,10 +37,16 @@ void Timeout::stop()
 /* Queries the current time from the operating system */
 uint64_t Timeout::getCurrentTime()
 {
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    // There is neither an C function allowed by subject nor a C++98
+    // standard function to obtain the current millisecond time
+    return static_cast<uint64_t>(std::time(NULL)) * 1000;
+#else
     timespec ts;
 
     if (clock_gettime(CLOCK_MONOTONIC_RAW, &ts) != 0)
         throw std::runtime_error("Unable to query monotonic system time");
 
     return ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
 }
