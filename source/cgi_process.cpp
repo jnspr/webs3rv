@@ -195,8 +195,8 @@ std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request
     if (contentType != NULL)
         result.push_back("CONTENT_TYPE=" + contentType->getValue());
     result.push_back("GATEWAY_INTERFACE=CGI/1.1");
-    result.push_back("PATH_INFO=NULL");
-    result.push_back("PATH_TRANSLATED=NULL");
+    result.push_back("PATH_INFO=");
+    result.push_back("PATH_TRANSLATED=");
     result.push_back("QUERY_STRING=" + request.queryParameters.toString());
     result.push_back("REMOTE_ADDR=" + Utility::ipv4ToString(request.clientHost));
     result.push_back("REMOTE_HOST=" + Utility::ipv4ToString(request.clientHost));
