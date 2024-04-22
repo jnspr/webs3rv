@@ -51,21 +51,17 @@ public:
     bool operator==(Slice other);
     bool operator!=(Slice other);
 
-    /* Removes the slice's start until `delimiter` is reached and populates `outSlice` with it,
+    /* Removes the slice's start until `delimiter` is reached and populates `outStart` with it,
        the current slice will be the remainder excluding the delimiter */
     bool splitStart(char delimiter, Slice &outStart);
 
-    /* Removes the slice's start until `delimiter` is reached and populates `outSlice` with it,
+    /* Removes the slice's start until `delimiter` is reached and populates `outStart` with it,
        the current slice will be the remainder excluding the delimiter */
     bool splitStart(Slice delimiter, Slice &outStart);
 
-    /* Removes the slice's end until `delimiter` is reached and populates `outSlice` with it,
-       the current slice will be the remainder including the delimiter */
+    /* Removes the slice's end until `delimiter` is reached and populates `outEnd` with it,
+       the current slice will be the remainder excluding the delimiter */
     bool splitEnd(char delimiter, Slice &outEnd);
-
-    /* Removes the slice's end until `delimiter` is reached and populates `outSlice` with it,
-    the current slice will be the remainder without the delimiter */
-    bool splitEndnoDel(char delimiter, Slice &outEnd);
 
     /* Removes any occurrences of the given character from the start of the slice */
     Slice &stripStart(char character);
