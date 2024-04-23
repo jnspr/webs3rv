@@ -25,6 +25,12 @@ enum NodeType
 
 namespace Utility
 {
+    /* Finds the substring `needle` in the given string `haystack` */
+    const void *find(const void *haystack, size_t haystackLength, const void *needle, size_t needleLength);
+
+    /* Finds the character `needle` in the given string `haystack` */
+    const void *findReverse(const void *haystack, char needle, size_t haystackLength);
+
     /* Converts a number to a string */
     template <typename T>
     static std::string numberToString(T number)

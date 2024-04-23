@@ -1,14 +1,15 @@
 #include "slice.hpp"
+#include "utility.hpp"
 
 #include <ostream>
-#include <string.h>
+#include <cstring>
 
 /* Comparison to other slice */
 bool Slice::operator==(Slice other)
 {
     if (_length != other._length)
         return false;
-    return memcmp(_string, other._string, _length) == 0;
+    return std::memcmp(_string, other._string, _length) == 0;
 }
 
 /* Comparison to other slice */
@@ -16,14 +17,14 @@ bool Slice::operator!=(Slice other)
 {
     if (_length != other._length)
         return true;
-    return memcmp(_string, other._string, _length) != 0;
+    return std::memcmp(_string, other._string, _length) != 0;
 }
 
 /* Removes the slice's start until `delimiter` is reached and populates `outSlice` with it,
    the current slice will be the remainder excluding the delimiter */
 bool Slice::splitStart(char delimiter, Slice &outStart)
 {
-    const char *position = (const char *)memchr(_string, delimiter, _length);
+    const char *position = (const char *)std::memchr(_string, delimiter, _length);
     if (position == NULL)
         return false;
 
@@ -42,7 +43,7 @@ bool Slice::splitStart(char delimiter, Slice &outStart)
    the current slice will be the remainder excluding the delimiter */
 bool Slice::splitStart(Slice delimiter, Slice &outStart)
 {
-    const char *position = (const char *)memmem(_string, _length, delimiter._string, delimiter._length);
+    const char *position = (const char *)Utility::find(_string, _length, delimiter._string, delimiter._length);
     if (position == NULL)
         return false;
 
@@ -61,7 +62,7 @@ bool Slice::splitStart(Slice delimiter, Slice &outStart)
    the current slice will be the remainder excluding the delimiter */
 bool Slice::splitEnd(char delimiter, Slice &outEnd)
 {
-    const char *position = (const char *)memrchr(_string, delimiter, _length);
+    const char *position = (const char *)Utility::findReverse(_string, delimiter, _length);
     if (position == NULL)
         return false;
 
@@ -99,7 +100,7 @@ bool Slice::removePrefix(Slice prefix)
 {
     if (_length < prefix._length)
         return false;
-    if (memcmp(_string, prefix._string, prefix._length) != 0)
+    if (std::memcmp(_string, prefix._string, prefix._length) != 0)
         return false;
 
     _string += prefix._length;
@@ -119,7 +120,7 @@ bool Slice::startsWith(Slice prefix) const
 {
     if (_length < prefix._length)
         return false;
-    return memcmp(_string, prefix._string, prefix._length) == 0;
+    return std::memcmp(_string, prefix._string, prefix._length) == 0;
 }
 
 /* Gets if the slice ends with the given suffix */
@@ -129,7 +130,7 @@ bool Slice::endsWith(Slice prefix) const
         return false;
     if (_length == 0)
         return true;
-    return memcmp(&_string[_length - prefix._length], prefix._string, prefix._length) == 0;
+    return std::memcmp(&_string[_length - prefix._length], prefix._string, prefix._length) == 0;
 }
 
 /* Returns a new slice with the given number of characters removed from the start,

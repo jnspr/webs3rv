@@ -3,7 +3,7 @@
 #include "slice.hpp"
 #include "application.hpp"
 
-#include <string.h>
+#include <cstring>
 #include <stdlib.h>
 #include <limits.h>
 #include <unistd.h>
@@ -113,7 +113,7 @@ void CgiProcess::handleEvents(uint32_t eventMask)
                 if (newLength > (2ull * 1024ull * 1024ull * 1024ull))
                     throw std::runtime_error("Response body too large");
                 _buffer.resize(oldLength + length);
-                memcpy(&_buffer[oldLength], buffer, length);
+                std::memcpy(&_buffer[oldLength], buffer, length);
 #ifdef __42_LIKES_WASTING_CPU_CYCLES__
                 return;
 #endif // __42_LIKES_WASTING_CPU_CYCLES__

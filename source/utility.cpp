@@ -8,6 +8,48 @@
 #include <cstring>
 #include <netdb.h>
 
+/* Finds the substring `needle` in the given string `haystack` */
+const void *Utility::find(const void *haystack, size_t haystackLength, const void *needle, size_t needleLength)
+{
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    if (haystackLength == 0 || haystackLength < needleLength)
+        return NULL;
+
+    const char *current = reinterpret_cast<const char *>(haystack);
+    const char *end = &current[haystackLength - needleLength + 1];
+    for (; current < end; current++)
+    {
+        if (std::memcmp(current, needle, needleLength) == 0)
+            return current;
+    }
+
+    return NULL;
+#else
+    return memmem(haystack, haystackLength, needle, needleLength);
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
+}
+
+/* Finds the character `needle` in the given string `haystack` */
+const void *Utility::findReverse(const void *haystack, char needle, size_t haystackLength)
+{
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    if (haystackLength == 0)
+        return NULL;
+
+    const char *current = &reinterpret_cast<const char *>(haystack)[haystackLength - 1];
+    for (size_t index = 0; index < haystackLength; index++)
+    {
+        if (*current == needle)
+            return current;
+        current--;
+    }
+
+    return NULL;
+#else
+    return memrchr(haystack, needle, haystackLength);
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
+}
+
 /* Queries the type of node at the given FS path */
 NodeType Utility::queryNodeType(const char *path)
 {

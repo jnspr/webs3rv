@@ -80,7 +80,7 @@ HttpRequestPhase HttpRequestParser::handleHeader(Slice &data)
 
     // Copy the data into the header buffer and save the fresh data's offset
     size_t freshOffset = _headerLength;
-    memcpy(&_headerBuffer[freshOffset], &data[0], copyLength);
+    std::memcpy(&_headerBuffer[freshOffset], &data[0], copyLength);
     _headerLength += copyLength;
 
     // Search for double-CRLF from up to 3 bytes below the fresh data
@@ -90,7 +90,7 @@ HttpRequestPhase HttpRequestParser::handleHeader(Slice &data)
     else
         searchOffset -= 3;
     const char *position = reinterpret_cast<const char *>(
-        memmem(&_headerBuffer[searchOffset], _headerLength - searchOffset, "\r\n\r\n", 4)
+        Utility::find(&_headerBuffer[searchOffset], _headerLength - searchOffset, "\r\n\r\n", 4)
     );
 
     // If the double-CRLF is not found, the header can't be completed yet
@@ -167,7 +167,7 @@ HttpRequestPhase HttpRequestParser::handleBodyRaw(Slice &data)
     if (SIZE_MAX - oldLength < copyLength)
         return HTTP_REQUEST_BODY_EXCEED;
     _request.body.resize(oldLength + copyLength);
-    memcpy(&_request.body[oldLength], &data[0], copyLength);
+    std::memcpy(&_request.body[oldLength], &data[0], copyLength);
 
     // Consume the copied bytes and decrement the remaining body size
     data.consumeStart(copyLength);
@@ -195,7 +195,7 @@ HttpRequestPhase HttpRequestParser::handleBodyChunkedHeader(Slice &data)
 
     // Copy the data into the header buffer and save the fresh data's offset
     size_t freshOffset = _chunkHeaderLength;
-    memcpy(&_chunkHeaderBuffer[freshOffset], &data[0], copyLength);
+    std::memcpy(&_chunkHeaderBuffer[freshOffset], &data[0], copyLength);
     _chunkHeaderLength += copyLength;
 
     // Search for CRLF from up to 1 bytes below the fresh data
@@ -205,7 +205,7 @@ HttpRequestPhase HttpRequestParser::handleBodyChunkedHeader(Slice &data)
     else
         searchOffset -= 1;
     const char *position = reinterpret_cast<const char *>(
-        memmem(&_chunkHeaderBuffer[searchOffset], _chunkHeaderLength - searchOffset, "\r\n", 2)
+        Utility::find(&_chunkHeaderBuffer[searchOffset], _chunkHeaderLength - searchOffset, "\r\n", 2)
     );
 
     // If the CRLF is not found, the header can't be completed yet
@@ -258,7 +258,7 @@ HttpRequestPhase HttpRequestParser::handleBodyChunkedBody(Slice &data)
     if (oldLength + copyLength > _config.maxBodySize)
         return HTTP_REQUEST_BODY_EXCEED;
     _request.body.resize(oldLength + copyLength);
-    memcpy(&_request.body[oldLength], &data[0], copyLength);
+    std::memcpy(&_request.body[oldLength], &data[0], copyLength);
 
     // Consume the copied bytes and decrement the remaining body size
     data.consumeStart(copyLength);
