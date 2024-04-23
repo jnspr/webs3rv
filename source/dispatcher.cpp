@@ -23,8 +23,13 @@ Dispatcher::Dispatcher(size_t bufferSize)
 {
     _buffer.resize(_bufferSize);
 
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    if ((_epollFileno = epoll_create(128)) < 0)
+        throw std::runtime_error("Unable to create epoll file descriptor");
+#else
     if ((_epollFileno = epoll_create1(EPOLL_CLOEXEC)) < 0)
         throw std::runtime_error("Unable to create epoll file descriptor");
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
 }
 
 /* Releases the dispatcher's resources */
