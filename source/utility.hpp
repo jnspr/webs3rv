@@ -4,14 +4,12 @@
 #include "slice.hpp"
 #include "config.hpp"
 
-#include <string>
-#include <cstddef>
-#include <sstream>
-#include <stdint.h>
 #include <cstdio> 
-#include <netdb.h>
 #include <vector>
-
+#include <string>
+#include <sstream>
+#include <cstddef>
+#include <stdint.h>
 
 enum NodeType
 {
@@ -69,22 +67,6 @@ namespace Utility
 
     /* Checks the config for more than one server listening on the same address*/
     void checkduplicatehost(const ApplicationConfig &config);
-
-
-    /* Class to resolve an host Adress and return the ipv4*/
-    class AddrInfo {
-        public:
-            AddrInfo(const char *hostname);
-            ~AddrInfo();
-            /* Returns a vector with the resolved http Adresses*/
-            std::vector<struct addrinfo *> getResult() const;
-
-
-        private:
-            const char      *_hostname;
-            const char      *_service;
-            struct addrinfo *_result;
-    };
 }
 
 #endif // UTILITY_hpp

@@ -241,29 +241,3 @@ void Utility::checkduplicatehost(const ApplicationConfig &config)
     (void)config;
     // TODO: Adjust to check same address AND same name(s)
 }
-
-Utility::AddrInfo::AddrInfo(const char *hostname) : _hostname(hostname), _service("http"), _result(NULL){
-    struct addrinfo hints;
-    std::memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-
-    int status = getaddrinfo(_hostname, _service, &hints, &_result);
-    if (status != 0)
-        throw std::runtime_error("getaddrinfo failed");
-
-}
-
-Utility::AddrInfo::~AddrInfo(){
-    if (_result)
-        freeaddrinfo(_result);
-}
-
-/* Returns a vector with the resolved http Adresses*/
- std::vector<struct addrinfo *>  Utility::AddrInfo::getResult() const {
-    std::vector <struct addrinfo *> addresses;
-    for (struct addrinfo *p = _result; p != NULL; p = p->ai_next)
-        addresses.push_back(p);
-
-    return addresses;
- }
