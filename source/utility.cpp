@@ -112,7 +112,7 @@ bool Utility::checkPathLevel(Slice path)
 std::string Utility::ipv4ToString(uint32_t ipv4Addr)
 {
     char addrBuffer[16];
-    sprintf(addrBuffer, "%u.%u.%u.%u", (ipv4Addr >> 24) & 0xFF, (ipv4Addr >> 16) & 0xFF,
+    std::sprintf(addrBuffer, "%u.%u.%u.%u", (ipv4Addr >> 24) & 0xFF, (ipv4Addr >> 16) & 0xFF,
         (ipv4Addr >> 8) & 0xFF, ipv4Addr & 0xFF);
     return std::string(addrBuffer);
 }

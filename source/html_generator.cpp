@@ -43,7 +43,23 @@ private:
 /* Comparison function for `std::sort()` */
 static bool compareLowercase(const std::string &lhs, const std::string &rhs)
 {
+#ifdef __42_LIKES_WASTING_CPU_CYCLES__
+    const char *lhsPointer = lhs.c_str();
+    const char *rhsPointer = rhs.c_str();
+
+    while (*lhsPointer && *rhsPointer)
+    {
+        int lhsCharacter = std::tolower(*lhsPointer);
+        int rhsCharacter = std::tolower(*rhsPointer);
+        if (lhsCharacter != rhsCharacter)
+            return (lhsCharacter - rhsCharacter) < 0;
+        lhsPointer++;
+        rhsPointer++;
+    }
+    return (std::tolower(*lhsPointer) - std::tolower(*rhsPointer)) < 0;
+#else
     return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
+#endif // __42_LIKES_WASTING_CPU_CYCLES__
 }
 
 /* Generates an error page for the given status code */

@@ -21,7 +21,7 @@ std::vector<Token> ConfigTokenizer::tokenize()
 
     while (offset < config_input.length())
     {
-        if (isspace(config_input[offset]))
+        if (std::isspace(config_input[offset]))
             offset++;
         else if (config_input[offset] == '{')
         {
@@ -38,7 +38,7 @@ std::vector<Token> ConfigTokenizer::tokenize()
             tokens.push_back(Token(SY_SEMICOLON, ";", offset));
             offset++;
         }
-        else if (isalnum(config_input[offset]) || config_input[offset] == '/' ||
+        else if (std::isalnum(config_input[offset]) || config_input[offset] == '/' ||
                  config_input[offset] == '.' || config_input[offset] == '_')
             tokens.push_back(parseKeywordOrData());
         else if (config_input[offset] == '#')
@@ -55,7 +55,7 @@ std::vector<Token> ConfigTokenizer::tokenize()
 Token ConfigTokenizer::parseKeywordOrData()
 {
     size_t start = offset;
-    while (offset < config_input.length() && !isspace(config_input[offset]) &&
+    while (offset < config_input.length() && !std::isspace(config_input[offset]) &&
            config_input[offset] != '{' && config_input[offset] != '}' &&
            config_input[offset] != ';' && config_input[offset] != '#')
     {

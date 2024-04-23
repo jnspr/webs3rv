@@ -225,7 +225,7 @@ std::vector<std::string> CgiProcess::setupEnvironment(const HttpRequest &request
             if (key[i] == '-')
                 key[i] = '_';
             else
-                key[i] = toupper(key[i]);
+                key[i] = std::toupper(key[i]);
         }
         result.push_back(key + "=" + value);
     }
