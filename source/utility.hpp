@@ -64,9 +64,6 @@ namespace Utility
 
     /* Attempts to convert a URL-encoded string slice to a URL-decoded string */
     bool decodeUrl(Slice string, std::string &outResult);
-
-    /* Checks the config for more than one server listening on the same address*/
-    void checkduplicatehost(const ApplicationConfig &config);
 }
 
 #endif // UTILITY_hpp

@@ -226,18 +226,3 @@ bool Utility::decodeUrl(Slice string, std::string &outResult)
     outResult = stream.str();
     return true;
 }
-
-void Utility::checkduplicatehost(const ApplicationConfig &config)
-{
-    /*for(size_t i = 0; i < config.servers.size(); i++)
-    {
-        for (size_t j = 0; j < config.servers.size(); j++)
-        {
-            if(i != j && config.servers[i].host == config.servers[j].host 
-                && config.servers[i].port == config.servers[j].port)
-                throw std::runtime_error("Multiple servers on the same address");
-        }
-    }*/
-    (void)config;
-    // TODO: Adjust to check same address AND same name(s)
-}

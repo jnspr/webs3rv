@@ -8,8 +8,6 @@ Application::Application(ApplicationConfig &config)
     // Check if the configuration is valid
     if (config.servers.size() == 0)
         throw std::runtime_error("Configuration has no servers");
-    /* Checks the config for a duplicate host and throws a standard error if found*/
-    Utility::checkduplicatehost(config);
 }
 
 /* Sets up the server according to the constructor-supplied configuration */
