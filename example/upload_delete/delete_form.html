@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+    <h1>Non-CGI file delete test</h1>
+    <hr/>
+    <input id="urlInput" type="text" placeholder="Name or URL of the file">
+    <button id="sendButton">Send DELETE request</button>
+    <p>Status: <span id="statusText">Awaiting input</span></p>
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const sendButton = document.getElementById('sendButton');
+        const statusText = document.getElementById('statusText');
+
+        function deleteRequest(url)
+        {
+            return new Promise((resolve, reject) =>
+            {
+                const xhr = new XMLHttpRequest();
+                xhr.open('DELETE', url);
+                xhr.onload = () =>
+                {
+                    if (xhr.status < 200 || xhr.status > 299)
+                        reject(`Operation failed (${xhr.status})`);
+                    else
+                        resolve("Operation completed successfully");
+                };
+                xhr.onerror = () => reject("Connection issue or other unknown error");
+                xhr.send();
+            });
+        }
+
+        sendButton.addEventListener('click', async () =>
+        {
+            if (urlInput.value.trim().length == 0)
+            {
+                if (!confirm("This would delete the whole upload route's directory, are you sure?"))
+                    return;
+            }
+            try
+            {
+                statusText.innerText = await deleteRequest(urlInput.value);
+                statusText.style.color = 'green';
+            }
+            catch (error)
+            {
+                statusText.innerText = error;
+                statusText.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+
+</html>
