@@ -193,7 +193,7 @@ size_t HttpResponse::sendSliceToSocket(int fileno, Slice &slice)
 {
     ssize_t result;
 
-    result = send(fileno, &slice[0], slice.getLength(), 0);
+    result = send(fileno, &slice[0], slice.getLength(), MSG_DONTWAIT);
     if (result == -1)
         throw std::runtime_error("Unable to send data to socket");
     if (result == 0)
