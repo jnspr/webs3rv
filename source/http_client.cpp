@@ -241,7 +241,8 @@ void HttpClient::setupFileResponse(size_t statusCode, Slice statusMessage, const
 /* Handles an exception that occurred in `handleEvent()` */
 void HttpClient::handleException(const char *message)
 {
-    std::cout << "Exception while handling HTTP client event: " << message << std::endl;
+    (void)message;
+    //std::cout << "Exception while handling HTTP client event: " << message << std::endl;
     markForCleanup();
 }
 

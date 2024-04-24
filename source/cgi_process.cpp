@@ -133,7 +133,8 @@ void CgiProcess::handleEvents(uint32_t eventMask)
 /* Handles an exception that occurred in `handleEvent()` */
 void CgiProcess::handleException(const char *message)
 {
-    std::cout << "Exception while handling CGI process event: " << message << std::endl;
+    (void)message;
+    //std::cout << "Exception while handling CGI process event: " << message << std::endl;
 
     // Only report failure once
     if (_state != CGI_PROCESS_RUNNING)
