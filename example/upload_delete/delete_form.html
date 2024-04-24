@@ -37,8 +37,8 @@
         {
             if (urlInput.value.trim().length == 0)
             {
-                if (!confirm("This would delete the whole upload route's directory, are you sure?"))
-                    return;
+                alert("Please enter a valid URL or file name");
+                return;
             }
             try
             {
