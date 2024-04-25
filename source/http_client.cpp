@@ -8,6 +8,7 @@
 #include "html_generator.hpp"
 #include "config.hpp"
 #include "upload_handler.hpp"
+#include "signal_manager.hpp"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -53,7 +54,11 @@ void HttpClient::handleEvents(uint32_t eventMask)
         char buffer[8192];
 
         if ((length = read(_fileno, buffer, sizeof(buffer))) < 0)
+        {
+            if (SignalManager::shouldQuit())
+                return;
             throw std::runtime_error("Unable to read from client");
+        }
 
         if (_waitingForClose)
         {

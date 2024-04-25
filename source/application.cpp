@@ -1,5 +1,6 @@
 #include "application.hpp"
 #include "endpoint.hpp"
+#include "signal_manager.hpp"
 
 /* Constructs the main application object */
 Application::Application(ApplicationConfig &config)
@@ -77,7 +78,7 @@ void Application::mainLoop()
         throw std::logic_error("Invalid usage; .configure() must be called before .mainLoop()");
 
     HttpClient *headClient, *nextClient;
-    for (;;)
+    while (!SignalManager::shouldQuit())
     { 
         // Wait up to 5 seconds to dispatch any event(s)
         _dispatcher.dispatch(5000);

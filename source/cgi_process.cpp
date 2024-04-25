@@ -2,6 +2,7 @@
 #include "http_client.hpp"
 #include "slice.hpp"
 #include "application.hpp"
+#include "signal_manager.hpp"
 
 #include <cstring>
 #include <stdlib.h>
@@ -60,10 +61,14 @@ void CgiProcess::handleEvents(uint32_t eventMask)
                 {
                     // Write the request body to the process' standard input pipe
                     ssize_t result = write(_process.getInputFileno(), &_request.body[_bodyOffset], _request.body.size() - _bodyOffset);
+                    if (result < 0)
+                    {
+                        if (SignalManager::shouldQuit())
+                            return;
+                        throw std::runtime_error("Unable to write to CGI process");
+                    }
                     if (result == 0)
                         throw std::runtime_error("Unexpected end of stream");
-                    if (result < 0)
-                        throw std::runtime_error("Unable to write to CGI process");
                     _bodyOffset += static_cast<size_t>(result);
                 }
 
@@ -87,6 +92,12 @@ void CgiProcess::handleEvents(uint32_t eventMask)
 
                 // Read up to 8KiB from the process' standard output pipe
                 ssize_t result = read(_process.getOutputFileno(), buffer, sizeof(buffer));
+                if (result < 0)
+                {
+                    if (SignalManager::shouldQuit())
+                        return;
+                    throw std::runtime_error("Unable to read from CGI process");
+                }
                 if (result == 0)
                 {
                     // This can never happen, see the following example:
@@ -101,8 +112,6 @@ void CgiProcess::handleEvents(uint32_t eventMask)
                     //   buffer is fully processed by `Dispatcher`
                     throw std::runtime_error("Unexpected end of stream");
                 }
-                if (result < 0)
-                    throw std::runtime_error("Unable to read from CGI process");
                 size_t length = static_cast<size_t>(result);
 
                 // Push the data into the response buffer

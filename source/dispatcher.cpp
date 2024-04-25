@@ -1,4 +1,5 @@
 #include "dispatcher.hpp"
+#include "signal_manager.hpp"
 
 #include <unistd.h>
 #include <stdexcept>
@@ -98,6 +99,8 @@ void Dispatcher::dispatch(int timeout)
     _buffer.resize(_bufferSize);
 
     int count = epoll_wait(_epollFileno, _buffer.data(), _bufferSize, timeout);
+    if (SignalManager::shouldQuit())
+        return;
     if (count < 0)
         throw std::runtime_error("Unable to wait for events to occur");
 
