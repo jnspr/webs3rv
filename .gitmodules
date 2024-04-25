@@ -1,7 +1,9 @@
 [submodule "doc/doxygen-awesome-css"]
 	path = doc/doxygen-awesome-css
 	url = https://github.com/jothepro/doxygen-awesome-css.git
+	shallow = true
 [submodule "example/wordpress/wordpress"]
 	path = example/wordpress/wordpress
 	url = https://github.com/WordPress/WordPress
 	branch = 6.5-branch
+	shallow = true
