@@ -339,13 +339,6 @@ std::map<std::string, std::string> ConfigParser::parseCgiFileExtensions()
     expect(DATA);
     extension = currentToken().data;
     checkValidCgiFileExtension(extension, _tokens[_current].offset, _config_input);
-    // If the extension is .cgi, the path is the same as server root path
-    if (extension == ".cgi")
-    {
-        cgiFileExtensions[extension] = "";
-        moveToNextToken();
-        return cgiFileExtensions;
-    }
     moveToNextToken();
     expect(DATA);
     path = currentToken().data;
